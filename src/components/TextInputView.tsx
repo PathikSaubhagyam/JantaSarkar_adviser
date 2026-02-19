@@ -9,6 +9,7 @@ import {
 import { FONTS_Family, FONTS_SIZE } from '../constants/Font';
 import { COLORS } from '../constants/Colors';
 import TextCommonSemiBold from './TextCommonSemiBold';
+import TextCommonMedium from './TextCommonMedium';
 
 interface TextInputProps {
   containerStyle?: ViewStyle;
@@ -61,7 +62,7 @@ const TextInputView = (props: TextInputProps) => {
         {props.child2 && <>{props.child2}</>}
       </View>
       {props?.errText && (
-        <TextCommonSemiBold
+        <TextCommonMedium
           text={props?.errText}
           textViewStyle={styles.errText}
         />
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
     fontSize: FONTS_SIZE.txt_14,
-    fontWeight: '400',
+    // fontWeight: '400',
     flex: 1,
     fontFamily: FONTS_Family.FontMedium,
   },

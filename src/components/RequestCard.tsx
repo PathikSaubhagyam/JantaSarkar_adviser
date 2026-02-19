@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants/Colors';
+import { FONTS_SIZE } from '../constants/Font';
+import TextCommonBold from './TextCommonBold';
+import TextCommonMedium from './TextCommonMedium';
+import TextCommonRegular from './TextCommonRegular';
 
 const RequestCard = ({
   initials = 'NA',
   name = '',
+  department = '',
   tag = '',
   tagColor = '#EEE',
   time = '',
@@ -13,7 +18,10 @@ const RequestCard = ({
   date = '',
   onAccept = () => {},
   onReject = () => {},
+  acceptLabel = 'Accept',
+  rejectLabel = 'Reject',
   showButtons = true,
+  showCancelButton = true,
 }) => {
   return (
     <View style={styles.card}>
@@ -25,26 +33,43 @@ const RequestCard = ({
           </View>
 
           <View style={styles.nameWrapper}>
-            <Text numberOfLines={1} style={styles.name}>
-              {name}
-            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <TextCommonBold text={name} textViewStyle={styles.name} />
+              {!!time && (
+                <TextCommonMedium text={time} textViewStyle={styles.time} />
+              )}
+            </View>
+
+            <TextCommonMedium
+              text={department}
+              textViewStyle={{
+                fontSize: FONTS_SIZE.txt_14,
+                color: COLORS.black,
+              }}
+            />
 
             {!!tag && (
               <View style={[styles.tag, { backgroundColor: tagColor }]}>
-                <Text style={styles.tagText}>{tag}</Text>
+                <TextCommonMedium text={tag} textViewStyle={styles.tagText} />
               </View>
             )}
           </View>
         </View>
-
-        {!!time && <Text style={styles.time}>{time}</Text>}
       </View>
 
       {/* Description */}
       {!!description && (
-        <Text numberOfLines={3} style={styles.desc}>
-          {description}
-        </Text>
+        <TextCommonRegular
+          text={description}
+          numberOfLines={3}
+          textViewStyle={styles.desc}
+        />
       )}
 
       {/* Footer */}
@@ -58,20 +83,27 @@ const RequestCard = ({
       {/* Buttons */}
       {showButtons && (
         <View style={styles.btnRow}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.rejectBtn}
-            onPress={onReject}
-          >
-            <Text style={styles.rejectText}>Reject</Text>
-          </TouchableOpacity>
+          {/* Cancel button */}
+          {showCancelButton && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.rejectBtn}
+              onPress={onReject}
+            >
+              <Text style={styles.rejectText}>{rejectLabel}</Text>
+            </TouchableOpacity>
+          )}
 
+          {/* Complete button always show */}
           <TouchableOpacity
             activeOpacity={0.8}
-            style={styles.acceptBtn}
+            style={[
+              styles.acceptBtn,
+              !showCancelButton && { marginLeft: 0, flex: 1 },
+            ]}
             onPress={onAccept}
           >
-            <Text style={styles.acceptText}>Accept</Text>
+            <Text style={styles.acceptText}>{acceptLabel}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -85,7 +117,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.white,
     borderRadius: 18,
-    padding: 16,
+    padding: 8,
     marginBottom: 10,
     borderWidth: 0.5,
     borderColor: COLORS.colorLightGray,
@@ -122,34 +154,33 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.textDark,
+    fontSize: FONTS_SIZE.txt_16,
+    color: COLORS.black,
   },
 
   tag: {
     marginTop: 4,
     alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    // paddingHorizontal: 15,
+    padding: 5,
+    // paddingVertical: 4,
+    borderRadius: 5,
   },
 
   tagText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: FONTS_SIZE.txt_12,
   },
 
   time: {
     fontSize: 12,
-    color: COLORS.textGrey,
+    color: COLORS.gry_text,
     marginLeft: 8,
   },
 
   desc: {
     marginTop: 12,
-    fontSize: 14,
-    color: COLORS.textGrey,
+    fontSize: FONTS_SIZE.txt_14,
+    color: COLORS.gry_text,
     lineHeight: 20,
   },
 
@@ -160,8 +191,8 @@ const styles = StyleSheet.create({
 
   footerText: {
     marginRight: 16,
-    fontSize: 13,
-    color: COLORS.textGrey,
+    fontSize: FONTS_SIZE.txt_15,
+    color: COLORS.gry_text,
   },
 
   btnRow: {
@@ -189,7 +220,7 @@ const styles = StyleSheet.create({
 
   rejectText: {
     fontWeight: '600',
-    color: COLORS.textDark,
+    color: COLORS.black,
   },
 
   acceptText: {

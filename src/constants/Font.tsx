@@ -2,14 +2,15 @@ import { Platform } from 'react-native';
 
 export const FONTS_Family = {
   FontExtraLight:
-    Platform.OS === 'ios' ? 'Nunito-ExtraLight' : 'Nunito-ExtraLight', //200
-  FontLight: Platform.OS === 'ios' ? 'Nunito-Light' : 'Nunito-Light', //300
-  FontRegular: Platform.OS === 'ios' ? 'Nunito-Regular' : 'Nunito-Regular', //400
-  FontMedium: Platform.OS === 'ios' ? 'Nunito-Medium' : 'Nunito-Medium', //500
+    Platform.OS === 'ios' ? 'Poppins-ExtraBold' : 'Poppins-ExtraBold', //200
+  FontLight:
+    Platform.OS === 'ios' ? 'Poppins-ExtraLight' : 'Poppins-ExtraLight', //300
+  FontRegular: Platform.OS === 'ios' ? 'Poppins-Regular' : 'Poppins-Regular', //400
+  FontMedium: Platform.OS === 'ios' ? 'Poppins-Medium' : 'Poppins-Medium', //500
   FontSemiBold: Platform.OS === 'ios' ? 'Nunito-SemiBold' : 'Nunito-SemiBold', //600
-  FontBold: Platform.OS === 'ios' ? 'Nunito-Bold' : 'Nunito-Bold', //700
+  FontBold: Platform.OS === 'ios' ? 'Poppins-SemiBold' : 'Poppins-SemiBold', //700
   FontExtraBold:
-    Platform.OS === 'ios' ? 'Nunito-ExtraBold' : 'Nunito-ExtraBold', // 800
+    Platform.OS === 'ios' ? 'Poppins-ExtraBold' : 'Poppins-ExtraBold', // 800
   FontDSDigi:
     // Platform.OS === 'ios' ? 'digital-7 (italic)' : 'digital-7 (italic)',
     Platform.OS === 'ios' ? 'DS-DIGI' : 'DS-DIGI',

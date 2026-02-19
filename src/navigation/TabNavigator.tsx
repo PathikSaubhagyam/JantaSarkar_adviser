@@ -62,15 +62,15 @@ const TabNavigator = () => {
                 alignItems: 'center',
 
                 height: 45,
-                width: 55,
+                width: 65,
                 // elevation: 2,
               }}
             >
               <Image
                 source={require('../assets/images/request.png')}
                 style={{
-                  height: 25,
-                  width: 25,
+                  height: 22,
+                  width: 22,
                   tintColor: focused ? COLORS.primary : COLORS.gry_text,
                 }}
               />
@@ -104,8 +104,8 @@ const TabNavigator = () => {
               <Image
                 source={require('../assets/images/history.png')}
                 style={{
-                  height: 25,
-                  width: 25,
+                  height: 22,
+                  width: 22,
                   tintColor: focused ? COLORS.primary : COLORS.gry_text,
                 }}
               />
@@ -132,14 +132,14 @@ const TabNavigator = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: 45,
-                width: 68,
+                width: 80,
               }}
             >
               <Image
                 source={require('../assets/images/community.png')}
                 style={{
-                  height: 25,
-                  width: 25,
+                  height: 22,
+                  width: 22,
                   tintColor: focused ? COLORS.primary : COLORS.gry_text,
                 }}
               />
@@ -171,8 +171,8 @@ const TabNavigator = () => {
               <Image
                 source={require('../assets/images/user.png')}
                 style={{
-                  height: 20,
-                  width: 20,
+                  height: 22,
+                  width: 22,
                   tintColor: focused ? COLORS.primary : COLORS.gry_text,
                 }}
               />

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/Colors';
+import { FONTS_SIZE } from '../../constants/Font';
 
 const { width } = Dimensions.get('window');
 
@@ -135,9 +136,10 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    fontSize: width * 0.07,
+    fontSize: FONTS_SIZE.txt_27,
     fontWeight: '700',
-    marginVertical: 20,
+    marginBottom: 10,
+    marginTop: 25,
     color: '#0B1320',
   },
 
@@ -176,9 +178,9 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: 'white',
-    borderRadius: 18,
-    padding: width * 0.04,
-    marginBottom: 16,
+    borderRadius: 15,
+    padding: width * 0.05,
+    marginBottom: 10,
     elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.05,

@@ -13,14 +13,27 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const init = async () => {
-      setTimeout(() => {
+      try {
+        // Splash delay
+        setTimeout(async () => {
+          const userId = await AsyncStorage.getItem('user_Id');
+
+          console.log('USER ID =>', userId);
+
+          if (userId) {
+            navigation.replace('HomeNavigator');
+          } else {
+            navigation.replace('AuthNavigator');
+          }
+        }, 1500);
+      } catch (error) {
+        console.log('Splash Error =>', error);
         navigation.replace('AuthNavigator');
-      }, 1500);
+      }
     };
 
     init();
-  }, [navigation]);
-
+  }, []);
   return (
     <View style={styles.container}>
       <Image

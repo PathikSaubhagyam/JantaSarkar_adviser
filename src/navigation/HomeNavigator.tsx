@@ -1,17 +1,23 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import TabNavigator from './TabNavigator';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS } from '../constants/Colors';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName="TabNavigator"
+    <SafeAreaView
+      edges={['bottom']}
+      style={{ flex: 1, backgroundColor: COLORS.white }}
     >
-      <Stack.Screen name="TabNavigator" component={TabNavigator} />
-    </Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="TabNavigator"
+      >
+        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+      </Stack.Navigator>
+    </SafeAreaView>
   );
 };
 

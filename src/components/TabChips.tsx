@@ -21,7 +21,7 @@ export default function TabChips({ tabs = [], selected, onSelect }) {
             flexDirection: 'row',
             backgroundColor: '#E9EDF3',
             borderRadius: 14,
-            padding: 8,
+            padding: 4,
             // marginBottom: 20,
             // paddingTop: 20,
             paddingHorizontal: 10,
@@ -78,13 +78,12 @@ const styles = StyleSheet.create({
   },
 
   chipText: {
-    fontSize: 13,
-    color: COLORS.black, // 👈 Inactive Text Black
-    fontWeight: '500',
+    fontSize: 14,
+    color: '#6B7A90',
+    fontWeight: '600',
   },
 
   activeChipText: {
-    color: COLORS.black, // 👈 Active Text White
-    fontWeight: '600',
+    color: '#0B1320',
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -24,27 +24,26 @@ import SnackBarCommon from '../../components/SnackBarCommon';
 import { FONTS_SIZE } from '../../constants/Font';
 import CommonButton from '../../components/CommonButton';
 import APIWebCall from '../../common/APIWebCall';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const SignUp = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+
+  const routePhone = route?.params?.phoneNumber || '';
+  const routeUserId = route?.params?.userId || '';
+
   const [fullName, setFullName] = useState('');
   const [registorNo, setRegistorNo] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(routePhone);
   const [barDoc, setBarDoc] = useState(null);
   const [idDoc, setIdDoc] = useState(null);
   const [cityOpen, setCityOpen] = useState(false);
   const [cityValue, setCityValue] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
-  const [cityItems, setCityItems] = useState([
-    { label: 'Ahmedabad', value: 'ahmedabad' },
-    { label: 'Surat', value: 'surat' },
-    { label: 'Vadodara', value: 'vadodara' },
-    { label: 'Rajkot', value: 'rajkot' },
-    { label: 'New Delhi', value: 'delhi' },
-  ]);
-
+  const [cityLoading, setCityLoading] = useState(false);
+  const [cityItems, setCityItems] = useState([]);
   /* ---------------- Experience Dropdown ---------------- */
   const [expOpen, setExpOpen] = useState(false);
   const [expValue, setExpValue] = useState(null);
@@ -54,6 +53,12 @@ const SignUp = () => {
     { label: '3-5 Years', value: '3-5' },
     { label: '5+ Years', value: '5+' },
   ]);
+
+  useEffect(() => {
+    if (routePhone) {
+      setPhoneNumber(routePhone);
+    }
+  }, [routePhone]);
 
   const pickBarDocument = async () => {
     try {
@@ -128,6 +133,69 @@ const SignUp = () => {
     handleSignupApiCall();
   };
 
+  // const handleSignupApiCall = async () => {
+  //   try {
+  //     let formData = new FormData();
+
+  //     formData.append('full_name', fullName || '');
+  //     formData.append('email', email || '');
+  //     formData.append('phone_number', phoneNumber || '');
+  //     formData.append('bar_council_registration_no', registorNo || '');
+  //     formData.append('experience', expValue || '');
+  //     formData.append('city_id', '1');
+
+  //     // ✅ Bar Certificate
+  //     if (barDoc?.uri) {
+  //       formData.append('bar_certificate', {
+  //         uri:
+  //           Platform.OS === 'android'
+  //             ? barDoc.uri
+  //             : barDoc.uri.replace('file://', ''),
+  //         name: barDoc.name || 'bar_certificate.pdf',
+  //         type: barDoc.type || 'application/pdf',
+  //       });
+  //     }
+
+  //     // ✅ ID Proof
+  //     if (idDoc?.uri) {
+  //       formData.append('id_proof', {
+  //         uri:
+  //           Platform.OS === 'android'
+  //             ? idDoc.uri
+  //             : idDoc.uri.replace('file://', ''),
+  //         name: idDoc.fileName || 'id_proof.jpg',
+  //         type: idDoc.type || 'image/jpeg',
+  //       });
+  //     }
+
+  //     console.log('FORM DATA =>', formData);
+
+  //     const res = await APIWebCall.onSignUPAPICall(formData);
+
+  //     console.log('SIGNUP RESPONSE =>', res);
+
+  //     if (res?.status === true || res?.success === true) {
+  //       SnackBarCommon.displayMessage({
+  //         message: res?.message || 'Signup Success',
+  //         isSuccess: true,
+  //       });
+  //       navigation.replace('HomeNavigator');
+  //     } else {
+  //       SnackBarCommon.displayMessage({
+  //         message: res?.message || 'Signup Failed',
+  //         isSuccess: false,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log('SIGNUP ERROR =>', error);
+
+  //     SnackBarCommon.displayMessage({
+  //       message: 'Signup Failed',
+  //       isSuccess: false,
+  //     });
+  //   }
+  // };
+
   const handleSignupApiCall = async () => {
     try {
       let formData = new FormData();
@@ -137,9 +205,8 @@ const SignUp = () => {
       formData.append('phone_number', phoneNumber || '');
       formData.append('bar_council_registration_no', registorNo || '');
       formData.append('experience', expValue || '');
-      formData.append('city_id', '1');
+      formData.append('city_id', cityValue || '');
 
-      // ✅ Bar Certificate
       if (barDoc?.uri) {
         formData.append('bar_certificate', {
           uri:
@@ -151,7 +218,6 @@ const SignUp = () => {
         });
       }
 
-      // ✅ ID Proof
       if (idDoc?.uri) {
         formData.append('id_proof', {
           uri:
@@ -163,9 +229,7 @@ const SignUp = () => {
         });
       }
 
-      console.log('FORM DATA =>', formData);
-
-      const res = await APIWebCall.onSignUPAPICall(formData);
+      const res = await APIWebCall.onSignUPAPICall(routeUserId, formData);
 
       console.log('SIGNUP RESPONSE =>', res);
 
@@ -174,6 +238,7 @@ const SignUp = () => {
           message: res?.message || 'Signup Success',
           isSuccess: true,
         });
+
         navigation.replace('HomeNavigator');
       } else {
         SnackBarCommon.displayMessage({
@@ -190,14 +255,36 @@ const SignUp = () => {
       });
     }
   };
+  const loadCityList = async () => {
+    try {
+      setCityLoading(true);
 
+      const res = await APIWebCall.oncityListAPICall();
+
+      if (res?.status === true || res?.success === true) {
+        const formattedCities = res?.data?.map(item => ({
+          label: item.name,
+          value: item.id,
+        }));
+
+        setCityItems(formattedCities);
+      }
+    } catch (error) {
+      console.log('CITY LIST ERROR => ', error);
+    } finally {
+      setCityLoading(false);
+    }
+  };
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: COLORS.white }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 150 }}
+      >
         {/* Logo */}
         <View style={styles.logoContainer}>
           <Image
@@ -205,7 +292,7 @@ const SignUp = () => {
             style={{ height: 200, width: 200 }}
           />
         </View>
-        <TextCommonSemiBold
+        <TextCommonBold
           text={'Lawyer Registration'}
           textViewStyle={styles.title}
         />
@@ -287,12 +374,26 @@ const SignUp = () => {
                 open={cityOpen}
                 value={cityValue}
                 items={cityItems}
-                setOpen={setCityOpen}
-                setValue={setCityValue}
+                loading={cityLoading}
+                searchable={true} // ✅ Search bar enabled
+                searchPlaceholder="Search city..."
+                setOpen={open => {
+                  setCityOpen(open);
+
+                  // ✅ Open thay tyare API call
+                  if (open && cityItems.length === 0) {
+                    loadCityList();
+                  }
+                }}
+                setValue={callback => {
+                  const value = callback(cityValue);
+                  setCityValue(value);
+                }}
                 setItems={setCityItems}
                 placeholder="Select City"
                 style={styles.dropdown}
                 dropDownContainerStyle={styles.dropdownContainer}
+                listMode="SCROLLVIEW"
                 zIndex={3000}
                 zIndexInverse={1000}
               />

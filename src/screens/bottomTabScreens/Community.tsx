@@ -14,6 +14,7 @@ import FeedCard from '../../components/FeedCard';
 import TabChips from '../../components/TabChips';
 import { COLORS } from '../../constants/Colors';
 import BottomNav from '../../components/BottomNav';
+import { FONTS_SIZE } from '../../constants/Font';
 
 const { width } = Dimensions.get('window');
 
@@ -59,7 +60,6 @@ export default function Community() {
     <SafeAreaView style={styles.safe}>
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <View>
             <Text style={styles.title}>Community Feed</Text>
@@ -67,7 +67,6 @@ export default function Community() {
           </View>
         </View>
 
-        {/* Tabs */}
         <TabChips
           tabs={TABS}
           selected={selectedTab}
@@ -103,10 +102,10 @@ const styles = StyleSheet.create({
   },
   header: {
     // paddingVertical: 10,
-    marginTop: 50,
+    marginTop: 60,
   },
   title: {
-    fontSize: width * 0.06,
+    fontSize: FONTS_SIZE.txt_27,
     fontWeight: '700',
     color: COLORS.black,
   },

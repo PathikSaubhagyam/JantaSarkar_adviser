@@ -22,6 +22,7 @@ import TextCommonBold from '../../components/TextCommonBold';
 import SnackBarCommon from '../../components/SnackBarCommon';
 import APIWebCall from '../../common/APIWebCall';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const navigation = useNavigation<any>();
@@ -63,7 +64,11 @@ const Login = () => {
       if (res?.status === true) {
         setShowOtpSection(true);
         setTimer(60);
-        setServerOtp(res?.OTP || res?.data?.OTP || '');
+        setServerOtp(res?.otp || res?.data?.otp || '');
+
+        if (res?.data?.user_id) {
+          await AsyncStorage.setItem('user_Id', res?.data?.user_id);
+        }
 
         SnackBarCommon.displayMessage({
           message: res?.message || 'OTP Sent Successfully',
@@ -106,39 +111,30 @@ const Login = () => {
       console.log('VERIFY OTP RESPONSE =>', JSON.stringify(res));
 
       if (res?.status === true || res?.status === 'true') {
-        if (res?.token) {
-          await AsyncStorage.setItem('token', res.token);
+        // ✅ Save Token
+        if (res?.access_token) {
+          await AsyncStorage.setItem('token', res.access_token);
         }
 
-        SnackBarCommon.displayMessage({
-          message: res?.message || 'Login Success',
-          isSuccess: true,
-        });
+        if (res.is_profile_complete === false) {
+          SnackBarCommon.displayMessage({
+            message: 'Please complete signup',
+            isSuccess: false,
+          });
 
-        navigation.replace('HomeNavigator');
-        return;
-      }
+          navigation.replace('SignUp', {
+            phoneNumber: phoneNumber,
+            userId: res?.user?.id,
+          });
+        } else {
+          SnackBarCommon.displayMessage({
+            message: res?.message || 'Login Success',
+            isSuccess: true,
+          });
 
-      const userExists = res?.user_exists;
-      const isRegistered = res?.is_registered;
+          navigation.replace('HomeNavigator');
+        }
 
-      const isUserNotRegistered =
-        userExists === false ||
-        userExists === 'false' ||
-        userExists === 0 ||
-        isRegistered === false ||
-        isRegistered === 'false' ||
-        isRegistered === 0;
-
-      if (isUserNotRegistered) {
-        SnackBarCommon.displayMessage({
-          message: 'Please signup first',
-          isSuccess: false,
-        });
-
-        navigation.replace('SignUp', {
-          phoneNumber: phoneNumber,
-        });
         return;
       }
 
@@ -196,7 +192,7 @@ const Login = () => {
             />
           </View>
 
-          <TextCommonSemiBold text={'Welcome'} textViewStyle={styles.welcome} />
+          <TextCommonBold text={'Welcome'} textViewStyle={styles.welcome} />
 
           <TextCommonMedium
             text={'Sign in to access secure government'}
@@ -206,14 +202,17 @@ const Login = () => {
 
           {/* PHONE INPUT */}
           <View style={{ marginTop: 30, paddingHorizontal: 15 }}>
-            <TextCommonBold
+            <TextCommonMedium
               text={'Mobile Number'}
               textViewStyle={styles.inputLabel}
             />
 
             <View style={styles.phoneInputContainer}>
               <View style={styles.countryCode}>
-                <Text style={styles.countryCodeText}>+91</Text>
+                <TextCommonMedium
+                  text={'+91'}
+                  textViewStyle={styles.countryCodeText}
+                />
               </View>
 
               <View style={{ flex: 1 }}>
@@ -309,7 +308,7 @@ const Login = () => {
               paddingHorizontal: 20,
             }}
           >
-            <TextCommonSemiBold
+            <TextCommonMedium
               text="By signing in, you agree to our "
               textViewStyle={{
                 color: COLORS.color_txt_gray,
@@ -318,7 +317,7 @@ const Login = () => {
             />
 
             <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-              <TextCommonBold
+              <TextCommonMedium
                 text="Terms of Service"
                 textViewStyle={{
                   color: COLORS.primary,
@@ -327,7 +326,7 @@ const Login = () => {
               />
             </TouchableOpacity>
 
-            <TextCommonSemiBold
+            <TextCommonMedium
               text=" and "
               textViewStyle={{
                 color: COLORS.color_txt_gray,
@@ -338,7 +337,7 @@ const Login = () => {
             <TouchableOpacity
               onPress={() => navigation.navigate('PrivacyPolicy')}
             >
-              <TextCommonBold
+              <TextCommonMedium
                 text="Privacy Policy"
                 textViewStyle={{
                   color: COLORS.primary,
@@ -386,11 +385,11 @@ const styles = StyleSheet.create({
     borderColor: COLORS.gray,
     borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 11,
+    paddingVertical: 10,
     backgroundColor: COLORS.white,
   },
   countryCodeText: {
-    fontSize: 16,
+    fontSize: FONTS_SIZE.txt_14,
     color: '#111827',
   },
 
