@@ -19,6 +19,11 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../../constants/Colors';
 import { BASE_URL } from '../../constants/Utils';
+import { useNavigation } from '@react-navigation/native';
+import TextCommonMedium from '../../components/TextCommonMedium';
+import TextCommonRegular from '../../components/TextCommonRegular';
+import TextCommonBold from '../../components/TextCommonBold';
+import { onProfileAPICall } from '../../common/APIWebCall';
 const { width, height } = Dimensions.get('window');
 
 type ProfileScreenProps = {
@@ -26,51 +31,35 @@ type ProfileScreenProps = {
 };
 
 export default function Profile({ onLogout }: ProfileScreenProps) {
-  const [profile, setProfile] = useState<any>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const navigation = useNavigation();
+  const [profile, setProfile] = useState({});
+  const [profileImage, setProfileImage] = useState(null);
+  console.log('ppppppppppp', profile);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   useEffect(() => {
-    fetchProfile();
+    loadProfile();
   }, []);
 
-  const fetchProfile = async () => {
+  const loadProfile = async () => {
     try {
-      const token = await AsyncStorage.getItem('access_token');
-      console.log(token, 'token');
+      const response = await onProfileAPICall();
 
-      // show cached data first (fast UI)
-      const savedProfile = await AsyncStorage.getItem('profile');
-      if (savedProfile) {
-        const parsed = JSON.parse(savedProfile);
-        setProfile(parsed);
-        setProfileImage(parsed.profile_image);
-      }
+      console.log('PROFILE RESPONSE =>', response);
 
-      // API call
-      const response = await axios.get(`${BASE_URL}/profile/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response, 'profile res----');
+      if (response?.data) {
+        setProfile(response.data);
 
-      if (response.data.status) {
-        setProfile(response.data.data);
-        setProfileImage(response.data.data.profile_image);
-
-        // save to storage
-        await AsyncStorage.setItem(
-          'profile',
-          JSON.stringify(response.data.data),
-        );
+        if (response.data.profile_image) {
+          setProfileImage(response.data.profile_image);
+        }
       }
     } catch (error) {
-      console.log('Profile API error:', error?.response?.data || error.message);
+      console.log('PROFILE ERROR =>', error);
     }
   };
 
-  // 📸 Select Image Alert
   const selectImage = () => {
     Alert.alert(
       'Update Profile Photo',
@@ -111,10 +100,14 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     setShowLogoutModal(true);
   };
 
-  const confirmLogout = () => {
-    setShowLogoutModal(false);
-    if (onLogout) {
-      onLogout();
+  const confirmLogout = async () => {
+    try {
+      setShowLogoutModal(false);
+      await AsyncStorage.multiRemove(['token']);
+      console.log('Logout successful');
+      navigation.replace('AuthNavigator');
+    } catch (error) {
+      console.log('Logout error:', error);
     }
   };
 
@@ -127,8 +120,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
         </View>
 
         <View style={{ marginLeft: 12 }}>
-          <Text style={styles.menuTitle}>{title}</Text>
-          <Text style={styles.menuSub}>{subtitle}</Text>
+          <TextCommonMedium text={title} textViewStyle={styles.menuTitle} />
+          <TextCommonRegular text={subtitle} textViewStyle={styles.menuSub} />
         </View>
       </View>
 
@@ -157,16 +150,25 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.name}>
-            {profile?.full_name || 'Mitva Dudhat'}
-          </Text>
+          <TextCommonBold
+            text={profile?.full_name}
+            textViewStyle={styles.name}
+          />
 
-          <Text style={styles.subText}>Verified Citizen • JS-8829</Text>
-          <Text style={styles.govText}>JANTA SARKAR</Text>
+          <TextCommonMedium
+            text={`Verified Citizen • ${profile?.phone_number || ''}`}
+            textViewStyle={styles.subText}
+          />
+          <TextCommonMedium
+            text={`${profile?.role || ''} • ${profile?.city || ''}`}
+            textViewStyle={styles.subText}
+          />
         </View>
 
-        {/* ACCOUNT SETTINGS */}
-        <Text style={styles.sectionTitle}>ACCOUNT SETTINGS</Text>
+        <TextCommonMedium
+          text={'ACCOUNT SETTINGS'}
+          textViewStyle={styles.sectionTitle}
+        />
         <View style={styles.card}>
           {renderMenuItem(
             'My Profile',
@@ -194,7 +196,10 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
         </View>
 
         {/* PREFERENCES */}
-        <Text style={styles.sectionTitle}>PREFERENCES</Text>
+        <TextCommonMedium
+          text={'PREFERENCES'}
+          textViewStyle={styles.sectionTitle}
+        />
         <View style={styles.card}>
           {renderMenuItem(
             'Settings',
@@ -215,10 +220,12 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
 
         {/* Logout */}
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Log Out</Text>
+          <TextCommonMedium
+            text={'Log Out'}
+            textViewStyle={styles.logoutText}
+          />
         </TouchableOpacity>
 
-        {/* LOGOUT CONFIRMATION MODAL */}
         <Modal
           visible={showLogoutModal}
           transparent

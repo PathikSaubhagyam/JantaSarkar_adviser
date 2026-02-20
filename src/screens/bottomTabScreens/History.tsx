@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     fontSize: FONTS_SIZE.txt_27,
     fontWeight: '700',
     marginBottom: 10,
-    marginTop: 25,
+    marginTop: 15,
     color: '#0B1320',
   },
 

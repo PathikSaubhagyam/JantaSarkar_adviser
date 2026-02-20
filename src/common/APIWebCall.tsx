@@ -67,7 +67,7 @@ const _REQUEST2SERVER = async (
 // ✅ Signup API (IMPORTANT → isFormData = true)
 export const onSignUPAPICall = (userId, params) => {
   return _REQUEST2SERVER(
-    `update-advisorprofile/${userId}/`,
+    `mobile/update-advisorprofile/${userId}/`,
     params,
     'PATCH', // ✅ PATCH method
     true,
@@ -77,7 +77,7 @@ export const onSignUPAPICall = (userId, params) => {
 
 export const onLoginAPICall = params => {
   return _REQUEST2SERVER(
-    `advisor/login/send-otp/`,
+    `mobile/advisor/login/send-otp/`,
     params,
     'POST',
     false,
@@ -87,29 +87,59 @@ export const onLoginAPICall = params => {
 
 export const onVerifyOtpAPICall = params => {
   return _REQUEST2SERVER(
-    `advisor/login/verify-otp/`,
+    `mobile/advisor/login/verify-otp/`,
     params,
     'POST',
     false,
     false,
   );
 };
+export const onCommunityFeedAPICall = params => {
+  return _REQUEST2SERVER(
+    `mobile/community-complaint/`,
+    params,
+    'POST',
+    false,
+    true,
+  );
+};
 export const onAdvisorComplaintsAPICall = () => {
-  return _REQUEST2SERVER(`advisor/complaints/`, null, 'GET', false, true);
+  return _REQUEST2SERVER(
+    `mobile/advisor/complaints/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
 };
 export const onAdvisorOngoingAPICall = () => {
-  return _REQUEST2SERVER(`onging/`, null, 'GET', false, true);
+  return _REQUEST2SERVER(`mobile/onging/`, null, 'GET', false, true);
 };
 export const onAdvisorHistoryAPICall = () => {
-  return _REQUEST2SERVER(`history/`, null, 'GET', false, true);
+  return _REQUEST2SERVER(`mobile/history/`, null, 'GET', false, true);
 };
 export const oncityListAPICall = () => {
-  return _REQUEST2SERVER(`city-list/`, null, 'GET', false, true);
+  return _REQUEST2SERVER(`mobile/city-list/`, null, 'GET', false, true);
+};
+export const onDepartmentAPICall = () => {
+  return _REQUEST2SERVER(`departments/?all=true`, null, 'GET', false, false);
+};
+export const onProfileAPICall = () => {
+  return _REQUEST2SERVER(`mobile/profile/`, null, 'GET', false, true);
+};
+export const onCommunityFeedListAPICall = () => {
+  return _REQUEST2SERVER(
+    `mobile/community-complaint/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
 };
 
 export const onApproveComplaintAPICall = complaintId => {
   return _REQUEST2SERVER(
-    `complaint-request/approved/${complaintId}/`,
+    `mobile/complaint-request/approved/${complaintId}/`,
     null,
     'POST',
     false,
@@ -118,7 +148,7 @@ export const onApproveComplaintAPICall = complaintId => {
 };
 export const onCompletedComplaintAPICall = complaintId => {
   return _REQUEST2SERVER(
-    `completed/${complaintId}/`,
+    `mobile/completed/${complaintId}/`,
     null,
     'POST',
     false,
@@ -127,7 +157,7 @@ export const onCompletedComplaintAPICall = complaintId => {
 };
 export const onRequestRejectAPICall = complaintId => {
   return _REQUEST2SERVER(
-    `complaint-reject/${complaintId}/`,
+    `mobile/complaint-reject/${complaintId}/`,
     null,
     'POST',
     false,
@@ -136,7 +166,7 @@ export const onRequestRejectAPICall = complaintId => {
 };
 export const onComplaintCancelAPICall = complaintId => {
   return _REQUEST2SERVER(
-    `complaint-cancel/${complaintId}/`,
+    `mobile/complaint-cancel/${complaintId}/`,
     null,
     'POST',
     false,
@@ -155,4 +185,8 @@ export default {
   oncityListAPICall,
   onRequestRejectAPICall,
   onComplaintCancelAPICall,
+  onDepartmentAPICall,
+  onCommunityFeedAPICall,
+  onProfileAPICall,
+  onCommunityFeedListAPICall,
 };

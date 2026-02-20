@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,112 +6,180 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
-  StatusBar,
+  Linking,
+  Image,
 } from 'react-native';
-
-import FeedCard from '../../components/FeedCard';
-import TabChips from '../../components/TabChips';
-import { COLORS } from '../../constants/Colors';
-import BottomNav from '../../components/BottomNav';
 import { FONTS_SIZE } from '../../constants/Font';
+import { COLORS } from '../../constants/Colors';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import TextCommonMedium from '../../components/TextCommonMedium';
+import TextCommonBold from '../../components/TextCommonBold';
+import { onCommunityFeedListAPICall } from '../../common/APIWebCall';
 
-const { width } = Dimensions.get('window');
+const Community = () => {
+  const navigation = useNavigation<any>();
+  // Sample data (later replace with API data)
+  const [requestList, setRequestList] = useState([]);
 
-const TABS = ['All Posts', 'Civil Law', 'Criminal Case', 'Corporate', 'IPR'];
+  useFocusEffect(
+    useCallback(() => {
+      loadCommunityFeed();
+    }, []),
+  );
 
-const DATA = [
-  {
-    id: '1',
-    name: 'Adv. Rajesh Sharma',
-    tag: 'Supreme Court Specialist',
-    text: 'Important update on the new labor law reforms.',
-    type: 'pdf',
-    fileName: 'Labour_Law_Update.pdf',
-    likes: 24,
-    comments: 8,
-  },
-  {
-    id: '2',
-    name: 'Adv. Priya Menon',
-    tag: 'IPR & Copyright Expert',
-    text: 'Future of AI in legal tech is here.',
-    type: 'image',
-    fileUrl:
-      'https://tile.jawg.io/jawg-dark/14/11954/7618.png?access-token=8k5zP4A1X2xj6cYwJ9g2Fq0mR3v7uD6B',
-    likes: 156,
-    comments: 12,
-  },
-  {
-    id: '3',
-    name: 'Adv. Amit Shah',
-    tag: 'Corporate Lawyer',
-    text: 'New corporate compliance rules released.',
-    type: 'text',
-    likes: 50,
-    comments: 5,
-  },
-];
+  const loadCommunityFeed = async () => {
+    try {
+      const res = await onCommunityFeedListAPICall();
 
-export default function Community() {
-  const [selectedTab, setSelectedTab] = useState('All Posts');
+      console.log('API RESPONSE FULL:', res);
+
+      if (res && res.data && Array.isArray(res.data)) {
+        const formattedData = res.data.map(item => ({
+          id: item.id.toString(),
+          department: item.department_name,
+          issueType: item.description_issue,
+          city: item.city_name,
+
+          persons: [
+            item.person1_name
+              ? {
+                  name: item.person1_name,
+                  mobile: item.person1_mobile,
+                }
+              : null,
+
+            item.person2_name
+              ? {
+                  name: item.person2_name,
+                  mobile: item.person2_mobile,
+                }
+              : null,
+
+            item.person3_name
+              ? {
+                  name: item.person3_name,
+                  mobile: item.person3_mobile,
+                }
+              : null,
+          ].filter(Boolean),
+        }));
+
+        setRequestList(formattedData);
+      } else {
+        console.log('Invalid API response:', res);
+      }
+    } catch (error) {
+      console.log('LOAD ERROR:', error);
+    }
+  };
+  const handleCall = mobile => {
+    if (!mobile) return;
+
+    Linking.openURL(`tel:${mobile}`).catch(err =>
+      console.log('Call Error:', err),
+    );
+  };
+  const renderItem = ({ item }) => {
+    return (
+      <View style={styles.card}>
+        {/* Department */}
+        <TextCommonBold
+          text={item?.department}
+          textViewStyle={{
+            fontSize: FONTS_SIZE.txt_16,
+            color: COLORS.primary,
+          }}
+        />
+
+        {/* Issue */}
+        <TextCommonMedium
+          text={item?.issueType}
+          textViewStyle={{
+            fontSize: FONTS_SIZE.txt_14,
+            color: COLORS.black,
+            marginTop: 2,
+          }}
+        />
+
+        {/* City */}
+        <TextCommonMedium
+          text={item?.city}
+          textViewStyle={{
+            fontSize: FONTS_SIZE.txt_14,
+            color: '#666',
+            marginTop: 2,
+          }}
+        />
+
+        <Text style={styles.personTitle}>Persons:</Text>
+
+        {item?.persons && item.persons.length > 0 ? (
+          item.persons.map((person, index) => (
+            <View key={index} style={styles.personRow}>
+              <Text style={styles.personName}>{person?.name || 'N/A'}</Text>
+
+              <View
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
+              >
+                <Text style={styles.personMobile}>
+                  {person?.mobile || 'N/A'}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => handleCall(person?.mobile)}
+                  style={styles.callButton}
+                >
+                  <Image
+                    source={require('../../assets/images/call_icon.png')}
+                    style={styles.callIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))
+        ) : (
+          <Text style={{ color: '#999', marginTop: 5 }}>
+            No persons available
+          </Text>
+        )}
+      </View>
+    );
+  };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>Community Feed</Text>
-            <Text style={styles.subtitle}>Professional Network</Text>
-          </View>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View>
+        <Text style={styles.title}>Community Feed</Text>
 
-        <TabChips
-          tabs={TABS}
-          selected={selectedTab}
-          onSelect={setSelectedTab}
-          says
-        />
-
-        {/* Feed */}
         <FlatList
-          data={DATA}
+          data={requestList}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => <FeedCard item={item} />}
+          renderItem={renderItem}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 100 }}
         />
-
-        <TouchableOpacity style={styles.fab}>
-          <Text style={styles.fabText}>+</Text>
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('CommunityFeedAdd');
+        }}
+        style={styles.fab}
+      >
+        <Text style={styles.fabText}>+</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
-}
+};
 
+export default Community;
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: COLORS.white,
+  callButton: {
+    padding: 8,
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: width * 0.04,
-  },
-  header: {
-    // paddingVertical: 10,
-    marginTop: 60,
-  },
-  title: {
-    fontSize: FONTS_SIZE.txt_27,
-    fontWeight: '700',
-    color: COLORS.black,
-  },
-  subtitle: {
-    fontSize: width * 0.032,
-    color: COLORS.textLight,
+
+  callIcon: {
+    width: 18,
+    height: 18,
+    tintColor: COLORS.primary,
   },
   fab: {
     position: 'absolute',
@@ -129,5 +197,58 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 30,
     fontWeight: '600',
+  },
+  title: {
+    fontSize: FONTS_SIZE.txt_27,
+    fontWeight: '700',
+    color: COLORS.black,
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+    padding: 16,
+  },
+
+  card: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 3,
+  },
+
+  department: {
+    fontSize: 16,
+    color: '#007BFF',
+  },
+
+  issue: {
+    fontSize: 16,
+    color: COLORS.black,
+  },
+
+  personTitle: {
+    marginTop: 10,
+    fontWeight: '600',
+    color: COLORS.black,
+  },
+
+  personRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  personName: {
+    fontSize: 14,
+    color: COLORS.black,
+  },
+
+  personMobile: {
+    fontSize: 14,
+    color: '#666',
+    color: COLORS.black,
   },
 });

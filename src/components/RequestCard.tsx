@@ -10,6 +10,8 @@ const RequestCard = ({
   initials = 'NA',
   name = '',
   department = '',
+  description_issue = '',
+  authority_person_name = '',
   tag = '',
   tagColor = '#EEE',
   time = '',
@@ -63,7 +65,37 @@ const RequestCard = ({
         </View>
       </View>
 
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+        <TextCommonMedium
+          text={'Consignee Officer : '}
+          textViewStyle={{
+            fontSize: FONTS_SIZE.txt_14,
+            color: COLORS.black,
+            marginTop: 5,
+          }}
+        />
+        <TextCommonRegular
+          text={authority_person_name}
+          textViewStyle={{
+            fontSize: FONTS_SIZE.txt_14,
+            color: COLORS.black,
+            marginTop: 5,
+          }}
+        />
+      </View>
+
+      {description_issue && (
+        <TextCommonRegular
+          text={description_issue}
+          textViewStyle={{
+            fontSize: FONTS_SIZE.txt_14,
+            color: COLORS.black,
+            marginTop: 5,
+          }}
+        />
+      )}
       {/* Description */}
+
       {!!description && (
         <TextCommonRegular
           text={description}

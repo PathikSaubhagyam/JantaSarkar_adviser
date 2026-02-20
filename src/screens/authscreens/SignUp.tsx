@@ -9,6 +9,8 @@ import {
   Text,
   Platform,
   StatusBar,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -25,6 +27,8 @@ import { FONTS_SIZE } from '../../constants/Font';
 import CommonButton from '../../components/CommonButton';
 import APIWebCall from '../../common/APIWebCall';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignUp = () => {
   const navigation = useNavigation<any>();
@@ -123,78 +127,39 @@ const SignUp = () => {
         isSuccess: false,
       });
     }
-    if (!email.trim()) {
+    if (!email) {
       return SnackBarCommon.displayMessage({
         message: 'Enter Email',
         isSuccess: false,
       });
     }
+    if (!registorNo) {
+      return SnackBarCommon.displayMessage({
+        message: 'Enter Registretion No',
+        isSuccess: false,
+      });
+    }
+    if (!expValue) {
+      return SnackBarCommon.displayMessage({
+        message: 'Select Experience',
+        isSuccess: false,
+      });
+    }
 
+    if (!cityValue) {
+      return SnackBarCommon.displayMessage({
+        message: 'Select City',
+        isSuccess: false,
+      });
+    }
+    if (!isChecked) {
+      return SnackBarCommon.displayMessage({
+        message: 'Please Check Terms Of Condition',
+        isSuccess: false,
+      });
+    }
     handleSignupApiCall();
   };
-
-  // const handleSignupApiCall = async () => {
-  //   try {
-  //     let formData = new FormData();
-
-  //     formData.append('full_name', fullName || '');
-  //     formData.append('email', email || '');
-  //     formData.append('phone_number', phoneNumber || '');
-  //     formData.append('bar_council_registration_no', registorNo || '');
-  //     formData.append('experience', expValue || '');
-  //     formData.append('city_id', '1');
-
-  //     // ✅ Bar Certificate
-  //     if (barDoc?.uri) {
-  //       formData.append('bar_certificate', {
-  //         uri:
-  //           Platform.OS === 'android'
-  //             ? barDoc.uri
-  //             : barDoc.uri.replace('file://', ''),
-  //         name: barDoc.name || 'bar_certificate.pdf',
-  //         type: barDoc.type || 'application/pdf',
-  //       });
-  //     }
-
-  //     // ✅ ID Proof
-  //     if (idDoc?.uri) {
-  //       formData.append('id_proof', {
-  //         uri:
-  //           Platform.OS === 'android'
-  //             ? idDoc.uri
-  //             : idDoc.uri.replace('file://', ''),
-  //         name: idDoc.fileName || 'id_proof.jpg',
-  //         type: idDoc.type || 'image/jpeg',
-  //       });
-  //     }
-
-  //     console.log('FORM DATA =>', formData);
-
-  //     const res = await APIWebCall.onSignUPAPICall(formData);
-
-  //     console.log('SIGNUP RESPONSE =>', res);
-
-  //     if (res?.status === true || res?.success === true) {
-  //       SnackBarCommon.displayMessage({
-  //         message: res?.message || 'Signup Success',
-  //         isSuccess: true,
-  //       });
-  //       navigation.replace('HomeNavigator');
-  //     } else {
-  //       SnackBarCommon.displayMessage({
-  //         message: res?.message || 'Signup Failed',
-  //         isSuccess: false,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log('SIGNUP ERROR =>', error);
-
-  //     SnackBarCommon.displayMessage({
-  //       message: 'Signup Failed',
-  //       isSuccess: false,
-  //     });
-  //   }
-  // };
 
   const handleSignupApiCall = async () => {
     try {
@@ -231,8 +196,6 @@ const SignUp = () => {
 
       const res = await APIWebCall.onSignUPAPICall(routeUserId, formData);
 
-      console.log('SIGNUP RESPONSE =>', res);
-
       if (res?.status === true || res?.success === true) {
         SnackBarCommon.displayMessage({
           message: res?.message || 'Signup Success',
@@ -240,19 +203,17 @@ const SignUp = () => {
         });
 
         navigation.replace('HomeNavigator');
-      } else {
-        SnackBarCommon.displayMessage({
-          message: res?.message || 'Signup Failed',
-          isSuccess: false,
-        });
+        if (res.user?.id) {
+          await AsyncStorage.setItem('User_id', res.user?.id);
+        }
       }
     } catch (error) {
       console.log('SIGNUP ERROR =>', error);
 
-      SnackBarCommon.displayMessage({
-        message: 'Signup Failed',
-        isSuccess: false,
-      });
+      // SnackBarCommon.displayMessage({
+      //   message: 'Signup Failed',
+      //   isSuccess: false,
+      // });
     }
   };
   const loadCityList = async () => {
@@ -278,196 +239,268 @@ const SignUp = () => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: COLORS.white }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 150 }}
-      >
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/images/app_img.jpg')}
-            style={{ height: 200, width: 200 }}
-          />
-        </View>
-        <TextCommonBold
-          text={'Lawyer Registration'}
-          textViewStyle={styles.title}
-        />
-        <TextCommonSemiBold
-          text={'Join our professional legal network'}
-          textViewStyle={{
-            textAlign: 'center',
-            fontSize: FONTS_SIZE.txt_14,
-            color: COLORS.gry_text,
-          }}
-        />
-        <View style={styles.formContainer}>
-          {/* Name */}
-          <TextCommonBold text={'Full Name'} textViewStyle={styles.label} />
-          <TextInputView
-            placeholder="Adv. John Doe"
-            value={fullName}
-            onChangeText={setFullName}
-          />
-
-          {/* Phone */}
-          <TextCommonBold text={'Mobile Number'} textViewStyle={styles.label} />
-
-          <View style={styles.phoneRow}>
-            <View style={styles.codeBox}>
-              <Text>+91</Text>
-            </View>
-
-            <View style={{ flex: 1 }}>
-              <TextInputView
-                placeholder="9876543210"
-                keyboardType="number-pad"
-                maxLength={10}
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/images/app_img.jpg')}
+                style={{ height: 200, width: 200 }}
               />
             </View>
-          </View>
-          <TextCommonBold text={'Email Address'} textViewStyle={styles.label} />
-          <TextInputView
-            placeholder="Adv. John Doe"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextCommonBold
-            text={'Bar Council Registretion No.'}
-            textViewStyle={styles.label}
-          />
-          <TextInputView
-            placeholder="Adv. John Doe"
-            value={registorNo}
-            onChangeText={setRegistorNo}
-          />
-          <View style={styles.row}>
-            <View style={styles.halfContainer}>
+            <TextCommonBold
+              text={'Lawyer Registration'}
+              textViewStyle={styles.title}
+            />
+            <TextCommonSemiBold
+              text={'Join our professional legal network'}
+              textViewStyle={{
+                textAlign: 'center',
+                fontSize: FONTS_SIZE.txt_14,
+                color: COLORS.gry_text,
+              }}
+            />
+            <View style={styles.formContainer}>
               <TextCommonBold
-                text={'Experience'}
+                text={'Full Name*'}
+                textViewStyle={styles.label}
+              />
+              <TextInputView
+                placeholder="Adv. John Doe"
+                value={fullName}
+                onChangeText={setFullName}
+              />
+
+              <TextCommonBold
+                text={'Mobile Number*'}
                 textViewStyle={styles.label}
               />
 
-              <DropDownPicker
-                open={expOpen}
-                value={expValue}
-                items={expItems}
-                setOpen={setExpOpen}
-                setValue={setExpValue}
-                setItems={setExpItems}
-                placeholder="Select Experience"
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownContainer}
-                zIndex={2000}
-                zIndexInverse={2000}
+              <View style={styles.phoneRow}>
+                <View style={styles.codeBox}>
+                  <Text>+91</Text>
+                </View>
+
+                <View style={{ flex: 1 }}>
+                  <TextInputView
+                    placeholder="9876543210"
+                    keyboardType="number-pad"
+                    editable={false}
+                    maxLength={10}
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                  />
+                </View>
+              </View>
+              <TextCommonBold
+                text={'Email Address*'}
+                textViewStyle={styles.label}
               />
-            </View>
-            <View style={styles.halfContainer}>
-              <TextCommonBold text={'City'} textViewStyle={styles.label} />
-
-              <DropDownPicker
-                open={cityOpen}
-                value={cityValue}
-                items={cityItems}
-                loading={cityLoading}
-                searchable={true} // ✅ Search bar enabled
-                searchPlaceholder="Search city..."
-                setOpen={open => {
-                  setCityOpen(open);
-
-                  // ✅ Open thay tyare API call
-                  if (open && cityItems.length === 0) {
-                    loadCityList();
-                  }
-                }}
-                setValue={callback => {
-                  const value = callback(cityValue);
-                  setCityValue(value);
-                }}
-                setItems={setCityItems}
-                placeholder="Select City"
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownContainer}
-                listMode="SCROLLVIEW"
-                zIndex={3000}
-                zIndexInverse={1000}
+              <TextInputView
+                placeholder="Adv. John Doe"
+                value={email}
+                onChangeText={setEmail}
               />
-            </View>
-          </View>
+              <TextCommonBold
+                text={'Bar Council Registretion No.*'}
+                textViewStyle={styles.label}
+              />
+              <TextInputView
+                placeholder="Adv. John Doe"
+                value={registorNo}
+                onChangeText={setRegistorNo}
+              />
+              <View style={styles.row}>
+                <View style={styles.halfContainer}>
+                  <TextCommonBold
+                    text={'Experience*'}
+                    textViewStyle={styles.label}
+                  />
 
-          {/* Upload Documents */}
-          <TextCommonBold
-            text={'Upload Documents'}
-            textViewStyle={styles.label}
-          />
+                  <View style={{ zIndex: 2000 }}>
+                    <DropDownPicker
+                      open={expOpen}
+                      value={expValue}
+                      items={expItems}
+                      setOpen={setExpOpen}
+                      setValue={callback => {
+                        const value = callback(cityValue);
+                        setCityValue(value);
+                      }}
+                      setValue={setExpValue}
+                      setItems={setExpItems}
+                      placeholder="Select Experience"
+                      searchable={true}
+                      listMode="MODAL"
+                      modalProps={{
+                        animationType: 'slide',
+                      }}
+                      modalContentContainerStyle={{
+                        backgroundColor: '#fff',
+                      }}
+                      searchContainerStyle={{
+                        borderBottomColor: COLORS.colorLightGray,
+                        borderBottomWidth: 1,
+                        padding: 5,
+                      }}
+                      searchTextInputStyle={{
+                        borderColor: COLORS.colorLightGray,
+                        borderBottomWidth: 1,
+                        borderRadius: 8,
+                        color: COLORS.black,
+                      }}
+                      searchPlaceholder="Search city"
+                      style={{
+                        borderColor: COLORS.gray,
+                        borderWidth: 0.5,
+                        borderRadius: 10,
+                        minHeight: 50,
+                      }}
+                      dropDownContainerStyle={{
+                        borderBottomColor: COLORS.colorLightGray,
+                        borderWidth: 1,
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.halfContainer}>
+                <TextCommonBold text={'City*'} textViewStyle={styles.label} />
 
-          <View style={styles.uploadRow}>
-            <TouchableOpacity
-              style={styles.uploadBox}
-              onPress={pickBarDocument}
-            >
-              <Text>Bar Certificate</Text>
+                <View style={{ zIndex: 2000 }}>
+                  <DropDownPicker
+                    open={cityOpen}
+                    value={cityValue}
+                    items={cityItems}
+                    loading={cityLoading}
+                    setOpen={open => {
+                      setCityOpen(open);
 
-              {barDoc && (
-                <Text numberOfLines={1} style={{ marginTop: 5 }}>
-                  {barDoc?.name || 'File Selected'}
-                </Text>
-              )}
-            </TouchableOpacity>
+                      if (open && cityItems.length === 0) {
+                        loadCityList();
+                      }
+                    }}
+                    setValue={callback => {
+                      const value = callback(cityValue);
+                      setCityValue(value);
+                    }}
+                    setValue={setCityValue}
+                    setItems={setCityItems}
+                    placeholder="Select City"
+                    searchable={true}
+                    listMode="MODAL"
+                    modalProps={{
+                      animationType: 'slide',
+                    }}
+                    modalContentContainerStyle={{
+                      backgroundColor: '#fff',
+                    }}
+                    searchContainerStyle={{
+                      borderBottomColor: COLORS.colorLightGray,
+                      borderBottomWidth: 1,
+                      padding: 5,
+                    }}
+                    searchTextInputStyle={{
+                      borderColor: COLORS.colorLightGray,
+                      borderBottomWidth: 1,
+                      borderRadius: 8,
+                      color: COLORS.black,
+                    }}
+                    searchPlaceholder="Search city"
+                    style={{
+                      borderColor: COLORS.gray,
+                      borderWidth: 0.5,
+                      borderRadius: 10,
+                      minHeight: 50,
+                    }}
+                    dropDownContainerStyle={{
+                      borderBottomColor: COLORS.colorLightGray,
+                      borderWidth: 1,
+                    }}
+                  />
+                </View>
+              </View>
+              <TextCommonBold
+                text={'Upload Documents'}
+                textViewStyle={styles.label}
+              />
 
-            <TouchableOpacity style={styles.uploadBox} onPress={pickIdDocument}>
-              <Text>ID Proof</Text>
-
-              {idDoc && (
-                <Text numberOfLines={1} style={{ marginTop: 5 }}>
-                  {idDoc.fileName || 'Image Selected'}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-          <View style={styles.termsContainer}>
-            {/* Checkbox */}
-            <TouchableOpacity
-              style={[styles.checkbox, isChecked && styles.checkboxChecked]}
-              onPress={() => setIsChecked(!isChecked)}
-            >
-              {isChecked && <Text style={styles.checkMark}>✓</Text>}
-            </TouchableOpacity>
-
-            {/* Text Section */}
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{ textAlign: 'center', fontSize: FONTS_SIZE.txt_13 }}
-              >
-                I confirm that the information provided is accurate and I agree
-                to the{' '}
-                <Text
-                  style={{ color: COLORS.primary, fontSize: FONTS_SIZE.txt_14 }}
-                  onPress={() => navigation.navigate('TermsOfService')}
+              <View style={styles.uploadRow}>
+                <TouchableOpacity
+                  style={styles.uploadBox}
+                  onPress={pickBarDocument}
                 >
-                  Terms of Service
-                </Text>
-              </Text>
-            </View>
-          </View>
+                  <Text>Bar Certificate</Text>
 
-          <View style={{ marginTop: 30 }}>
-            <CommonButton text=" Register As Lawyer" onPress={handleSubmit} />
-          </View>
-        </View>
-      </ScrollView>
+                  {barDoc && (
+                    <Text numberOfLines={1} style={{ marginTop: 5 }}>
+                      {barDoc?.name || 'File Selected'}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.uploadBox}
+                  onPress={pickIdDocument}
+                >
+                  <Text>ID Proof</Text>
+
+                  {idDoc && (
+                    <Text numberOfLines={1} style={{ marginTop: 5 }}>
+                      {idDoc.fileName || 'Image Selected'}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+              <View style={styles.termsContainer}>
+                <TouchableOpacity
+                  style={[styles.checkbox, isChecked && styles.checkboxChecked]}
+                  onPress={() => setIsChecked(!isChecked)}
+                >
+                  {isChecked && <Text style={styles.checkMark}>✓</Text>}
+                </TouchableOpacity>
+
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{ textAlign: 'center', fontSize: FONTS_SIZE.txt_13 }}
+                  >
+                    I confirm that the information provided is accurate and I
+                    agree to the{' '}
+                    <Text
+                      style={{
+                        color: COLORS.primary,
+                        fontSize: FONTS_SIZE.txt_14,
+                      }}
+                      onPress={() => navigation.navigate('TermsOfService')}
+                    >
+                      Terms of Service
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{ marginTop: 30 }}>
+                <CommonButton
+                  text=" Register As Lawyer"
+                  onPress={handleSubmit}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
 
 export default SignUp;
-
-/* ---------------- Styles ---------------- */
 
 const styles = StyleSheet.create({
   termsContainer: {

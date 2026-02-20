@@ -108,8 +108,6 @@ const Login = () => {
 
       const res = await APIWebCall.onVerifyOtpAPICall(payload);
 
-      console.log('VERIFY OTP RESPONSE =>', JSON.stringify(res));
-
       if (res?.status === true || res?.status === 'true') {
         // ✅ Save Token
         if (res?.access_token) {
@@ -239,7 +237,14 @@ const Login = () => {
                 textViewStyle={styles.verificationHeader}
               />
               {serverOtp ? (
-                <Text style={{ textAlign: 'center', marginBottom: 10 }}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    marginBottom: 10,
+                    color: COLORS.black,
+                    fontSize: FONTS_SIZE.txt_14,
+                  }}
+                >
                   Debug OTP: {serverOtp}
                 </Text>
               ) : null}

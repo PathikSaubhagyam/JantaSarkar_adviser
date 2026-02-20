@@ -5,7 +5,6 @@ import TextCommonBold from './TextCommonBold';
 import { activeOpacity } from '../constants/Utils';
 import { COLORS } from '../constants/Colors';
 import { FONTS_Family, FONTS_SIZE } from '../constants/Font';
-import LinearGradient from 'react-native-linear-gradient';
 
 const CommonButton = (props: any) => {
   return (
