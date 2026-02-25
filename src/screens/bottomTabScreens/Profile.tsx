@@ -112,8 +112,32 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
   };
 
   // 🔹 Reusable Menu Item
-  const renderMenuItem = (title, subtitle, iconName, bgColor, iconColor) => (
-    <TouchableOpacity style={styles.menuItem}>
+  // const renderMenuItem = (title, subtitle, iconName, bgColor, iconColor) => (
+  //   <TouchableOpacity style={styles.menuItem}>
+  //     <View style={styles.menuLeft}>
+  //       <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
+  //         <Icon name={iconName} size={20} color={iconColor} />
+  //       </View>
+
+  //       <View style={{ marginLeft: 12 }}>
+  //         <TextCommonMedium text={title} textViewStyle={styles.menuTitle} />
+  //         <TextCommonRegular text={subtitle} textViewStyle={styles.menuSub} />
+  //       </View>
+  //     </View>
+
+  //     <Icon name="chevron-right" size={22} color="#ccc" />
+  //   </TouchableOpacity>
+  // );
+
+  const renderMenuItem = (
+    title,
+    subtitle,
+    iconName,
+    bgColor,
+    iconColor,
+    onPress?,
+  ) => (
+    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
       <View style={styles.menuLeft}>
         <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
           <Icon name={iconName} size={20} color={iconColor} />
@@ -176,6 +200,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             'person',
             '#FBE4D8',
             '#FF7A00',
+            () =>
+              navigation.navigate('ProfileDetails', { profileData: profile }),
           )}
 
           {renderMenuItem(
@@ -184,8 +210,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             'badge',
             '#DCE8F9',
             '#3A7BFF',
+            () => navigation.navigate('UploadDocScreen'),
           )}
-
           {renderMenuItem(
             'Legal History',
             'Past cases and records',

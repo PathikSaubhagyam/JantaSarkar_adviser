@@ -1,3 +1,226 @@
+// import React, { useEffect, useState } from 'react';
+// import {
+//   Image,
+//   KeyboardAvoidingView,
+//   ScrollView,
+//   StyleSheet,
+//   TouchableOpacity,
+//   View,
+//   Text,
+//   Platform,
+//   StatusBar,
+//   TouchableWithoutFeedback,
+//   Keyboard,
+// } from 'react-native';
+
+// import DropDownPicker from 'react-native-dropdown-picker';
+// import { launchImageLibrary } from 'react-native-image-picker';
+
+// import { COLORS } from '../../constants/Colors';
+// import TextCommonSemiBold from '../../components/TextCommonSemiBold';
+// import TextCommonMedium from '../../components/TextCommonMedium';
+// import TextCommonBold from '../../components/TextCommonBold';
+// import TextInputView from '../../components/TextInputView';
+// import SnackBarCommon from '../../components/SnackBarCommon';
+// import CommonButton from '../../components/CommonButton';
+// import APIWebCall from '../../common/APIWebCall';
+// import { useNavigation, useRoute } from '@react-navigation/native';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+
+// const ProfileDetails = () => {
+//   const navigation = useNavigation<any>();
+//   const route = useRoute<any>();
+
+//   const profileData = route?.params?.profileData;
+
+//   const [fullName, setFullName] = useState('');
+//   const [registorNo, setRegistorNo] = useState('');
+//   const [email, setEmail] = useState('');
+//   const [phoneNumber, setPhoneNumber] = useState('');
+//   const [profileImage, setProfileImage] = useState(null);
+
+//   const [cityOpen, setCityOpen] = useState(false);
+//   const [cityValue, setCityValue] = useState(null);
+//   const [cityItems, setCityItems] = useState([]);
+
+//   const [expOpen, setExpOpen] = useState(false);
+//   const [expValue, setExpValue] = useState(null);
+//   const [expItems, setExpItems] = useState([
+//     { label: '0-1 Years', value: '0-1' },
+//     { label: '1-3 Years', value: '1-3' },
+//     { label: '3-5 Years', value: '3-5' },
+//     { label: '5+ Years', value: '5+' },
+//   ]);
+
+//   useEffect(() => {
+//     if (profileData) {
+//       setFullName(profileData.full_name || '');
+//       setEmail(profileData.email || '');
+//       setPhoneNumber(profileData.phone_number || '');
+//       setCityValue(profileData.city_id || null);
+//       setRegistorNo(profileData.bar_council_registration_no || '');
+//       setProfileImage(profileData.profile_image || null);
+//     }
+//   }, []);
+
+//   const pickProfileImage = () => {
+//     launchImageLibrary(
+//       {
+//         mediaType: 'photo',
+//         quality: 0.7,
+//       },
+//       response => {
+//         if (response.assets?.length) {
+//           setProfileImage(response.assets[0]);
+//         }
+//       },
+//     );
+//   };
+
+//   const handleUpdate = async () => {
+//     if (!fullName) {
+//       return SnackBarCommon.displayMessage({
+//         message: 'Enter Full Name',
+//         isSuccess: false,
+//       });
+//     }
+
+//     try {
+//       let formData = new FormData();
+
+//       formData.append('full_name', fullName);
+//       formData.append('email', email);
+//       formData.append('city_id', cityValue);
+//       formData.append('experience', expValue);
+
+//       if (profileImage?.uri) {
+//         formData.append('profile_image', {
+//           uri:
+//             Platform.OS === 'android'
+//               ? profileImage.uri
+//               : profileImage.uri.replace('file://', ''),
+//           name: 'profile.jpg',
+//           type: 'image/jpeg',
+//         });
+//       }
+
+//       const res = await APIWebCall.onUpdateProfile(formData);
+
+//       if (res?.success) {
+//         SnackBarCommon.displayMessage({
+//           message: 'Profile Updated Successfully',
+//           isSuccess: true,
+//         });
+
+//         navigation.goBack();
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
+//   const loadCityList = async () => {
+//     const res = await APIWebCall.oncityListAPICall();
+
+//     if (res?.data) {
+//       const formatted = res.data.map(item => ({
+//         label: item.name,
+//         value: item.id,
+//       }));
+
+//       setCityItems(formatted);
+//     }
+//   };
+
+//   return (
+//     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: COLORS.white }}>
+//       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+//         <SafeAreaView style={{ flex: 1 }}>
+//           <StatusBar barStyle="dark-content" />
+
+//           <ScrollView>
+//             {/* Profile Image */}
+//             <View style={styles.imageContainer}>
+//               <TouchableOpacity onPress={pickProfileImage}>
+//                 <Image
+//                   source={{
+//                     uri:
+//                       profileImage?.uri ||
+//                       profileImage ||
+//                       'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+//                   }}
+//                   style={styles.profileImage}
+//                 />
+//               </TouchableOpacity>
+//             </View>
+
+//             {/* Form */}
+
+//             <View style={styles.formContainer}>
+//               <TextCommonBold text="Full Name" />
+//               <TextInputView value={fullName} onChangeText={setFullName} />
+
+//               <TextCommonBold text="Email" />
+//               <TextInputView value={email} onChangeText={setEmail} />
+
+//               <TextCommonBold text="Mobile Number" />
+//               <TextInputView value={phoneNumber} editable={false} />
+
+//               <TextCommonBold text="Experience" />
+
+//               <DropDownPicker
+//                 open={expOpen}
+//                 value={expValue}
+//                 items={expItems}
+//                 setOpen={setExpOpen}
+//                 setValue={setExpValue}
+//                 setItems={setExpItems}
+//                 placeholder="Select Experience"
+//               />
+
+//               <TextCommonBold text="City" />
+
+//               <DropDownPicker
+//                 open={cityOpen}
+//                 value={cityValue}
+//                 items={cityItems}
+//                 setOpen={open => {
+//                   setCityOpen(open);
+//                   if (open) loadCityList();
+//                 }}
+//                 setValue={setCityValue}
+//                 setItems={setCityItems}
+//                 placeholder="Select City"
+//               />
+
+//               <CommonButton text="Update Profile" onPress={handleUpdate} />
+//             </View>
+//           </ScrollView>
+//         </SafeAreaView>
+//       </TouchableWithoutFeedback>
+//     </KeyboardAvoidingView>
+//   );
+// };
+
+// export default ProfileDetails;
+
+// const styles = StyleSheet.create({
+//   imageContainer: {
+//     alignItems: 'center',
+//     marginTop: 20,
+//   },
+
+//   profileImage: {
+//     width: 120,
+//     height: 120,
+//     borderRadius: 60,
+//   },
+
+//   formContainer: {
+//     padding: 20,
+//   },
+// });
+
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -30,9 +253,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const SignUp = () => {
+const ProfileDetails = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+
+  const profileData = route?.params?.profileData;
+  console.log(profileData, 'profile get dat===>>>');
 
   const routePhone = route?.params?.phoneNumber || '';
   const routeUserId = route?.params?.userId || '';
@@ -62,6 +288,30 @@ const SignUp = () => {
     if (routePhone) {
       setPhoneNumber(routePhone);
     }
+  }, [routePhone]);
+
+  useEffect(() => {
+    const fetchProfileDetails = async () => {
+      try {
+        const res = await APIWebCall.onProfileAPICall();
+        console.log(res, 'get profile data');
+
+        if (res?.status === true || res?.success === true) {
+          const apiProfile = res?.data || {};
+
+          setFullName(apiProfile?.full_name || '');
+          setEmail(apiProfile?.email || '');
+          setPhoneNumber(apiProfile?.phone_number || routePhone || '');
+          setRegistorNo(apiProfile?.bar_council_registration_no || '');
+          setExpValue(apiProfile?.experience || null);
+          setCityValue(apiProfile?.city?.id || apiProfile?.city_id || null);
+        }
+      } catch (error) {
+        console.log('PROFILE API ERROR =>', error);
+      }
+    };
+
+    fetchProfileDetails();
   }, [routePhone]);
 
   const pickBarDocument = async () => {
@@ -249,29 +499,13 @@ const SignUp = () => {
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ paddingBottom: 20 }}
           >
-            <View style={styles.logoContainer}>
-              <Image
-                source={require('../../assets/images/app_img.jpg')}
-                style={{ height: 200, width: 200 }}
-              />
-            </View>
             <TextCommonBold
-              text={'Lawyer Registration'}
+              text={'Edite Profile'}
               textViewStyle={styles.title}
             />
-            <TextCommonSemiBold
-              text={'Join our professional legal network'}
-              textViewStyle={{
-                textAlign: 'center',
-                fontSize: FONTS_SIZE.txt_14,
-                color: COLORS.gry_text,
-              }}
-            />
+
             <View style={styles.formContainer}>
-              <TextCommonBold
-                text={'Full Name*'}
-                textViewStyle={styles.label}
-              />
+              <TextCommonBold text={'Full Name'} textViewStyle={styles.label} />
               <TextInputView
                 placeholder="Adv. John Doe"
                 value={fullName}
@@ -279,7 +513,7 @@ const SignUp = () => {
               />
 
               <TextCommonBold
-                text={'Mobile Number*'}
+                text={'Mobile Number'}
                 textViewStyle={styles.label}
               />
 
@@ -300,7 +534,7 @@ const SignUp = () => {
                 </View>
               </View>
               <TextCommonBold
-                text={'Email Address*'}
+                text={'Email Address'}
                 textViewStyle={styles.label}
               />
               <TextInputView
@@ -315,12 +549,13 @@ const SignUp = () => {
               <TextInputView
                 placeholder="Adv. John Doe"
                 value={registorNo}
+                editable={false}
                 onChangeText={setRegistorNo}
               />
               <View style={styles.row}>
                 <View style={styles.halfContainer}>
                   <TextCommonBold
-                    text={'Experience*'}
+                    text={'Experience'}
                     textViewStyle={styles.label}
                   />
 
@@ -372,7 +607,7 @@ const SignUp = () => {
                 </View>
               </View>
               <View style={styles.halfContainer}>
-                <TextCommonBold text={'City*'} textViewStyle={styles.label} />
+                <TextCommonBold text={'City'} textViewStyle={styles.label} />
 
                 <View style={{ zIndex: 2000 }}>
                   <DropDownPicker
@@ -427,80 +662,9 @@ const SignUp = () => {
                   />
                 </View>
               </View>
-              <TextCommonBold
-                text={'Upload Documents'}
-                textViewStyle={styles.label}
-              />
-
-              <View style={styles.uploadRow}>
-                <TouchableOpacity
-                  style={styles.uploadBox}
-                  onPress={pickBarDocument}
-                >
-                  <Text style={{ color: '#000000' }}>Bar Certificate</Text>
-
-                  {barDoc && (
-                    <Text
-                      numberOfLines={1}
-                      style={{ marginTop: 5, color: '#000000' }}
-                    >
-                      {barDoc?.name || 'File Selected'}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.uploadBox}
-                  onPress={pickIdDocument}
-                >
-                  <Text style={{ color: '#000000' }}>ID Proof</Text>
-
-                  {idDoc && (
-                    <Text
-                      numberOfLines={1}
-                      style={{ marginTop: 5, color: '#000000' }}
-                    >
-                      {idDoc.fileName || 'Image Selected'}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-              <View style={styles.termsContainer}>
-                <TouchableOpacity
-                  style={[styles.checkbox, isChecked && styles.checkboxChecked]}
-                  onPress={() => setIsChecked(!isChecked)}
-                >
-                  {isChecked && <Text style={styles.checkMark}>✓</Text>}
-                </TouchableOpacity>
-
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={{
-                      textAlign: 'center',
-                      fontSize: FONTS_SIZE.txt_13,
-                      color: COLORS.black,
-                    }}
-                  >
-                    I confirm that the information provided is accurate and I
-                    agree to the{' '}
-                    <Text
-                      style={{
-                        color: COLORS.primary,
-                        fontSize: FONTS_SIZE.txt_14,
-                      }}
-                      onPress={() => navigation.navigate('TermsOfService')}
-                    >
-                      Terms of Service
-                    </Text>
-                  </Text>
-                </View>
-              </View>
 
               <View style={{ marginTop: 30 }}>
-                <CommonButton
-                  text=" Register As Lawyer"
-                  onPress={handleSubmit}
-                />
+                <CommonButton text=" Update" onPress={handleSubmit} />
               </View>
             </View>
           </ScrollView>
@@ -510,7 +674,7 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default ProfileDetails;
 
 const styles = StyleSheet.create({
   termsContainer: {
@@ -580,7 +744,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: FONTS_SIZE.txt_28,
+    fontSize: FONTS_SIZE.txt_16,
     color: COLORS.black,
   },
   formContainer: {

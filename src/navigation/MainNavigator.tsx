@@ -6,6 +6,8 @@ import AuthNavigator from './AuthNavigator';
 import { SafeAreaView } from 'react-native';
 import { COLORS } from '../constants/Colors';
 import HomeNavigator from './HomeNavigator';
+import ProfileDetails from '../screens/screen/ProfileDetails';
+import UploadDocScreen from '../screens/screen/UploadDocScreen';
 // import BottomTabs from './BottomTabs';
 
 const Stack = createNativeStackNavigator();
@@ -20,6 +22,8 @@ export default function MainNavigator() {
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
           <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
           <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
+          <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
+          <Stack.Screen name="UploadDocScreen" component={UploadDocScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

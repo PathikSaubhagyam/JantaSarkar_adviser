@@ -65,6 +65,7 @@ const Login = () => {
         setShowOtpSection(true);
         setTimer(60);
         setServerOtp(res?.otp || res?.data?.otp || '');
+        console.log(res?.data, 'otp----');
 
         if (res?.data?.user_id) {
           await AsyncStorage.setItem('user_Id', res?.data?.user_id);
@@ -420,6 +421,7 @@ const styles = StyleSheet.create({
     height: 50,
     textAlign: 'center',
     fontSize: 18,
+    color: COLORS.black,
   },
   resendContainer: {
     flexDirection: 'row',
@@ -435,5 +437,6 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontWeight: '600',
+    color: COLORS.black,
   },
 });

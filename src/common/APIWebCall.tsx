@@ -137,6 +137,26 @@ export const onCommunityFeedListAPICall = () => {
   );
 };
 
+export const onUploadDocumentsAPICall = formData => {
+  return _REQUEST2SERVER(
+    `mobile/advisordocument-upload/`,
+    formData,
+    'POST',
+    true,
+    true,
+  );
+};
+
+export const onGetUploadedDocumentsAPICall = () => {
+  return _REQUEST2SERVER(
+    `mobile/advisordocument-upload/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
 export const onApproveComplaintAPICall = complaintId => {
   return _REQUEST2SERVER(
     `mobile/complaint-request/approved/${complaintId}/`,
@@ -189,4 +209,6 @@ export default {
   onCommunityFeedAPICall,
   onProfileAPICall,
   onCommunityFeedListAPICall,
+  onUploadDocumentsAPICall,
+  onGetUploadedDocumentsAPICall,
 };
