@@ -193,6 +193,17 @@ export const onComplaintCancelAPICall = complaintId => {
     true,
   );
 };
+
+export const onRegisterFCMTokenAPICall = fcmToken => {
+  return _REQUEST2SERVER(
+    `mobile/notification/fcm-token/`,
+    { token: fcmToken },
+    'POST',
+    false,
+    true,
+  );
+};
+
 export default {
   onSignUPAPICall,
   onLoginAPICall,
@@ -211,4 +222,5 @@ export default {
   onCommunityFeedListAPICall,
   onUploadDocumentsAPICall,
   onGetUploadedDocumentsAPICall,
+  onRegisterFCMTokenAPICall,
 };

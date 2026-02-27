@@ -1,4 +1,4 @@
-package com.lector_education
+package com.jantasarkar.adviser
 
 import android.app.Application
 import com.facebook.react.PackageList

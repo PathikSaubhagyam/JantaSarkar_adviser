@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.lector_education"
+    namespace "com.jantasarkar.adviser"
     defaultConfig {
-        applicationId "com.lector_education"
+        applicationId "com.jantasarkar.adviser"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -116,4 +116,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+}
+
+// Apply Firebase plugin only when config file exists
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
 }
