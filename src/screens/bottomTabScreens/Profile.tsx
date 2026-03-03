@@ -227,12 +227,20 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           textViewStyle={styles.sectionTitle}
         />
         <View style={styles.card}>
+          {/* {renderMenuItem(
+            'Settings',
+            'Security and app settings',
+            'settings',
+            '#E9EDF3',
+            '#5A6B85',
+          )} */}
           {renderMenuItem(
             'Settings',
             'Security and app settings',
             'settings',
             '#E9EDF3',
             '#5A6B85',
+            () => navigation.navigate('SettingsScreen'),
           )}
 
           {renderMenuItem(

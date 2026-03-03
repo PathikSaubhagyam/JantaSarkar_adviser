@@ -18,6 +18,7 @@ import { COLORS } from '../../constants/Colors';
 import { BASE_URL } from '../../constants/Utils';
 import APIWebCall from '../../common/APIWebCall';
 import SnackBarCommon from '../../components/SnackBarCommon';
+import Header from '../../components/Header';
 
 type DocumentType = 'id_proof' | 'pancard' | 'bar_certificate';
 
@@ -227,7 +228,10 @@ export default function UploadDocScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Upload Documents</Text>
+        <Header
+          title="Upload Documents"
+          onBackPress={() => navigation.goBack()}
+        />
         <Text style={styles.subTitle}>
           Please upload all required documents for verification.
         </Text>

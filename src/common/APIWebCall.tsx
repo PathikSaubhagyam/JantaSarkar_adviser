@@ -103,9 +103,20 @@ export const onCommunityFeedAPICall = params => {
     true,
   );
 };
-export const onAdvisorComplaintsAPICall = () => {
+export const onAdvisorComplaintsAPICall = (
+  latitude = null,
+  longitude = null,
+) => {
+  const hasCoordinates =
+    typeof latitude === 'number' && typeof longitude === 'number';
+  const query = hasCoordinates
+    ? `?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(
+        longitude,
+      )}`
+    : '';
+
   return _REQUEST2SERVER(
-    `mobile/advisor/complaints/`,
+    `mobile/advisor/complaints/${query}`,
     null,
     'GET',
     false,
@@ -203,6 +214,35 @@ export const onRegisterFCMTokenAPICall = fcmToken => {
     true,
   );
 };
+export const onNotificationSettingAPICall = params => {
+  return _REQUEST2SERVER(
+    `mobile/notification-setting/`, // ⚠️ use same prefix as other APIs
+    params,
+    'PATCH',
+    false,
+    true, // ✅ requires token
+  );
+};
+
+export const onDashboardAPICall = () => {
+  return _REQUEST2SERVER(
+    `user/home-dashboard/`,
+    null,
+    'GET',
+    false,
+    true, // ✅ assuming dashboard requires auth token
+  );
+};
+
+export const onCrowdAttendanceAPICall = (crowdId, formData) => {
+  return _REQUEST2SERVER(
+    `mobile/crowd/${crowdId}/attendance/`,
+    formData,
+    'POST',
+    true,
+    true,
+  );
+};
 
 export default {
   onSignUPAPICall,
@@ -223,4 +263,7 @@ export default {
   onUploadDocumentsAPICall,
   onGetUploadedDocumentsAPICall,
   onRegisterFCMTokenAPICall,
+  onNotificationSettingAPICall,
+  onDashboardAPICall,
+  onCrowdAttendanceAPICall,
 };

@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install geolocation dependency",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"install",
+				"@react-native-community/geolocation@^3.4.0"
+			]
+		},
+		{
+			"label": "Install geolocation legacy peer deps",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"install",
+				"@react-native-community/geolocation@^3.4.0",
+				"--legacy-peer-deps"
+			]
+		}
+	]
+}

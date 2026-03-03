@@ -9,9 +9,12 @@ import {
   Dimensions,
   StatusBar,
   ActivityIndicator,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Geolocation from '@react-native-community/geolocation';
 import { COLORS } from '../../constants/Colors';
 import RequestCard from '../../components/RequestCard';
 import { BASE_URL, DOBFormat } from '../../constants/Utils';
@@ -30,6 +33,12 @@ import SnackBarCommon from '../../components/SnackBarCommon';
 import TextCommonMedium from '../../components/TextCommonMedium';
 import { FONTS_SIZE } from '../../constants/Font';
 const { width } = Dimensions.get('window');
+
+type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
+
 const RequestScreen = () => {
   const TABS = ['New', 'Ongoing', 'History'];
   const [refreshing, setRefreshing] = useState(false);
@@ -53,6 +62,45 @@ const RequestScreen = () => {
     }, [activeTab]),
   );
 
+  const getLiveCoordinates = async (): Promise<Coordinates | null> => {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Permission denied');
+          return null;
+        }
+      }
+
+      return await new Promise(resolve => {
+        Geolocation.getCurrentPosition(
+          position => {
+            console.log('LOCATION SUCCESS =>', position);
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          error => {
+            console.log('LOCATION ERROR =>', error);
+            resolve(null);
+          },
+          {
+            enableHighAccuracy: false, // ✅ changed
+            timeout: 30000, // ✅ increased
+            maximumAge: 0, // ✅ changed
+          },
+        );
+      });
+    } catch (error) {
+      console.log('GET LOCATION ERROR =>', error);
+      return null;
+    }
+  };
+
   const loadComplaints = async () => {
     try {
       setLoading(true);
@@ -60,7 +108,13 @@ const RequestScreen = () => {
       let res;
 
       if (activeTab === 'New') {
-        res = await onAdvisorComplaintsAPICall();
+        const coordinates = await getLiveCoordinates();
+        console.log(coordinates, 'coordinates-===>>>');
+
+        res = await onAdvisorComplaintsAPICall(
+          coordinates?.latitude,
+          coordinates?.longitude,
+        );
       } else if (activeTab === 'Ongoing') {
         res = await onAdvisorOngoingAPICall();
       } else if (activeTab === 'History') {

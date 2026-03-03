@@ -8,6 +8,7 @@ import { COLORS } from '../constants/Colors';
 import HomeNavigator from './HomeNavigator';
 import ProfileDetails from '../screens/screen/ProfileDetails';
 import UploadDocScreen from '../screens/screen/UploadDocScreen';
+import SettingsScreen from '../screens/screen/SettingsScreen';
 // import BottomTabs from './BottomTabs';
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ export default function MainNavigator() {
           <Stack.Screen name="HomeNavigator" component={HomeNavigator} />
           <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
           <Stack.Screen name="UploadDocScreen" component={UploadDocScreen} />
+          <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

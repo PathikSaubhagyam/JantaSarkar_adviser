@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "867691153975",
+    "project_id": "jantasarkaradviser",
+    "storage_bucket": "jantasarkaradviser.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867691153975:android:cb7f4fe4538ba3ad3d0db2",
+        "android_client_info": {
+          "package_name": "com.jantasarkar.adviser"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGYY-PoLnXVvE4VMpHEyTsmkNkfkdgABQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

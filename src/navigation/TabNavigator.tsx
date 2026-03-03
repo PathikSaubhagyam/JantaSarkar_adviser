@@ -10,6 +10,7 @@ import ProfileScreen from '../screens/bottomTabScreens/Profile';
 import TextCommonMedium from '../components/TextCommonMedium';
 import { FONTS_SIZE } from '../constants/Font';
 import RequestScreen from '../screens/bottomTabScreens/RequestScreen';
+import Crowd from '../screens/bottomTabScreens/Crowd';
 
 const Tab = createBottomTabNavigator();
 
@@ -204,6 +205,39 @@ const TabNavigator = () => {
               />
               <TextCommonMedium
                 text={'Profile'}
+                textViewStyle={{
+                  fontSize: FONTS_SIZE.txt_13,
+                  color: focused ? COLORS.primary : COLORS.gry_text,
+                }}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Crowd"
+        component={Crowd}
+        options={{
+          tabBarLabel: '',
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 45,
+                width: 50,
+              }}
+            >
+              <Image
+                source={require('../assets/images/user.png')}
+                style={{
+                  height: 22,
+                  width: 22,
+                  tintColor: focused ? COLORS.primary : COLORS.gry_text,
+                }}
+              />
+              <TextCommonMedium
+                text={'Crowd'}
                 textViewStyle={{
                   fontSize: FONTS_SIZE.txt_13,
                   color: focused ? COLORS.primary : COLORS.gry_text,

@@ -1,64 +1,4 @@
-// import React, { useCallback, useEffect, useState } from 'react';
-// import {
-//   StyleSheet,
-//   Text,
-//   View,
-//   FlatList,
-//   TouchableOpacity,
-//   SafeAreaView,
-//   Dimensions,
-//   StatusBar,
-//   ActivityIndicator,
-// } from 'react-native';
-
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { COLORS } from '../../constants/Colors';
-// import RequestCard from '../../components/RequestCard';
-// import { BASE_URL, DOBFormat } from '../../constants/Utils';
-// import {
-//   onAdvisorComplaintsAPICall,
-//   onAdvisorHistoryAPICall,
-//   onAdvisorOngoingAPICall,
-//   onApproveComplaintAPICall,
-//   onComplaintCancelAPICall,
-//   onCompletedComplaintAPICall,
-//   onRequestRejectAPICall,
-// } from '../../common/APIWebCall';
-// import moment from 'moment';
-// import { useFocusEffect } from '@react-navigation/native';
-// import SnackBarCommon from '../../components/SnackBarCommon';
-// import TextCommonMedium from '../../components/TextCommonMedium';
-// import { FONTS_SIZE } from '../../constants/Font';
-// import TextCommonBold from '../../components/TextCommonBold';
-// const { width } = Dimensions.get('window');
-// const Home = () => {
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-
-//       <View style={{}}>
-//         <TextCommonBold
-//           text={'Comming Soon'}
-//           textViewStyle={{ fontSize: FONTS_SIZE.txt_18 }}
-//         />
-//       </View>
-//     </SafeAreaView>
-//   );
-// };
-
-// export default Home;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: COLORS.white,
-//     paddingHorizontal: width * 0.04,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -67,16 +7,75 @@ import {
   SafeAreaView,
   Dimensions,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
+import { BASE_URL } from '../utils/constant';
+import APIWebCall from '../../common/APIWebCall';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
-  // demo values (later connect API)
-  const userCases = 12;
-  const providedHelp = 5;
-  const helpRecords = 27;
+  const [userCases, setUserCases] = useState(0);
+  const [providedHelp, setProvidedHelp] = useState(0);
+  const [helpRecords, setHelpRecords] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getDashboardData();
+  }, []);
+
+  const getDashboardData = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('access_token');
+      console.log(token, 'token');
+
+      const response = await axios.get(`${BASE_URL}/user/home-dashboard/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response, 'dashboard res===>>>');
+
+      if (response.data?.status) {
+        setUserCases(response.data.total_case);
+        setProvidedHelp(response.data.provide_help);
+        setHelpRecords(response.data.help_reward);
+      } else {
+        showErrorModal('Failed to load dashboard data');
+      }
+    } catch (error) {
+      console.log('Dashboard API Error:', error);
+      showErrorModal('Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      const res = await APIWebCall.onDashboardAPICall();
+
+      console.log('DASHBOARD RESPONSE => ', res);
+
+      if (res?.status === true || res?.success === true) {
+        setUserCases(res?.total_case ?? 0);
+        setProvidedHelp(res?.provide_help ?? 0);
+        setHelpRecords(res?.help_reward ?? 0);
+      } else {
+        console.log('Dashboard API failed:', res?.message);
+      }
+    } catch (error) {
+      console.log('DASHBOARD ERROR => ', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,49 +84,42 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.welcome}>Welcome</Text>
-        {/* <View style={styles.locationRow}>
-          <Icon name="location-outline" size={18} color="#2563eb" />
-          <Text style={styles.locationText}>Ahmedabad</Text>
-        </View> */}
       </View>
 
-      {/* Dashboard Cards */}
-      <View style={styles.cardContainer}>
-        {/* User Case */}
-        <TouchableOpacity style={[styles.card, styles.blueCard]}>
-          <View style={styles.iconBox}>
-            <Icon name="document-text-outline" size={26} color="#fff" />
-          </View>
-          <Text style={styles.cardNumber}>{userCases}</Text>
-          <Text style={styles.cardLabel}>Your Cases</Text>
-        </TouchableOpacity>
+      {loading ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#2563eb" />
+        </View>
+      ) : (
+        <View style={styles.cardContainer}>
+          {/* Your Cases */}
+          <TouchableOpacity style={[styles.card, styles.blueCard]}>
+            <View style={styles.iconBox}>
+              <Icon name="document-text-outline" size={26} color="#fff" />
+            </View>
+            <Text style={styles.cardNumber}>{userCases}</Text>
+            <Text style={styles.cardLabel}>Your Cases</Text>
+          </TouchableOpacity>
 
-        {/* Provide Help */}
-        <TouchableOpacity style={[styles.card, styles.greenCard]}>
-          <View style={styles.iconBox}>
-            <Icon name="people-outline" size={26} color="#fff" />
-          </View>
-          <Text style={styles.cardNumber}>{providedHelp}</Text>
-          <Text style={styles.cardLabel}>Provided Help</Text>
-        </TouchableOpacity>
+          {/* Provided Help */}
+          <TouchableOpacity style={[styles.card, styles.greenCard]}>
+            <View style={styles.iconBox}>
+              <Icon name="people-outline" size={26} color="#fff" />
+            </View>
+            <Text style={styles.cardNumber}>{providedHelp}</Text>
+            <Text style={styles.cardLabel}>Provided Help</Text>
+          </TouchableOpacity>
 
-        {/* Help Record */}
-        <TouchableOpacity style={[styles.card, styles.orangeCard]}>
-          <View style={styles.iconBox}>
-            <Icon name="time-outline" size={26} color="#fff" />
-          </View>
-          <Text style={styles.cardNumber}>{helpRecords}</Text>
-          <Text style={styles.cardLabel}>Help Records</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Future Content Section */}
-      {/* <View style={styles.bottomSection}>
-        <Text style={styles.sectionTitle}>Recent Activity</Text>
-        <Text style={styles.sectionSub}>
-          Your recent case & help activity will appear here.
-        </Text>
-      </View> */}
+          {/* Help Records */}
+          <TouchableOpacity style={[styles.card, styles.orangeCard]}>
+            <View style={styles.iconBox}>
+              <Icon name="time-outline" size={26} color="#fff" />
+            </View>
+            <Text style={styles.cardNumber}>{helpRecords}</Text>
+            <Text style={styles.cardLabel}>Help Records</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -152,17 +144,10 @@ const styles = StyleSheet.create({
     color: '#0f172a',
   },
 
-  locationRow: {
-    flexDirection: 'row',
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 4,
-  },
-
-  locationText: {
-    marginLeft: 6,
-    color: '#475569',
-    fontSize: 14,
-    fontWeight: '500',
   },
 
   cardContainer: {
@@ -218,22 +203,5 @@ const styles = StyleSheet.create({
 
   orangeCard: {
     backgroundColor: '#f97316',
-  },
-
-  bottomSection: {
-    marginTop: 30,
-    paddingHorizontal: 18,
-  },
-
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-
-  sectionSub: {
-    marginTop: 6,
-    color: '#64748b',
-    fontSize: 14,
   },
 });
