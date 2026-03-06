@@ -27,6 +27,7 @@ import {
   onCompletedComplaintAPICall,
   onRequestRejectAPICall,
 } from '../../common/APIWebCall';
+import NotificationService from '../../services/NotificationService';
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
 import SnackBarCommon from '../../components/SnackBarCommon';
@@ -61,6 +62,18 @@ const RequestScreen = () => {
       loadComplaints();
     }, [activeTab]),
   );
+
+  useEffect(() => {
+    const syncFCMToken = async () => {
+      try {
+        await NotificationService.getFCMToken();
+      } catch (error) {
+        console.log('FCM TOKEN SYNC ERROR =>', error);
+      }
+    };
+
+    syncFCMToken();
+  }, []);
 
   const getLiveCoordinates = async (): Promise<Coordinates | null> => {
     try {
@@ -115,6 +128,7 @@ const RequestScreen = () => {
           coordinates?.latitude,
           coordinates?.longitude,
         );
+        console.log(res, 'response====>>>');
       } else if (activeTab === 'Ongoing') {
         res = await onAdvisorOngoingAPICall();
       } else if (activeTab === 'History') {

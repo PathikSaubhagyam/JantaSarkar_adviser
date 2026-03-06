@@ -54,6 +54,7 @@ class NotificationService {
   async registerTokenWithBackend(fcmToken: string) {
     try {
       const response = await APIWebCall.onRegisterFCMTokenAPICall(fcmToken);
+      console.log(response, 'push notification res==>>>');
 
       if (response?.status === true) {
         console.log('FCM token registered successfully with backend');

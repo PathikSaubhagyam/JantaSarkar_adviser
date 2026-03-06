@@ -4,6 +4,7 @@ import TabNavigator from './TabNavigator';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/Colors';
 import CommunityFeedAdd from '../screens/bottomTabScreens/CommunityFeedAdd';
+import RewardHistoryScreen from '../screens/screen/RewardHistoryScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
@@ -18,6 +19,10 @@ const HomeNavigator = () => {
       >
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
         <Stack.Screen name="CommunityFeedAdd" component={CommunityFeedAdd} />
+        <Stack.Screen
+          name="RewardHistoryScreen"
+          component={RewardHistoryScreen}
+        />
       </Stack.Navigator>
     </SafeAreaView>
   );

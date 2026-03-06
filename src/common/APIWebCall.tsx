@@ -226,7 +226,7 @@ export const onNotificationSettingAPICall = params => {
 
 export const onDashboardAPICall = () => {
   return _REQUEST2SERVER(
-    `user/home-dashboard/`,
+    `mobile/user/home-dashboard/`,
     null,
     'GET',
     false,

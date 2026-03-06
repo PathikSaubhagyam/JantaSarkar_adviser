@@ -9,6 +9,7 @@ import HomeNavigator from './HomeNavigator';
 import ProfileDetails from '../screens/screen/ProfileDetails';
 import UploadDocScreen from '../screens/screen/UploadDocScreen';
 import SettingsScreen from '../screens/screen/SettingsScreen';
+import RewardHistoryScreen from '../screens/screen/RewardHistoryScreen';
 // import BottomTabs from './BottomTabs';
 
 const Stack = createNativeStackNavigator();
@@ -26,6 +27,10 @@ export default function MainNavigator() {
           <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
           <Stack.Screen name="UploadDocScreen" component={UploadDocScreen} />
           <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+          <Stack.Screen
+            name="RewardHistoryScreen"
+            component={RewardHistoryScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

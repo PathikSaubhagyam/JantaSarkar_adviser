@@ -10,14 +10,14 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import { BASE_URL } from '../utils/constant';
-import APIWebCall from '../../common/APIWebCall';
+import { onDashboardAPICall } from '../../common/APIWebCall';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
+  const navigation = useNavigation<any>();
   const [userCases, setUserCases] = useState(0);
   const [providedHelp, setProvidedHelp] = useState(0);
   const [helpRecords, setHelpRecords] = useState(0);
@@ -30,48 +30,22 @@ export default function HomeScreen() {
   const getDashboardData = async () => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem('access_token');
-      console.log(token, 'token');
+      const response = await onDashboardAPICall();
+      console.log(response, 'ress dashboard==>>');
 
-      const response = await axios.get(`${BASE_URL}/user/home-dashboard/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log(response, 'dashboard res===>>>');
-
-      if (response.data?.status) {
-        setUserCases(response.data.total_case);
-        setProvidedHelp(response.data.provide_help);
-        setHelpRecords(response.data.help_reward);
+      if (response?.status || response?.success) {
+        setUserCases(Number(response?.total_case) || 0);
+        setProvidedHelp(Number(response?.provide_help) || 0);
+        setHelpRecords(Number(response?.help_reward) || 0);
       } else {
-        showErrorModal('Failed to load dashboard data');
+        Alert.alert(
+          'Error',
+          response?.message || 'Failed to load dashboard data',
+        );
       }
     } catch (error) {
       console.log('Dashboard API Error:', error);
-      showErrorModal('Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-
-      const res = await APIWebCall.onDashboardAPICall();
-
-      console.log('DASHBOARD RESPONSE => ', res);
-
-      if (res?.status === true || res?.success === true) {
-        setUserCases(res?.total_case ?? 0);
-        setProvidedHelp(res?.provide_help ?? 0);
-        setHelpRecords(res?.help_reward ?? 0);
-      } else {
-        console.log('Dashboard API failed:', res?.message);
-      }
-    } catch (error) {
-      console.log('DASHBOARD ERROR => ', error);
+      Alert.alert('Error', 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -111,12 +85,16 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           {/* Help Records */}
-          <TouchableOpacity style={[styles.card, styles.orangeCard]}>
+          <TouchableOpacity
+            style={[styles.card, styles.orangeCard]}
+            activeOpacity={0.85}
+            // onPress={() => navigation.navigate('RewardHistoryScreen')}
+          >
             <View style={styles.iconBox}>
               <Icon name="time-outline" size={26} color="#fff" />
             </View>
             <Text style={styles.cardNumber}>{helpRecords}</Text>
-            <Text style={styles.cardLabel}>Help Records</Text>
+            <Text style={styles.cardLabel}>Your Rewards ⭐⭐⭐</Text>
           </TouchableOpacity>
         </View>
       )}

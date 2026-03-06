@@ -23,6 +23,7 @@ import SnackBarCommon from '../../components/SnackBarCommon';
 import APIWebCall from '../../common/APIWebCall';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NotificationService from '../../services/NotificationService';
 
 const Login = () => {
   const navigation = useNavigation<any>();
@@ -113,6 +114,12 @@ const Login = () => {
         // ✅ Save Token
         if (res?.access_token) {
           await AsyncStorage.setItem('token', res.access_token);
+
+          try {
+            await NotificationService.getFCMToken();
+          } catch (fcmError) {
+            console.log('FCM REGISTER ERROR =>', fcmError);
+          }
         }
 
         if (res.is_profile_complete === false) {
