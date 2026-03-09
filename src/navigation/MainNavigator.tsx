@@ -10,6 +10,7 @@ import ProfileDetails from '../screens/screen/ProfileDetails';
 import UploadDocScreen from '../screens/screen/UploadDocScreen';
 import SettingsScreen from '../screens/screen/SettingsScreen';
 import RewardHistoryScreen from '../screens/screen/RewardHistoryScreen';
+import RequestScreen from '../screens/bottomTabScreens/RequestScreen';
 // import BottomTabs from './BottomTabs';
 
 const Stack = createNativeStackNavigator();
@@ -31,6 +32,7 @@ export default function MainNavigator() {
             name="RewardHistoryScreen"
             component={RewardHistoryScreen}
           />
+          <Stack.Screen name="RequestScreen" component={RequestScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

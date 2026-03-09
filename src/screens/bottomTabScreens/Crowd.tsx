@@ -29,6 +29,7 @@ type CrowdScreenProps = {
 type CrowdItem = {
   id: number;
   crowd?: number;
+  is_attendance?: boolean;
   city: number;
   city_name: string;
   department: number;
@@ -48,8 +49,11 @@ type CrowdItem = {
 };
 
 type CrowdApiResponse = {
-  status: boolean;
-  data: CrowdItem[];
+  status?: boolean | string;
+  success?: boolean | string;
+  data?: CrowdItem[];
+  results?: CrowdItem[];
+  records?: CrowdItem[];
 };
 
 type AttendanceApiResponse = {
@@ -112,21 +116,38 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
 
   const fetchCrowdData = useCallback(async () => {
     try {
-      const accessToken = await AsyncStorage.getItem('access_token');
+      const token =
+        (await AsyncStorage.getItem('token')) ||
+        (await AsyncStorage.getItem('access_token'));
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
 
-      if (accessToken) {
-        headers.Authorization = `Bearer ${accessToken}`;
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
 
       const response = await axios.get<CrowdApiResponse>(CROWD_API_URL, {
         headers,
       });
+      console.log(response, 'crowd res');
 
-      if (response.data?.status && Array.isArray(response.data.data)) {
-        setCrowdData(response.data.data);
+      const payload = response.data || {};
+      const isSuccess =
+        payload.status === true ||
+        payload.success === true ||
+        payload.status === 'true' ||
+        payload.success === 'true';
+      const list = Array.isArray(payload.data)
+        ? payload.data
+        : Array.isArray(payload.results)
+        ? payload.results
+        : Array.isArray(payload.records)
+        ? payload.records
+        : [];
+
+      if (isSuccess || list.length > 0) {
+        setCrowdData(list);
       } else {
         setCrowdData([]);
       }
@@ -357,8 +378,52 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
     return 'No crowd records available';
   }, [loading]);
 
+  const formatEventDate = useCallback((value: string) => {
+    if (!value) {
+      return '-';
+    }
+
+    const parsedDate = new Date(value);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return value;
+    }
+
+    return parsedDate.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  }, []);
+
+  const formatEventTime = useCallback((value: string) => {
+    if (!value) {
+      return '-';
+    }
+
+    const normalized = value.trim();
+    const twelveHourMatch = normalized.match(
+      /^(\d{1,2}:\d{2})(?::\d{2})?\s*(AM|PM)$/i,
+    );
+    if (twelveHourMatch) {
+      return `${twelveHourMatch[1]} ${twelveHourMatch[2].toUpperCase()}`;
+    }
+
+    const twentyFourHourMatch = normalized.match(
+      /^(\d{1,2}):(\d{2})(?::\d{2})?$/,
+    );
+    if (twentyFourHourMatch) {
+      const hours = twentyFourHourMatch[1].padStart(2, '0');
+      const minutes = twentyFourHourMatch[2];
+      return `${hours}:${minutes}`;
+    }
+
+    return normalized;
+  }, []);
+
   const renderItem = ({ item }: { item: CrowdItem }) => {
     const hasAttendance = attendanceMarked.has(item.id);
+    console.log(item, 'iterm data');
+    const attendanceAdded = hasAttendance || item?.is_attendance;
 
     return (
       <View style={styles.card}>
@@ -399,35 +464,38 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
         <View style={styles.dateTimeRow}>
           <View style={styles.metaItem}>
             <Icon name="event" size={16} color="#64748b" />
-            <Text style={styles.metaText}>{item.event_date}</Text>
+            <Text style={styles.metaText}>
+              {formatEventDate(item.event_date)}
+            </Text>
           </View>
           <View style={styles.metaItem}>
             <Icon name="schedule" size={16} color="#64748b" />
-            <Text style={styles.metaText}>{item.event_time}</Text>
+            <Text style={styles.metaText}>
+              {formatEventTime(item.event_time)}
+            </Text>
           </View>
         </View>
 
         <TouchableOpacity
           style={[
             styles.attendanceButton,
-            hasAttendance && styles.attendanceButtonDone,
+            attendanceAdded && styles.attendanceButtonDone,
           ]}
-          onPress={() =>
-            handleAddAttendance(item.id, item.latitude, item.longitude)
-          }
-          disabled={capturingId === item.id}
+          onPress={() => handleAddAttendance(item.id)}
+          disabled={capturingId === item.id || attendanceAdded}
         >
           {capturingId === item.id ? (
             <ActivityIndicator size="small" color="#ffffff" />
           ) : (
             <>
               <Icon
-                name={hasAttendance ? 'check-circle' : 'photo-camera'}
+                name={attendanceAdded ? 'check-circle' : 'photo-camera'}
                 size={18}
                 color="#ffffff"
               />
+
               <Text style={styles.attendanceButtonText}>
-                {hasAttendance ? 'Attendance Added' : 'Add Attendance'}
+                {attendanceAdded ? 'Attendance Added' : 'Add Attendance'}
               </Text>
             </>
           )}

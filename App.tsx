@@ -6,20 +6,18 @@
  */
 
 import React, { useEffect } from 'react';
-import {
-  Platform,
-  StatusBar,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { COLORS } from './src/constants/Colors';
 import MainNavigator from './src/navigation/MainNavigator';
 import NotificationService from './src/services/NotificationService';
+import APIWebCall from './src/common/APIWebCall';
+
+const FCM_TOKEN_STORAGE_KEY = 'fcm_token';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,6 +33,11 @@ function App() {
 
       if (initialized) {
         console.log('Push notifications initialized successfully');
+
+        const fcmToken = await messaging().getToken();
+        if (fcmToken) {
+          await registerFcmTokenToServer(fcmToken);
+        }
 
         // Setup foreground notification listener
         const unsubscribeForeground =
@@ -61,6 +64,32 @@ function App() {
     }
   };
 
+  const registerFcmTokenToServer = async (fcmToken: string) => {
+    try {
+      if (!fcmToken) {
+        return;
+      }
+      console.log(fcmToken, 'token fcm123');
+
+      const response = await APIWebCall.onRegisterFCMTokenAPICall(fcmToken);
+      console.log(response, 'Token res----->>>');
+
+      if (response?.status === true || response?.status === 'true') {
+        await AsyncStorage.setItem(FCM_TOKEN_STORAGE_KEY, fcmToken);
+      }
+    } catch (error: unknown) {
+      const normalizedError = error as {
+        response?: { data?: unknown };
+        message?: string;
+      };
+
+      console.log(
+        'FCM token register failed:',
+        normalizedError?.response?.data || normalizedError?.message,
+      );
+    }
+  };
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'dark-content' : 'dark-content'} />
@@ -70,8 +99,6 @@ function App() {
 }
 
 function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
   return (
     <View style={styles.container}>
       <MainNavigator />

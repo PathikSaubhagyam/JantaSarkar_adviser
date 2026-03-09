@@ -76,7 +76,13 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           {/* Provided Help */}
-          <TouchableOpacity style={[styles.card, styles.greenCard]}>
+          <TouchableOpacity
+            style={[styles.card, styles.greenCard]}
+            activeOpacity={0.85}
+            // onPress={() =>
+            //   navigation.navigate('Request', { initialTab: 'History' })
+            // }
+          >
             <View style={styles.iconBox}>
               <Icon name="people-outline" size={26} color="#fff" />
             </View>
@@ -88,7 +94,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.card, styles.orangeCard]}
             activeOpacity={0.85}
-            // onPress={() => navigation.navigate('RewardHistoryScreen')}
+            onPress={() => navigation.navigate('RewardHistoryScreen')}
           >
             <View style={styles.iconBox}>
               <Icon name="time-outline" size={26} color="#fff" />

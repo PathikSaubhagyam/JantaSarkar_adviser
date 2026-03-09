@@ -29,7 +29,7 @@ import {
 } from '../../common/APIWebCall';
 import NotificationService from '../../services/NotificationService';
 import moment from 'moment';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import SnackBarCommon from '../../components/SnackBarCommon';
 import TextCommonMedium from '../../components/TextCommonMedium';
 import { FONTS_SIZE } from '../../constants/Font';
@@ -42,6 +42,7 @@ type Coordinates = {
 
 const RequestScreen = () => {
   const TABS = ['New', 'Ongoing', 'History'];
+  const route = useRoute<any>();
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('New');
   const [formatComplaintData, setFormatComplaintData] = useState([]);
@@ -62,6 +63,18 @@ const RequestScreen = () => {
       loadComplaints();
     }, [activeTab]),
   );
+
+  useEffect(() => {
+    const requestedTab = route?.params?.initialTab;
+
+    if (
+      requestedTab &&
+      TABS.includes(requestedTab) &&
+      requestedTab !== activeTab
+    ) {
+      setActiveTab(requestedTab);
+    }
+  }, [route?.params?.initialTab, activeTab]);
 
   useEffect(() => {
     const syncFCMToken = async () => {
