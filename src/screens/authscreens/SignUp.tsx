@@ -202,6 +202,11 @@ const SignUp = () => {
           isSuccess: true,
         });
 
+        await AsyncStorage.setItem(
+          'full_name',
+          (fullName || res?.user?.full_name || '').trim(),
+        );
+
         navigation.replace('HomeNavigator');
         if (res.user?.id) {
           await AsyncStorage.setItem('User_id', res.user?.id);

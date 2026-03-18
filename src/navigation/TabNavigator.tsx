@@ -11,6 +11,7 @@ import TextCommonMedium from '../components/TextCommonMedium';
 import { FONTS_SIZE } from '../constants/Font';
 import RequestScreen from '../screens/bottomTabScreens/RequestScreen';
 import Crowd from '../screens/bottomTabScreens/Crowd';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
 
@@ -162,13 +163,10 @@ const TabNavigator = () => {
                 width: 80,
               }}
             >
-              <Image
-                source={require('../assets/images/community.png')}
-                style={{
-                  height: 22,
-                  width: 22,
-                  tintColor: focused ? COLORS.primary : COLORS.gry_text,
-                }}
+              <Ionicons
+                name="newspaper-outline"
+                size={22}
+                color={focused ? COLORS.primary : COLORS.gry_text}
               />
               <TextCommonMedium
                 text={'Feed'}
@@ -228,13 +226,10 @@ const TabNavigator = () => {
                 width: 50,
               }}
             >
-              <Image
-                source={require('../assets/images/user.png')}
-                style={{
-                  height: 22,
-                  width: 22,
-                  tintColor: focused ? COLORS.primary : COLORS.gry_text,
-                }}
+              <Ionicons
+                name="people-outline"
+                size={22}
+                color={focused ? COLORS.primary : COLORS.gry_text}
               />
               <TextCommonMedium
                 text={'Crowd'}

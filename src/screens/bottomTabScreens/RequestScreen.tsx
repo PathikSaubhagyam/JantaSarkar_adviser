@@ -29,7 +29,7 @@ import {
 } from '../../common/APIWebCall';
 import NotificationService from '../../services/NotificationService';
 import moment from 'moment';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useRoute, useIsFocused } from '@react-navigation/native';
 import SnackBarCommon from '../../components/SnackBarCommon';
 import TextCommonMedium from '../../components/TextCommonMedium';
 import { FONTS_SIZE } from '../../constants/Font';
@@ -58,15 +58,12 @@ const RequestScreen = () => {
     Ongoing: 0,
     History: 0,
   });
-  useFocusEffect(
-    useCallback(() => {
-      loadComplaints();
-    }, [activeTab]),
-  );
+
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+    // Handle initial tab from route params
     const requestedTab = route?.params?.initialTab;
-
     if (
       requestedTab &&
       TABS.includes(requestedTab) &&
@@ -74,7 +71,23 @@ const RequestScreen = () => {
     ) {
       setActiveTab(requestedTab);
     }
-  }, [route?.params?.initialTab, activeTab]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route?.params?.initialTab]);
+
+  useEffect(() => {
+    let intervalId;
+    if (isFocused) {
+      loadComplaints();
+      // Poll every 30 seconds
+      intervalId = setInterval(() => {
+        loadComplaints();
+      }, 30000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused, activeTab]);
 
   useEffect(() => {
     const syncFCMToken = async () => {
@@ -131,31 +144,35 @@ const RequestScreen = () => {
     try {
       setLoading(true);
 
-      let res;
+      // Fetch all tab data in parallel
+      const [coordinates, newRes, ongoingRes, historyRes] = await Promise.all([
+        getLiveCoordinates(),
+        onAdvisorComplaintsAPICall(),
+        onAdvisorOngoingAPICall(),
+        onAdvisorHistoryAPICall(),
+      ]);
 
+      // If activeTab is New, refetch with coordinates
+      let activeList = [];
       if (activeTab === 'New') {
-        const coordinates = await getLiveCoordinates();
-        console.log(coordinates, 'coordinates-===>>>');
-
-        res = await onAdvisorComplaintsAPICall(
+        const coordRes = await onAdvisorComplaintsAPICall(
           coordinates?.latitude,
           coordinates?.longitude,
         );
-        console.log(res, 'response====>>>');
+        activeList = coordRes?.data || [];
       } else if (activeTab === 'Ongoing') {
-        res = await onAdvisorOngoingAPICall();
+        activeList = ongoingRes?.data || [];
       } else if (activeTab === 'History') {
-        res = await onAdvisorHistoryAPICall();
+        activeList = historyRes?.data || [];
       }
 
-      const list = res?.data || [];
+      setFormatComplaintData(activeList);
 
-      setFormatComplaintData(list);
-
-      setTabCounts(prev => ({
-        ...prev,
-        [activeTab]: list.length,
-      }));
+      setTabCounts({
+        New: (newRes?.data || []).length,
+        Ongoing: (ongoingRes?.data || []).length,
+        History: (historyRes?.data || []).length,
+      });
     } catch (error) {
       console.log('LOAD ERROR =>', error);
     } finally {
@@ -166,10 +183,13 @@ const RequestScreen = () => {
   const onAcceptPress = async complaintId => {
     try {
       setLoading(true);
+      console.log('hii1');
 
       let res;
 
       if (activeTab === 'Ongoing') {
+        console.log('hiii');
+
         res = await onCompletedComplaintAPICall(complaintId);
       } else {
         res = await onApproveComplaintAPICall(complaintId);
@@ -178,6 +198,7 @@ const RequestScreen = () => {
       if (res?.success !== false) {
         loadComplaints();
       }
+      console.log(res, 'complete res===');
 
       SnackBarCommon.displayMessage({
         message: res?.message || 'Success',
@@ -253,6 +274,7 @@ const RequestScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      <View style={{ marginTop: 15, backgroundColor: '#f8fafc' }} />
 
       <Text style={styles.header}>Client Request</Text>
 
@@ -298,7 +320,7 @@ const RequestScreen = () => {
                   : moment(item.created_at).fromNow()
               }
               location={item.city}
-              date={moment(item.created_at).format('DD-MM-YYYY')}
+              date={item.created_at}
               onAccept={() => onAcceptPress(item.complaint_id)}
               acceptLabel={activeTab === 'Ongoing' ? 'Complete' : 'Accept'}
               onReject={() => onCancelOrRejectPress(item.complaint_id)}
@@ -326,7 +348,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: '#E9EDF3',
-    borderRadius: 14,
+    borderRadius: 7,
     padding: 4,
     marginBottom: 20,
   },
@@ -364,7 +386,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 6,
   },
 
   activeTab: {

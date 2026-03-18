@@ -54,6 +54,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#f8fafc" barStyle="dark-content" />
+      <View style={{ marginTop: 15, backgroundColor: '#f8fafc' }} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -69,10 +70,14 @@ export default function HomeScreen() {
           {/* Your Cases */}
           <TouchableOpacity style={[styles.card, styles.blueCard]}>
             <View style={styles.iconBox}>
-              <Icon name="document-text-outline" size={26} color="#fff" />
+              <Icon name="document-text-outline" size={26} color="#2563eb" />
             </View>
-            <Text style={styles.cardNumber}>{userCases}</Text>
-            <Text style={styles.cardLabel}>Your Cases</Text>
+            <Text style={[styles.cardNumber, { color: '#2563eb' }]}>
+              {userCases}
+            </Text>
+            <Text style={[styles.cardLabel, { color: '#2563eb' }]}>
+              Your Cases
+            </Text>
           </TouchableOpacity>
 
           {/* Provided Help */}
@@ -84,10 +89,14 @@ export default function HomeScreen() {
             // }
           >
             <View style={styles.iconBox}>
-              <Icon name="people-outline" size={26} color="#fff" />
+              <Icon name="people-outline" size={26} color="#16a34a" />
             </View>
-            <Text style={styles.cardNumber}>{providedHelp}</Text>
-            <Text style={styles.cardLabel}>Provided Help</Text>
+            <Text style={[styles.cardNumber, { color: '#16a34a' }]}>
+              {providedHelp}
+            </Text>
+            <Text style={[styles.cardLabel, { color: '#16a34a' }]}>
+              Provided Help
+            </Text>
           </TouchableOpacity>
 
           {/* Help Records */}
@@ -97,10 +106,14 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('RewardHistoryScreen')}
           >
             <View style={styles.iconBox}>
-              <Icon name="time-outline" size={26} color="#fff" />
+              <Icon name="time-outline" size={26} color="#f97316" />
             </View>
-            <Text style={styles.cardNumber}>{helpRecords}</Text>
-            <Text style={styles.cardLabel}>Your Rewards ⭐⭐⭐</Text>
+            <Text style={[styles.cardNumber, { color: '#f97316' }]}>
+              {helpRecords}
+            </Text>
+            <Text style={[styles.cardLabel, { color: '#f97316' }]}>
+              Your Rewards ⭐⭐⭐
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -143,7 +156,7 @@ const styles = StyleSheet.create({
 
   card: {
     width: CARD_WIDTH,
-    borderRadius: 18,
+    borderRadius: 6,
     padding: 18,
     marginTop: 14,
     elevation: 4,
@@ -151,6 +164,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
+    borderWidth: 1,
   },
 
   iconBox: {
@@ -178,14 +192,20 @@ const styles = StyleSheet.create({
   },
 
   blueCard: {
-    backgroundColor: '#2563eb',
+    // backgroundColor: '#2563eb',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#2563eb',
   },
 
   greenCard: {
-    backgroundColor: '#16a34a',
+    // backgroundColor: '#16a34a',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#16a34a',
   },
 
   orangeCard: {
-    backgroundColor: '#f97316',
+    // backgroundColor: '#f97316',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#f97316',
   },
 });

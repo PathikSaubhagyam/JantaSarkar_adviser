@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 export default function SplashScreen() {
@@ -30,13 +31,27 @@ export default function SplashScreen() {
   const particle3Y = useRef(new Animated.Value(0)).current;
   const particle4Y = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    // your existing animation code...
+    const bootstrapNavigation = async () => {
+      try {
+        const [token, fullName] = await Promise.all([
+          AsyncStorage.getItem('token'),
+          AsyncStorage.getItem('full_name'),
+        ]);
 
-    const timer = setTimeout(() => {
-      navigation.replace('AuthNavigator'); // replace prevents going back to splash
-    }, 2000); // 3 seconds splash duration
+        const shouldGoHome = Boolean(token && fullName?.trim());
 
-    return () => clearTimeout(timer);
+        setTimeout(() => {
+          navigation.replace(shouldGoHome ? 'HomeNavigator' : 'AuthNavigator');
+        }, 2000);
+      } catch (error) {
+        console.log('SPLASH STORAGE CHECK ERROR =>', error);
+        setTimeout(() => {
+          navigation.replace('AuthNavigator');
+        }, 2000);
+      }
+    };
+
+    bootstrapNavigation();
   }, []);
 
   useEffect(() => {

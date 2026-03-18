@@ -14,7 +14,7 @@ import {
   Platform,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../../constants/Colors';
@@ -125,7 +125,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
   //       </View>
   //     </View>
 
-  //     <Icon name="chevron-right" size={22} color="#ccc" />
+  //     <Icon name="chevron-forward" size={22} color="#ccc" />
   //   </TouchableOpacity>
   // );
 
@@ -149,7 +149,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
         </View>
       </View>
 
-      <Icon name="chevron-right" size={22} color="#ccc" />
+      <Icon name="chevron-forward" size={22} color="#ccc" />
     </TouchableOpacity>
   );
 
@@ -170,7 +170,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             />
 
             <TouchableOpacity style={styles.editIcon} onPress={selectImage}>
-              <Icon name="edit" size={16} color="#fff" />
+              <Icon name="camera-outline" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
 
@@ -197,7 +197,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           {renderMenuItem(
             'My Profile',
             'Contact and basic info',
-            'person',
+            'person-outline',
             '#FBE4D8',
             '#FF7A00',
             () =>
@@ -207,7 +207,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           {renderMenuItem(
             'Identity Documents',
             'E-Valid for your IDs',
-            'badge',
+            'card-outline',
             '#DCE8F9',
             '#3A7BFF',
             () => navigation.navigate('UploadDocScreen'),
@@ -215,7 +215,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           {renderMenuItem(
             'Legal History',
             'Past cases and records',
-            'gavel',
+            'hammer-outline',
             '#DFF3EA',
             '#00A86B',
           )}
@@ -237,7 +237,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           {renderMenuItem(
             'Settings',
             'Security and app settings',
-            'settings',
+            'settings-outline',
             '#E9EDF3',
             '#5A6B85',
             () => navigation.navigate('SettingsScreen'),
@@ -246,7 +246,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           {renderMenuItem(
             'Help & Support',
             'FAQs and legal aid desk',
-            'help-outline',
+            'help-circle-outline',
             '#E9EDF3',
             '#5A6B85',
           )}

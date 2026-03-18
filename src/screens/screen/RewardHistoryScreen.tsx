@@ -1,130 +1,190 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Platform,
+  Pressable,
+  SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
   View,
-  useWindowDimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-
-import Header from '../../components/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { onAdminUserCrowdAttendanceAPICall } from '../../common/APIWebCall';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from '../../constants/Utils';
 import { FONTS_Family } from '../../constants/Font';
 
-type RewardItem = {
+type RewardRecord = {
   id: string;
-  city: string;
+  crowdName: string;
   issue: string;
   address: string;
-  attendanceDate: string;
-  rewardPoints: number;
+  attendedDate: string;
+  rewardPoint: number;
 };
 
-const REWARD_HISTORY: RewardItem[] = [
-  {
-    id: '1',
-    city: 'Bhopal',
-    issue: 'Road Repair Assistance',
-    address: 'Shivaji Nagar, Ward 14, Near Main Market',
-    attendanceDate: '04 Mar 2026',
-    rewardPoints: 45,
-  },
-  {
-    id: '2',
-    city: 'Indore',
-    issue: 'Water Supply Follow-up',
-    address: 'Vijay Nagar, Sector C, Opp. City Garden',
-    attendanceDate: '01 Mar 2026',
-    rewardPoints: 30,
-  },
-  {
-    id: '3',
-    city: 'Gwalior',
-    issue: 'Street Light Complaint',
-    address: 'Morar Road, Block B, Near Post Office',
-    attendanceDate: '26 Feb 2026',
-    rewardPoints: 20,
-  },
-  {
-    id: '4',
-    city: 'Jabalpur',
-    issue: 'Drainage Clean-up Drive',
-    address: 'Napier Town, Lane 3, Community Hall',
-    attendanceDate: '22 Feb 2026',
-    rewardPoints: 35,
-  },
-];
+type CrowdAttendanceItem = {
+  crowd_id: number;
+  crowd_name: string;
+  attended_at: string;
+  latitude: number;
+  longitude: number;
+};
 
-export default function RewardHistoryScreen() {
-  const navigation = useNavigation<any>();
-  const { width } = useWindowDimensions();
-  const horizontalPadding = Math.max(14, Math.min(22, width * 0.045));
+type RewardHistoryScreenProps = {
+  onBack?: () => void;
+};
 
-  const renderHistoryItem = ({ item }: { item: RewardItem }) => {
-    return (
-      <View style={styles.card}>
-        <View style={styles.topRow}>
-          <Text style={styles.cityText}>{item.city}</Text>
-          <View style={styles.pointsBadge}>
-            <Text style={styles.pointsText}>+{item.rewardPoints} pts</Text>
-          </View>
-        </View>
+const Row = ({ label, value }: { label: string; value: string }) => (
+  <View style={styles.row}>
+    <Text style={styles.rowLabel}>{label}</Text>
+    <Text style={styles.rowValue}>{value}</Text>
+  </View>
+);
 
-        <View style={styles.infoGroup}>
-          <Text style={styles.label}>Issue</Text>
-          <Text style={styles.value}>{item.issue}</Text>
-        </View>
+export default function RewardHistoryScreen({
+  onBack,
+}: RewardHistoryScreenProps) {
+  const [rewardRecords, setRewardRecords] = useState<RewardRecord[]>([]);
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  useEffect(() => {
+    fetchRewardHistory();
+  }, []);
 
-        <View style={styles.infoGroup}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.value} numberOfLines={2}>
-            {item.address}
-          </Text>
-        </View>
+  const fetchRewardHistory = async (showLoader = true) => {
+    try {
+      if (showLoader) {
+        setLoading(true);
+      } else {
+        setRefreshing(true);
+      }
 
-        <View style={styles.dateRow}>
-          <Text style={styles.label}>Attendance Date</Text>
-          <Text style={styles.dateValue}>{item.attendanceDate}</Text>
-        </View>
-      </View>
-    );
+      // Get user details object from AsyncStorage
+      const userDataString = await AsyncStorage.getItem('user');
+      console.log(userDataString, 'data===>>>');
+
+      let userId = null;
+      if (userDataString) {
+        try {
+          const userData = JSON.parse(userDataString);
+          userId = userData?.id || userData?._id || userData?.userId;
+        } catch (e) {
+          console.log('Failed to parse user data:', e);
+        }
+      }
+      if (!userId) {
+        setRewardRecords([]);
+        setTotalPoints(0);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+      console.log(userId, 'userId from user object');
+
+      const response = await onAdminUserCrowdAttendanceAPICall(userId);
+      console.log(response, 'reward res===');
+
+      if (response?.status) {
+        setTotalPoints(Number(response?.total_points ?? 0));
+        const mappedData: RewardRecord[] = (response?.data ?? []).map(
+          (item: CrowdAttendanceItem) => ({
+            id: String(item.crowd_id),
+            crowdName: item.crowd_name,
+            issue: 'Crowd Attendance',
+            address: `Lat: ${item.latitude}, Lng: ${item.longitude}`,
+            attendedDate: item.attended_at,
+            rewardPoint: 1,
+          }),
+        );
+        setRewardRecords(mappedData);
+      } else {
+        setRewardRecords([]);
+        setTotalPoints(0);
+      }
+    } catch (error) {
+      console.log('Reward history API error:', error);
+      setRewardRecords([]);
+      setTotalPoints(0);
+    } finally {
+      if (showLoader) {
+        setLoading(false);
+      } else {
+        setRefreshing(false);
+      }
+    }
   };
 
+  const renderItem = ({ item }: { item: RewardRecord }) => (
+    <View style={styles.card}>
+      <View style={styles.cardTopRow}>
+        <Text style={styles.cityName}>{item.crowdName}</Text>
+        <View style={styles.pointsBadge}>
+          <Text style={styles.pointsText}>+{item.rewardPoint} pts</Text>
+        </View>
+      </View>
+
+      {/* <View style={styles.issueBox}>
+        <Text style={styles.issueLabel}>Issue</Text>
+        <Text style={styles.issueValue}>{item.issue}</Text>
+      </View> */}
+
+      {/* // <Row label="Address" value={item.address} /> */}
+      <Row label="Attended" value={item.attendedDate} />
+    </View>
+  );
+
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-      <StatusBar
-        backgroundColor="#f4f7fb"
-        barStyle="dark-content"
-        translucent={false}
-      />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#f4f7fb" barStyle="dark-content" />
 
-      <View
-        style={[
-          styles.innerContainer,
-          { paddingHorizontal: horizontalPadding },
-        ]}
-      >
-        <Header
-          title="Reward History"
-          onBackPress={() => navigation.goBack()}
-          showBackButton
-        />
+      <View style={styles.header}>
+        <Pressable
+          onPress={onBack}
+          style={({ pressed }) => [
+            styles.backButton,
+            pressed && styles.backButtonPressed,
+          ]}
+          hitSlop={10}
+        >
+          <Ionicons name="chevron-back" size={22} color="#111827" />
+        </Pressable>
 
-        <Text style={styles.subtitle}>
-          Track reward points earned from each issue attended.
-        </Text>
+        <View style={styles.headerTextWrap}>
+          <Text style={styles.headerTitle}>Reward History</Text>
+          <Text style={styles.headerSubtitle}>Issue Attendance Rewards</Text>
+        </View>
+      </View>
 
+      {loading ? (
+        <View style={styles.loaderWrap}>
+          <ActivityIndicator size="large" color="#2563eb" />
+        </View>
+      ) : (
         <FlatList
-          data={REWARD_HISTORY}
+          data={rewardRecords}
           keyExtractor={item => item.id}
-          renderItem={renderHistoryItem}
+          style={{ marginBottom: 80 }}
+          renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
+          refreshing={refreshing}
+          onRefresh={() => fetchRewardHistory(false)}
+          ListHeaderComponent={
+            <Text style={styles.sectionTitle}>
+              Your Reward Points: {totalPoints}
+            </Text>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyWrap}>
+              <Text style={styles.emptyText}>No reward history found</Text>
+            </View>
+          }
         />
-      </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -133,92 +193,150 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4f7fb',
+    marginTop: 15,
   },
-  innerContainer: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 14,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e6ebf2',
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  backButtonPressed: {
+    opacity: 0.8,
+  },
+  headerTextWrap: {
     flex: 1,
   },
-  subtitle: {
-    marginTop: 4,
-    marginBottom: 12,
-    color: '#51607a',
+  headerTitle: {
+    fontSize: 20,
+    color: '#0f172a',
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+  headerSubtitle: {
     fontSize: 13,
+    color: '#6b7280',
+    marginTop: 2,
     fontFamily: FONTS_Family.FontRegular,
-    lineHeight: 19,
+  },
+  loaderWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContent: {
-    paddingBottom: 24,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+  },
+  sectionTitle: {
+    fontSize: 15,
+    color: '#334155',
+    marginBottom: 10,
+    fontFamily: FONTS_Family.FontMedium,
   },
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    borderRadius: 16,
+    padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#e8eef8',
+    borderColor: '#e6ebf2',
     ...Platform.select({
-      ios: {
-        shadowColor: '#1f2937',
-        shadowOpacity: 0.08,
-        shadowRadius: 6,
-        shadowOffset: { width: 0, height: 3 },
-      },
       android: {
         elevation: 2,
       },
+      ios: {
+        shadowColor: '#0f172a',
+        shadowOpacity: 0.08,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 6,
+      },
     }),
   },
-  topRow: {
+  cardTopRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
-  cityText: {
+  cityName: {
     flex: 1,
-    marginRight: 8,
-    color: '#0f172a',
     fontSize: 17,
+    color: '#0f172a',
     fontFamily: FONTS_Family.FontSemiBold,
+    marginRight: 10,
   },
   pointsBadge: {
-    backgroundColor: '#fff3e8',
-    borderRadius: 99,
-    paddingHorizontal: 10,
+    backgroundColor: '#dcfce7',
+    borderRadius: 999,
     paddingVertical: 5,
+    paddingHorizontal: 10,
   },
   pointsText: {
-    color: '#ea580c',
     fontSize: 12,
-    fontFamily: FONTS_Family.FontMedium,
+    color: '#166534',
+    fontFamily: FONTS_Family.FontSemiBold,
   },
-  infoGroup: {
+  issueBox: {
+    backgroundColor: '#fff7ed',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#fed7aa',
     marginBottom: 10,
   },
-  label: {
-    color: '#64748b',
-    fontSize: 12,
-    fontFamily: FONTS_Family.FontMedium,
+  issueLabel: {
+    fontSize: 11,
+    color: '#9a3412',
     marginBottom: 3,
-  },
-  value: {
-    color: '#111827',
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: FONTS_Family.FontRegular,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#eef2f7',
-    paddingTop: 10,
-    marginTop: 2,
-  },
-  dateValue: {
-    color: '#0f172a',
-    fontSize: 13,
+    textTransform: 'uppercase',
     fontFamily: FONTS_Family.FontMedium,
+  },
+  issueValue: {
+    fontSize: 14,
+    color: '#7c2d12',
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 6,
+  },
+  rowLabel: {
+    width: 72,
+    fontSize: 13,
+    color: '#64748b',
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  rowValue: {
+    flex: 1,
+    fontSize: 13,
+    color: '#1f2937',
+    fontFamily: FONTS_Family.FontRegular,
+    lineHeight: 18,
+  },
+  emptyWrap: {
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#6b7280',
+    fontSize: 13,
+    fontFamily: FONTS_Family.FontRegular,
   },
 });

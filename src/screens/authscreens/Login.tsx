@@ -122,6 +122,10 @@ const Login = () => {
           }
         }
 
+        if (res?.user?.full_name) {
+          await AsyncStorage.setItem('full_name', String(res.user.full_name));
+        }
+
         if (res.is_profile_complete === false) {
           SnackBarCommon.displayMessage({
             message: 'Please complete signup',

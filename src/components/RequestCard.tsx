@@ -148,7 +148,7 @@ export default RequestCard;
 const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.white,
-    borderRadius: 18,
+    borderRadius: 6,
     padding: 8,
     marginBottom: 10,
     borderWidth: 0.5,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   avatar: {
     height: 48,
     width: 48,
-    borderRadius: 24,
+    borderRadius: 6,
     backgroundColor: '#E8EEF9',
     justifyContent: 'center',
     alignItems: 'center',
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.rejectBg || '#EEE',
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 6,
     marginRight: 8,
     alignItems: 'center',
   },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 6,
     marginLeft: 8,
     alignItems: 'center',
   },

@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { FONTS_Family } from '../../constants/Font';
@@ -246,7 +246,7 @@ export default function UploadDocScreen() {
             {/* Aadhaar Card */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Icon name="badge" size={24} color={COLORS.primary} />
+                <Icon name="card-outline" size={24} color={COLORS.primary} />
                 <Text style={styles.cardTitle}>Aadhaar Card</Text>
               </View>
 
@@ -258,7 +258,7 @@ export default function UploadDocScreen() {
                 />
               ) : (
                 <View style={styles.emptyBox}>
-                  <Icon name="add-photo-alternate" size={32} color="#9ca3af" />
+                  <Icon name="image-outline" size={32} color="#9ca3af" />
                   <Text style={styles.emptyText}>No image selected</Text>
                 </View>
               )}
@@ -267,7 +267,7 @@ export default function UploadDocScreen() {
                 style={styles.selectBtn}
                 onPress={() => handleSelectDocument('id_proof')}
               >
-                <Icon name="photo-library" size={18} color={COLORS.primary} />
+                <Icon name="images-outline" size={18} color={COLORS.primary} />
                 <Text style={styles.selectBtnText}>
                   {idProof ? 'Change Image' : 'Select Image'}
                 </Text>
@@ -277,7 +277,7 @@ export default function UploadDocScreen() {
             {/* PAN Card */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Icon name="credit-card" size={24} color={COLORS.primary} />
+                <Icon name="card-outline" size={24} color={COLORS.primary} />
                 <Text style={styles.cardTitle}>PAN Card</Text>
               </View>
 
@@ -289,7 +289,7 @@ export default function UploadDocScreen() {
                 />
               ) : (
                 <View style={styles.emptyBox}>
-                  <Icon name="add-photo-alternate" size={32} color="#9ca3af" />
+                  <Icon name="image-outline" size={32} color="#9ca3af" />
                   <Text style={styles.emptyText}>No image selected</Text>
                 </View>
               )}
@@ -298,7 +298,7 @@ export default function UploadDocScreen() {
                 style={styles.selectBtn}
                 onPress={() => handleSelectDocument('pancard')}
               >
-                <Icon name="photo-library" size={18} color={COLORS.primary} />
+                <Icon name="images-outline" size={18} color={COLORS.primary} />
                 <Text style={styles.selectBtnText}>
                   {pancard ? 'Change Image' : 'Select Image'}
                 </Text>
@@ -308,7 +308,11 @@ export default function UploadDocScreen() {
             {/* Bar Certificate */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Icon name="description" size={24} color={COLORS.primary} />
+                <Icon
+                  name="document-text-outline"
+                  size={24}
+                  color={COLORS.primary}
+                />
                 <Text style={styles.cardTitle}>Bar Certificate</Text>
               </View>
 
@@ -320,7 +324,7 @@ export default function UploadDocScreen() {
                 />
               ) : (
                 <View style={styles.emptyBox}>
-                  <Icon name="add-photo-alternate" size={32} color="#9ca3af" />
+                  <Icon name="image-outline" size={32} color="#9ca3af" />
                   <Text style={styles.emptyText}>No image selected</Text>
                 </View>
               )}
@@ -329,7 +333,7 @@ export default function UploadDocScreen() {
                 style={styles.selectBtn}
                 onPress={() => handleSelectDocument('bar_certificate')}
               >
-                <Icon name="photo-library" size={18} color={COLORS.primary} />
+                <Icon name="images-outline" size={18} color={COLORS.primary} />
                 <Text style={styles.selectBtnText}>
                   {barCertificate ? 'Change Image' : 'Select Image'}
                 </Text>
@@ -346,7 +350,7 @@ export default function UploadDocScreen() {
                 <ActivityIndicator size="small" color="#ffffff" />
               ) : (
                 <>
-                  <Icon name="cloud-upload" size={20} color="#ffffff" />
+                  <Icon name="cloud-upload-outline" size={20} color="#ffffff" />
                   <Text style={styles.uploadBtnText}>Upload All Documents</Text>
                 </>
               )}

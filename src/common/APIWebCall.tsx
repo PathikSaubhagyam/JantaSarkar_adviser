@@ -1,3 +1,13 @@
+// Get crowd attendance for a user (admin API)
+export const onAdminUserCrowdAttendanceAPICall = userId => {
+  return _REQUEST2SERVER(
+    `mobile/admin_api/users/${userId}/crowd-attendance/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
 import axios from 'axios';
 import InternetPermission from '../components/InternetPermission';
 import { BASE_URL } from '../constants/Utils';
@@ -226,7 +236,7 @@ export const onNotificationSettingAPICall = params => {
 
 export const onDashboardAPICall = () => {
   return _REQUEST2SERVER(
-    `mobile/user/home-dashboard/`,
+    `mobile/advisor/dashboard/`,
     null,
     'GET',
     false,

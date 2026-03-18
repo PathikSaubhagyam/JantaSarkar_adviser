@@ -16,7 +16,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from '@react-native-community/geolocation';
 import { launchCamera } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { FONTS_Family } from '../../constants/Font';
 import CommonModal, { ModalType } from '../../components/CommonModal';
 import { onCrowdAttendanceAPICall } from '../../common/APIWebCall';
@@ -379,42 +379,52 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
   }, [loading]);
 
   const formatEventDate = useCallback((value: string) => {
-    if (!value) {
-      return '-';
+    if (!value) return '-';
+
+    const parsed = new Date(value);
+
+    if (!Number.isNaN(parsed.getTime())) {
+      const day = String(parsed.getDate()).padStart(2, '0');
+      const month = String(parsed.getMonth() + 1).padStart(2, '0');
+      const year = parsed.getFullYear();
+
+      return `${day}-${month}-${year}`; // ✅ 13-03-2026
     }
 
-    const parsedDate = new Date(value);
-    if (Number.isNaN(parsedDate.getTime())) {
-      return value;
-    }
-
-    return parsedDate.toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+    return value;
   }, []);
 
   const formatEventTime = useCallback((value: string) => {
-    if (!value) {
-      return '-';
-    }
+    if (!value) return '-';
 
     const normalized = value.trim();
+
+    // If already in AM/PM format
     const twelveHourMatch = normalized.match(
-      /^(\d{1,2}:\d{2})(?::\d{2})?\s*(AM|PM)$/i,
+      /^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)$/i,
     );
+
     if (twelveHourMatch) {
-      return `${twelveHourMatch[1]} ${twelveHourMatch[2].toUpperCase()}`;
+      const hours = twelveHourMatch[1].padStart(2, '0');
+      const minutes = twelveHourMatch[2];
+      const period = twelveHourMatch[3].toUpperCase();
+
+      return `${hours}:${minutes} ${period}`; // ✅ 02:30 PM
     }
 
+    // Convert 24-hour → 12-hour
     const twentyFourHourMatch = normalized.match(
       /^(\d{1,2}):(\d{2})(?::\d{2})?$/,
     );
+
     if (twentyFourHourMatch) {
-      const hours = twentyFourHourMatch[1].padStart(2, '0');
+      let hours = Number(twentyFourHourMatch[1]);
       const minutes = twentyFourHourMatch[2];
-      return `${hours}:${minutes}`;
+
+      const period = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+
+      return `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
     }
 
     return normalized;
@@ -463,43 +473,36 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
 
         <View style={styles.dateTimeRow}>
           <View style={styles.metaItem}>
-            <Icon name="event" size={16} color="#64748b" />
+            <Icon name="calendar-outline" size={16} color="#64748b" />
             <Text style={styles.metaText}>
               {formatEventDate(item.event_date)}
             </Text>
           </View>
           <View style={styles.metaItem}>
-            <Icon name="schedule" size={16} color="#64748b" />
+            <Icon name="time-outline" size={16} color="#64748b" />
             <Text style={styles.metaText}>
               {formatEventTime(item.event_time)}
             </Text>
           </View>
-        </View>
-
-        <TouchableOpacity
-          style={[
-            styles.attendanceButton,
-            attendanceAdded && styles.attendanceButtonDone,
-          ]}
-          onPress={() => handleAddAttendance(item.id)}
-          disabled={capturingId === item.id || attendanceAdded}
-        >
-          {capturingId === item.id ? (
-            <ActivityIndicator size="small" color="#ffffff" />
-          ) : (
-            <>
+          <TouchableOpacity
+            style={[
+              styles.attendanceButton,
+              attendanceAdded && styles.attendanceButtonDone,
+            ]}
+            onPress={() => handleAddAttendance(item.id)}
+            disabled={capturingId === item.id || attendanceAdded}
+          >
+            {capturingId === item.id ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
               <Icon
-                name={attendanceAdded ? 'check-circle' : 'photo-camera'}
+                name={attendanceAdded ? 'checkmark' : 'camera-outline'}
                 size={18}
                 color="#ffffff"
               />
-
-              <Text style={styles.attendanceButtonText}>
-                {attendanceAdded ? 'Attendance Added' : 'Add Attendance'}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -510,6 +513,7 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
         barStyle="dark-content"
         backgroundColor={Platform.OS === 'android' ? '#ffffff' : undefined}
       />
+      <View style={{ marginTop: 15, backgroundColor: '#ffffff' }} />
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Crowd Management</Text>
@@ -531,7 +535,7 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
           }
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Icon name="groups" size={56} color="#cbd5e1" />
+              <Icon name="people-outline" size={56} color="#cbd5e1" />
               <Text style={styles.emptyText}>{emptyStateText}</Text>
             </View>
           }
@@ -584,7 +588,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 14,
+    borderRadius: 7,
     padding: 14,
     borderWidth: 1,
     borderColor: '#e2e8f0',
@@ -666,12 +670,13 @@ const styles = StyleSheet.create({
   },
   attendanceButton: {
     backgroundColor: '#2563eb',
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 22,
+    width: 44,
+    height: 44,
+    alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8,
+    marginLeft: '20%',
   },
   attendanceButtonDone: {
     backgroundColor: '#16a34a',
