@@ -1,6 +1,7 @@
 import {
   Image,
   KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -35,6 +36,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const getOtpString = () => otp.join('');
   const otpInputs = useRef([]);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const otpSectionRef = useRef<View>(null);
 
   useEffect(() => {
     let interval;
@@ -66,6 +69,10 @@ const Login = () => {
         setShowOtpSection(true);
         setTimer(60);
         setServerOtp(res?.otp || res?.data?.otp || '');
+        setTimeout(
+          () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+          200,
+        );
         console.log(res?.data, 'otp----');
 
         if (res?.data?.user_id) {
@@ -186,11 +193,30 @@ const Login = () => {
     setServerOtp('');
   };
 
+  const scrollToOtpSection = () => {
+    if (otpSectionRef.current) {
+      otpSectionRef.current.measureLayout(
+        scrollViewRef.current?.getInnerViewNode?.(),
+        (_x, y) => {
+          scrollViewRef.current?.scrollTo({ y: y - 20, animated: true });
+        },
+        () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+      );
+    } else {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }
+  };
+
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: COLORS.white }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
+        ref={scrollViewRef}
+        contentContainerStyle={{ paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -227,7 +253,7 @@ const Login = () => {
 
               <View style={{ flex: 1 }}>
                 <TextInputView
-                  placeholder="9999999999"
+                  placeholder="98765 43210"
                   onChangeText={setPhoneNumber}
                   value={phoneNumber}
                   keyboardType="number-pad"
@@ -243,7 +269,10 @@ const Login = () => {
           </View>
 
           {showOtpSection && (
-            <View style={{ marginTop: 40, paddingHorizontal: 20 }}>
+            <View
+              ref={otpSectionRef}
+              style={{ marginTop: 40, paddingHorizontal: 20 }}
+            >
               <TextCommonSemiBold
                 text={'VERIFICATION'}
                 textViewStyle={styles.verificationHeader}
@@ -272,6 +301,15 @@ const Login = () => {
                     value={digit}
                     onChangeText={value => handleOtpChange(value, index)}
                     onKeyPress={e => handleKeyPress(e, index)}
+                    onFocus={() =>
+                      setTimeout(
+                        () =>
+                          scrollViewRef.current?.scrollToEnd({
+                            animated: true,
+                          }),
+                        150,
+                      )
+                    }
                     keyboardType="number-pad"
                     maxLength={1}
                   />

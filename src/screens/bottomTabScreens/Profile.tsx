@@ -6,7 +6,6 @@ import {
   View,
   Image,
   TouchableOpacity,
-  Alert,
   ScrollView,
   Dimensions,
   Modal,
@@ -37,6 +36,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
   console.log('ppppppppppp', profile);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showImagePickerModal, setShowImagePickerModal] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -61,20 +61,12 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
   };
 
   const selectImage = () => {
-    Alert.alert(
-      'Update Profile Photo',
-      'Choose an option',
-      [
-        { text: 'Camera', onPress: openCamera },
-        { text: 'Gallery', onPress: openGallery },
-        { text: 'Cancel', style: 'cancel' },
-      ],
-      { cancelable: true },
-    );
+    setShowImagePickerModal(true);
   };
 
   // 📷 Open Camera
   const openCamera = async () => {
+    setShowImagePickerModal(false);
     const result = await launchCamera({
       mediaType: 'photo',
       quality: 0.8,
@@ -87,6 +79,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
 
   // 🖼 Open Gallery
   const openGallery = async () => {
+    setShowImagePickerModal(false);
     const result = await launchImageLibrary({
       mediaType: 'photo',
       quality: 0.8,
@@ -110,24 +103,6 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
       console.log('Logout error:', error);
     }
   };
-
-  // 🔹 Reusable Menu Item
-  // const renderMenuItem = (title, subtitle, iconName, bgColor, iconColor) => (
-  //   <TouchableOpacity style={styles.menuItem}>
-  //     <View style={styles.menuLeft}>
-  //       <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
-  //         <Icon name={iconName} size={20} color={iconColor} />
-  //       </View>
-
-  //       <View style={{ marginLeft: 12 }}>
-  //         <TextCommonMedium text={title} textViewStyle={styles.menuTitle} />
-  //         <TextCommonRegular text={subtitle} textViewStyle={styles.menuSub} />
-  //       </View>
-  //     </View>
-
-  //     <Icon name="chevron-forward" size={22} color="#ccc" />
-  //   </TouchableOpacity>
-  // );
 
   const renderMenuItem = (
     title,
@@ -213,11 +188,12 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             () => navigation.navigate('UploadDocScreen'),
           )}
           {renderMenuItem(
-            'Legal History',
-            'Past cases and records',
-            'hammer-outline',
+            'Bank Details',
+            'Manage your bank accounts',
+            'card-outline',
             '#DFF3EA',
             '#00A86B',
+            () => navigation.navigate('BankDetailsScreen'),
           )}
         </View>
 
@@ -244,6 +220,15 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
           )}
 
           {renderMenuItem(
+            'Notifications',
+            'View your recent notifications',
+            'notifications-outline',
+            '#EEF2FF',
+            '#3A7BFF',
+            () => navigation.navigate('NotificationScreen'),
+          )}
+
+          {renderMenuItem(
             'Help & Support',
             'FAQs and legal aid desk',
             'help-circle-outline',
@@ -259,6 +244,45 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             textViewStyle={styles.logoutText}
           />
         </TouchableOpacity>
+
+        <Modal
+          visible={showImagePickerModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowImagePickerModal(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.imagePickerModal}>
+              <Text style={styles.modalTitle}>Update Profile Photo</Text>
+              <Text style={styles.imagePickerMessage}>Choose an option</Text>
+
+              <TouchableOpacity
+                style={styles.imagePickerOption}
+                onPress={openCamera}
+                activeOpacity={0.85}
+              >
+                <Icon name="camera-outline" size={20} color="#FF7A00" />
+                <Text style={styles.imagePickerOptionText}>Camera</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.imagePickerOption}
+                onPress={openGallery}
+                activeOpacity={0.85}
+              >
+                <Icon name="images-outline" size={20} color="#3A7BFF" />
+                <Text style={styles.imagePickerOptionText}>Gallery</Text>
+              </TouchableOpacity>
+
+              <Pressable
+                style={styles.imagePickerCancelButton}
+                onPress={() => setShowImagePickerModal(false)}
+              >
+                <Text style={styles.imagePickerCancelText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
 
         <Modal
           visible={showLogoutModal}
@@ -437,6 +461,23 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  imagePickerModal: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 20,
+    width: '85%',
+    ...Platform.select({
+      android: { elevation: 8 },
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 12,
+      },
+    }),
+  },
   modalHeader: {
     marginBottom: 16,
   },
@@ -475,5 +516,40 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: 15,
     color: '#ffffff',
+  },
+  imagePickerMessage: {
+    fontSize: 15,
+    color: '#6b7280',
+    marginTop: 8,
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  imagePickerOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginBottom: 12,
+    backgroundColor: '#f9fafb',
+  },
+  imagePickerOptionText: {
+    fontSize: 15,
+    color: '#1f2937',
+  },
+  imagePickerCancelButton: {
+    marginTop: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#f3f4f6',
+  },
+  imagePickerCancelText: {
+    fontSize: 15,
+    color: '#6b7280',
   },
 });

@@ -84,9 +84,9 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.card, styles.greenCard]}
             activeOpacity={0.85}
-            // onPress={() =>
-            //   navigation.navigate('Request', { initialTab: 'History' })
-            // }
+            onPress={() =>
+              navigation.navigate('Request', { initialTab: 'History' })
+            }
           >
             <View style={styles.iconBox}>
               <Icon name="people-outline" size={26} color="#16a34a" />
@@ -113,6 +113,27 @@ export default function HomeScreen() {
             </Text>
             <Text style={[styles.cardLabel, { color: '#f97316' }]}>
               Your Rewards ⭐⭐⭐
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.card, styles.purpleCard]}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('PaymentHistoryScreen')}
+          >
+            <View style={styles.iconBox}>
+              <Icon name="wallet-outline" size={26} color="#7c3aed" />
+            </View>
+
+            {/* <Text style={[styles.cardNumber, { color: '#7c3aed' }]}>
+              ₹{availableBalance}
+            </Text> */}
+
+            <Text style={[styles.cardLabel, { color: '#7c3aed' }]}>
+              Payment History
+            </Text>
+
+            <Text style={[styles.addMoney, { color: '#7c3aed' }]}>
+              View Payments
             </Text>
           </TouchableOpacity>
         </View>
@@ -176,6 +197,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  purpleCard: {
+    // backgroundColor: '#7c3aed',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#7c3aed',
+  },
 
   cardNumber: {
     fontSize: 26,
@@ -189,6 +215,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     opacity: 0.9,
     fontWeight: '600',
+  },
+  addMoney: {
+    marginTop: 10,
+    fontSize: 12,
+    fontWeight: '700',
   },
 
   blueCard: {

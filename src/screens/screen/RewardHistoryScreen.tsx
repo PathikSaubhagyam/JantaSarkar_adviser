@@ -13,7 +13,6 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { onAdminUserCrowdAttendanceAPICall } from '../../common/APIWebCall';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '../../constants/Utils';
 import { FONTS_Family } from '../../constants/Font';
 
 type RewardRecord = {
@@ -44,6 +43,70 @@ const Row = ({ label, value }: { label: string; value: string }) => (
   </View>
 );
 
+const formatAttendedDate = (value: string) => {
+  if (!value) {
+    return '';
+  }
+
+  const toDisplay = (
+    day: number,
+    month: number,
+    year: number,
+    hour: number,
+    minute: number,
+    hasTime: boolean,
+  ) => {
+    const dd = String(day).padStart(2, '0');
+    const mm = String(month).padStart(2, '0');
+    const yyyy = String(year);
+
+    if (!hasTime) {
+      return `${dd}-${mm}-${yyyy}`;
+    }
+
+    const safeHour = Number.isFinite(hour) ? hour : 0;
+    const safeMinute = Number.isFinite(minute) ? minute : 0;
+    const period = safeHour >= 12 ? 'PM' : 'AM';
+    const hour12 = safeHour % 12 || 12;
+
+    return `${dd}-${mm}-${yyyy} ${String(hour12).padStart(2, '0')}:${String(
+      safeMinute,
+    ).padStart(2, '0')} ${period}`;
+  };
+
+  const normalized = value.trim();
+
+  const customFormatMatch = normalized.match(
+    /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s+(\d{1,2}):(\d{2}))?$/,
+  );
+  if (customFormatMatch) {
+    const [, day, month, year, hour = '0', minute = '0'] = customFormatMatch;
+    const hasTime = customFormatMatch[4] !== undefined;
+    return toDisplay(
+      Number(day),
+      Number(month),
+      Number(year),
+      Number(hour),
+      Number(minute),
+      hasTime,
+    );
+  }
+
+  const parsedDate = new Date(normalized);
+  if (!Number.isNaN(parsedDate.getTime())) {
+    return toDisplay(
+      parsedDate.getDate(),
+      parsedDate.getMonth() + 1,
+      parsedDate.getFullYear(),
+      parsedDate.getHours(),
+      parsedDate.getMinutes(),
+      true,
+    );
+  }
+
+  return normalized;
+};
+
 export default function RewardHistoryScreen({
   onBack,
 }: RewardHistoryScreenProps) {
@@ -63,19 +126,24 @@ export default function RewardHistoryScreen({
         setRefreshing(true);
       }
 
-      // Get user details object from AsyncStorage
-      const userDataString = await AsyncStorage.getItem('user');
-      console.log(userDataString, 'data===>>>');
+      const profileString = await AsyncStorage.getItem('profile');
 
-      let userId = null;
-      if (userDataString) {
+      let userId: string | null = null;
+      if (profileString) {
         try {
-          const userData = JSON.parse(userDataString);
-          userId = userData?.id || userData?._id || userData?.userId;
+          const profile = JSON.parse(profileString);
+          const idFromProfile =
+            profile?.id ?? profile?._id ?? profile?.user_id ?? profile?.userId;
+          if (idFromProfile !== undefined && idFromProfile !== null) {
+            userId = String(idFromProfile);
+          }
         } catch (e) {
-          console.log('Failed to parse user data:', e);
+          console.log('Failed to parse profile:', e);
         }
       }
+
+      console.log(userId, 'userId from profile');
+
       if (!userId) {
         setRewardRecords([]);
         setTotalPoints(0);
@@ -83,7 +151,6 @@ export default function RewardHistoryScreen({
         setRefreshing(false);
         return;
       }
-      console.log(userId, 'userId from user object');
 
       const response = await onAdminUserCrowdAttendanceAPICall(userId);
       console.log(response, 'reward res===');
@@ -133,7 +200,7 @@ export default function RewardHistoryScreen({
       </View> */}
 
       {/* // <Row label="Address" value={item.address} /> */}
-      <Row label="Attended" value={item.attendedDate} />
+      <Row label="Attended" value={formatAttendedDate(item.attendedDate)} />
     </View>
   );
 

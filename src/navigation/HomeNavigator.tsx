@@ -5,6 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/Colors';
 import CommunityFeedAdd from '../screens/bottomTabScreens/CommunityFeedAdd';
 import RewardHistoryScreen from '../screens/screen/RewardHistoryScreen';
+import BankDetailsScreen from '../screens/screen/BankDetailsScreen';
+import NotificationScreen from '../screens/screen/NotificationScreen';
+import PaymentHistoryScreen from '../screens/screen/PaymentHistoryScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
@@ -22,6 +25,15 @@ const HomeNavigator = () => {
         <Stack.Screen
           name="RewardHistoryScreen"
           component={RewardHistoryScreen}
+        />
+        <Stack.Screen name="BankDetailsScreen" component={BankDetailsScreen} />
+        <Stack.Screen
+          name="NotificationScreen"
+          component={NotificationScreen}
+        />
+        <Stack.Screen
+          name="PaymentHistoryScreen"
+          component={PaymentHistoryScreen}
         />
       </Stack.Navigator>
     </SafeAreaView>

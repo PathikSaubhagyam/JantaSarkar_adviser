@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type HeaderProps = {
   title: string;
@@ -16,7 +17,7 @@ export default function Header({
       <View style={styles.header}>
         {showBackButton ? (
           <Pressable style={styles.backButton} onPress={onBackPress}>
-            <Text style={styles.backArrow}>←</Text>
+            <Ionicons name="chevron-back" size={22} color="#1f2937" />
           </Pressable>
         ) : (
           <View style={styles.backButton} />

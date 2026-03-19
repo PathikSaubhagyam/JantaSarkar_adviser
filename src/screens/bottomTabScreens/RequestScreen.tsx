@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -58,8 +58,44 @@ const RequestScreen = () => {
     Ongoing: 0,
     History: 0,
   });
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
 
   const isFocused = useIsFocused();
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.log('No access token found');
+        return;
+      }
+
+      // Fetch profile from API
+      const response = await fetch(`${BASE_URL}/mobile/profile/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log(data, 'profile api response');
+
+      if (data?.status && data?.data) {
+        // Save profile to AsyncStorage
+        await AsyncStorage.setItem('profile', JSON.stringify(data.data));
+      } else {
+        console.log('Profile API did not return expected data');
+      }
+    } catch (error) {
+      console.log('Error fetching profile from API:', error);
+    }
+  };
 
   useEffect(() => {
     // Handle initial tab from route params
@@ -74,20 +110,88 @@ const RequestScreen = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route?.params?.initialTab]);
 
-  useEffect(() => {
-    let intervalId;
-    if (isFocused) {
-      loadComplaints();
-      // Poll every 30 seconds
-      intervalId = setInterval(() => {
-        loadComplaints();
-      }, 30000);
+  const fetchComplaints = useCallback(
+    async (showLoader: boolean = false) => {
+      try {
+        if (showLoader) {
+          setLoading(true);
+        }
+
+        // Fetch all tab data in parallel
+        const [coordinates, newRes, ongoingRes, historyRes] = await Promise.all(
+          [
+            getLiveCoordinates(),
+            onAdvisorComplaintsAPICall(),
+            onAdvisorOngoingAPICall(),
+            onAdvisorHistoryAPICall(),
+          ],
+        );
+
+        // If activeTab is New, refetch with coordinates
+        let activeList = [];
+        if (activeTab === 'New') {
+          const coordRes = await onAdvisorComplaintsAPICall(
+            coordinates?.latitude,
+            coordinates?.longitude,
+          );
+          activeList = coordRes?.data || [];
+        } else if (activeTab === 'Ongoing') {
+          activeList = ongoingRes?.data || [];
+        } else if (activeTab === 'History') {
+          activeList = historyRes?.data || [];
+        }
+
+        setFormatComplaintData(activeList);
+
+        setTabCounts({
+          New: (newRes?.data || []).length,
+          Ongoing: (ongoingRes?.data || []).length,
+          History: (historyRes?.data || []).length,
+        });
+      } catch (error) {
+        console.log('LOAD ERROR =>', error);
+      } finally {
+        if (showLoader) {
+          setLoading(false);
+        }
+      }
+    },
+    [activeTab],
+  );
+
+  const startPolling = useCallback(() => {
+    // Clear any existing interval
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
     }
+
+    // Poll every 1 second
+    pollingIntervalRef.current = setInterval(() => {
+      console.log('Polling for complaint updates...');
+      fetchComplaints(false);
+    }, 1000);
+  }, [fetchComplaints]);
+
+  const stopPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isFocused) {
+      stopPolling();
+      return;
+    }
+
+    fetchComplaints(true);
+    startPolling();
+
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      stopPolling();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFocused, activeTab]);
+  }, [isFocused, activeTab, fetchComplaints, startPolling, stopPolling]);
 
   useEffect(() => {
     const syncFCMToken = async () => {
@@ -140,46 +244,6 @@ const RequestScreen = () => {
     }
   };
 
-  const loadComplaints = async () => {
-    try {
-      setLoading(true);
-
-      // Fetch all tab data in parallel
-      const [coordinates, newRes, ongoingRes, historyRes] = await Promise.all([
-        getLiveCoordinates(),
-        onAdvisorComplaintsAPICall(),
-        onAdvisorOngoingAPICall(),
-        onAdvisorHistoryAPICall(),
-      ]);
-
-      // If activeTab is New, refetch with coordinates
-      let activeList = [];
-      if (activeTab === 'New') {
-        const coordRes = await onAdvisorComplaintsAPICall(
-          coordinates?.latitude,
-          coordinates?.longitude,
-        );
-        activeList = coordRes?.data || [];
-      } else if (activeTab === 'Ongoing') {
-        activeList = ongoingRes?.data || [];
-      } else if (activeTab === 'History') {
-        activeList = historyRes?.data || [];
-      }
-
-      setFormatComplaintData(activeList);
-
-      setTabCounts({
-        New: (newRes?.data || []).length,
-        Ongoing: (ongoingRes?.data || []).length,
-        History: (historyRes?.data || []).length,
-      });
-    } catch (error) {
-      console.log('LOAD ERROR =>', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const onAcceptPress = async complaintId => {
     try {
       setLoading(true);
@@ -196,7 +260,7 @@ const RequestScreen = () => {
       }
 
       if (res?.success !== false) {
-        loadComplaints();
+        fetchComplaints(false);
       }
       console.log(res, 'complete res===');
 
@@ -230,7 +294,7 @@ const RequestScreen = () => {
           isSuccess: true,
         });
 
-        loadComplaints();
+        fetchComplaints(false);
         SnackBarCommon.displayMessage({
           message: res?.message || 'Failed',
           isSuccess: true,
@@ -264,7 +328,7 @@ const RequestScreen = () => {
   const onRefresh = async () => {
     try {
       setRefreshing(true);
-      await loadComplaints();
+      await fetchComplaints(false);
     } catch (error) {
       console.log('Refresh error:', error);
     } finally {

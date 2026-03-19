@@ -1,7 +1,7 @@
 // Get crowd attendance for a user (admin API)
 export const onAdminUserCrowdAttendanceAPICall = userId => {
   return _REQUEST2SERVER(
-    `mobile/admin_api/users/${userId}/crowd-attendance/`,
+    `/admin_api/users/${userId}/crowd-attendance/`,
     null,
     'GET',
     false,
@@ -254,6 +254,30 @@ export const onCrowdAttendanceAPICall = (crowdId, formData) => {
   );
 };
 
+export const onAddBankDetailsAPICall = params => {
+  return _REQUEST2SERVER(
+    `mobile/advisor/add-bank/`,
+    params,
+    'POST',
+    false,
+    true,
+  );
+};
+
+export const onNotificationListAPICall = () => {
+  return _REQUEST2SERVER(`mobile/notification-list/`, null, 'GET', false, true);
+};
+
+export const onPaymentHistoryAPICall = () => {
+  return _REQUEST2SERVER(
+    `mobile/advisor/payment-history/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
 export default {
   onSignUPAPICall,
   onLoginAPICall,
@@ -276,4 +300,7 @@ export default {
   onNotificationSettingAPICall,
   onDashboardAPICall,
   onCrowdAttendanceAPICall,
+  onAddBankDetailsAPICall,
+  onNotificationListAPICall,
+  onPaymentHistoryAPICall,
 };
