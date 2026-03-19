@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants/Colors';
-import { FONTS_SIZE } from '../constants/Font';
+import { FONTS_Family, FONTS_SIZE } from '../constants/Font';
 import TextCommonBold from './TextCommonBold';
 import TextCommonMedium from './TextCommonMedium';
 import TextCommonRegular from './TextCommonRegular';
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 
   avatarText: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.primary,
   },
 
@@ -251,12 +251,12 @@ const styles = StyleSheet.create({
   },
 
   rejectText: {
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.black,
   },
 
   acceptText: {
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.white,
   },
 });

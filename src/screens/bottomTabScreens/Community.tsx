@@ -9,7 +9,7 @@ import {
   Linking,
   Image,
 } from 'react-native';
-import { FONTS_SIZE } from '../../constants/Font';
+import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import { COLORS } from '../../constants/Colors';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import TextCommonMedium from '../../components/TextCommonMedium';
@@ -149,14 +149,16 @@ const Community = () => {
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.title}>Community Feed</Text>
-
-        <FlatList
-          data={requestList}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
-        />
+        <View style={{ padding: 16 }}>
+          <FlatList
+            data={requestList}
+            keyExtractor={item => item.id}
+            style={{ marginLeft: 1 }}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+          />
+        </View>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -196,19 +198,24 @@ const styles = StyleSheet.create({
   fabText: {
     color: COLORS.white,
     fontSize: 30,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontMedium,
+    marginTop: 8,
   },
   title: {
     fontSize: FONTS_SIZE.txt_27,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.black,
     marginTop: 15,
     marginBottom: 15,
+    height: 70,
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    padding: 16,
   },
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
-    padding: 16,
+    backgroundColor: '#F4F6F9',
+    // padding: 16,
   },
 
   card: {
@@ -217,6 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     elevation: 3,
+    width: '99%',
   },
 
   department: {
@@ -231,7 +239,7 @@ const styles = StyleSheet.create({
 
   personTitle: {
     marginTop: 10,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.black,
   },
 

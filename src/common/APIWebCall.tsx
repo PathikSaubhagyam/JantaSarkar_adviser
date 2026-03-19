@@ -51,9 +51,11 @@ const _REQUEST2SERVER = async (
       }
     }
 
+    const requestUrl = /^https?:\/\//i.test(url) ? url : BASE_URL + url;
+
     const config = {
       method: method,
-      url: BASE_URL + url,
+      url: requestUrl,
       headers: headers,
       data: params,
     };
@@ -278,6 +280,16 @@ export const onPaymentHistoryAPICall = () => {
   );
 };
 
+export const onPageContentAPICall = type => {
+  return _REQUEST2SERVER(
+    `http://192.168.1.10:8000/mobile/page/?type=${encodeURIComponent(type)}`,
+    null,
+    'GET',
+    false,
+    false,
+  );
+};
+
 export default {
   onSignUPAPICall,
   onLoginAPICall,
@@ -303,4 +315,5 @@ export default {
   onAddBankDetailsAPICall,
   onNotificationListAPICall,
   onPaymentHistoryAPICall,
+  onPageContentAPICall,
 };

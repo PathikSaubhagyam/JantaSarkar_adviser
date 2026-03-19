@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { FONTS_Family } from '../constants/Font';
 
 type HeaderProps = {
   title: string;
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: '#1f2937',
   },
   underline: {

@@ -154,10 +154,10 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             textViewStyle={styles.name}
           />
 
-          <TextCommonMedium
+          {/* <TextCommonMedium
             text={`Verified Citizen • ${profile?.phone_number || ''}`}
             textViewStyle={styles.subText}
-          />
+          /> */}
           <TextCommonMedium
             text={`${profile?.role || ''} • ${profile?.city || ''}`}
             textViewStyle={styles.subText}
@@ -234,6 +234,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             'help-circle-outline',
             '#E9EDF3',
             '#5A6B85',
+            () => navigation.navigate('HelpSupportScreen'),
           )}
         </View>
 

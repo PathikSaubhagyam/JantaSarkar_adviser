@@ -18,7 +18,7 @@ import TextCommonSemiBold from '../../components/TextCommonSemiBold';
 import TextCommonMedium from '../../components/TextCommonMedium';
 import TextInputView from '../../components/TextInputView';
 import CommonButton from '../../components/CommonButton';
-import { FONTS_SIZE } from '../../constants/Font';
+import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import TextCommonBold from '../../components/TextCommonBold';
 import SnackBarCommon from '../../components/SnackBarCommon';
 import APIWebCall from '../../common/APIWebCall';
@@ -35,6 +35,7 @@ const Login = () => {
   const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState(false);
   const getOtpString = () => otp.join('');
+  const isPhoneNumberValid = /^\d{10}$/.test(phoneNumber.trim());
   const otpInputs = useRef([]);
   const scrollViewRef = useRef<ScrollView>(null);
   const otpSectionRef = useRef<View>(null);
@@ -193,6 +194,11 @@ const Login = () => {
     setServerOtp('');
   };
 
+  const handlePhoneNumberChange = (value: string) => {
+    const onlyDigits = value.replace(/\D/g, '');
+    setPhoneNumber(onlyDigits);
+  };
+
   const scrollToOtpSection = () => {
     if (otpSectionRef.current) {
       otpSectionRef.current.measureLayout(
@@ -254,7 +260,7 @@ const Login = () => {
               <View style={{ flex: 1 }}>
                 <TextInputView
                   placeholder="98765 43210"
-                  onChangeText={setPhoneNumber}
+                  onChangeText={handlePhoneNumberChange}
                   value={phoneNumber}
                   keyboardType="number-pad"
                   maxLength={10}
@@ -265,7 +271,11 @@ const Login = () => {
 
           {/* SEND OTP BUTTON */}
           <View style={{ marginTop: 30, paddingHorizontal: 5 }}>
-            <CommonButton text="Send OTP" onPress={handleSendOtp} />
+            <CommonButton
+              text="Send OTP"
+              onPress={handleSendOtp}
+              disabled={!isPhoneNumberValid}
+            />
           </View>
 
           {showOtpSection && (
@@ -479,13 +489,13 @@ const styles = StyleSheet.create({
   },
   resendText: {
     color: COLORS.color_cyan_dark,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontExtraBold,
   },
   resendDisabled: {
     color: COLORS.gray,
   },
   timerText: {
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.black,
   },
 });

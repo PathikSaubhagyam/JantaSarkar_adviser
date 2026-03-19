@@ -1,10 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -34,6 +37,9 @@ export default function BankDetailsScreen() {
   const navigation = useNavigation<any>();
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
+  const accountNumberRef = useRef<TextInput>(null);
+  const ifscRef = useRef<TextInput>(null);
+  const bankNameRef = useRef<TextInput>(null);
 
   const canSubmit = useMemo(() => {
     return (
@@ -115,68 +121,95 @@ export default function BankDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Header title="Bank Details" onBackPress={() => navigation.goBack()} />
-
-        <Text style={styles.subTitle}>
-          Add your bank account details securely.
-        </Text>
-
-        <View style={styles.formCard}>
-          <Text style={styles.label}>Account Holder Name</Text>
-          <TextInputView
-            placeholder="Enter account holder name"
-            value={form.account_holder_name}
-            onChangeText={text => updateField('account_holder_name', text)}
-            containerStyle={styles.inputContainer}
-          />
-
-          <Text style={styles.label}>Account Number</Text>
-          <TextInputView
-            placeholder="Enter account number"
-            value={form.account_number}
-            onChangeText={text =>
-              updateField('account_number', text.replace(/[^0-9]/g, ''))
-            }
-            keyboardType="number-pad"
-            maxLength={18}
-            containerStyle={styles.inputContainer}
-          />
-
-          <Text style={styles.label}>IFSC Code</Text>
-          <TextInputView
-            placeholder="e.g. HDFC0001234"
-            value={form.ifsc_code}
-            onChangeText={text => updateField('ifsc_code', text.toUpperCase())}
-            maxLength={11}
-            containerStyle={styles.inputContainer}
-          />
-
-          <Text style={styles.label}>Bank Name</Text>
-          <TextInputView
-            placeholder="Enter bank name"
-            value={form.bank_name}
-            onChangeText={text => updateField('bank_name', text)}
-            containerStyle={styles.inputContainer}
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[
-            styles.submitButton,
-            (!canSubmit || submitting) && styles.submitButtonDisabled,
-          ]}
-          onPress={onSubmit}
-          activeOpacity={0.85}
-          disabled={!canSubmit || submitting}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
         >
-          {submitting ? (
-            <ActivityIndicator color={COLORS.white} />
-          ) : (
-            <Text style={styles.submitButtonText}>Save Bank Details</Text>
-          )}
-        </TouchableOpacity>
-      </ScrollView>
+          <Header
+            title="Bank Details"
+            onBackPress={() => navigation.goBack()}
+          />
+
+          <Text style={styles.subTitle}>
+            Add your bank account details securely.
+          </Text>
+
+          <View style={styles.formCard}>
+            <Text style={styles.label}>Account Holder Name</Text>
+            <TextInputView
+              placeholder="Enter account holder name"
+              value={form.account_holder_name}
+              onChangeText={text => updateField('account_holder_name', text)}
+              containerStyle={styles.inputContainer}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onSubmitEditing={() => accountNumberRef.current?.focus()}
+            />
+
+            <Text style={styles.label}>Account Number</Text>
+            <TextInputView
+              placeholder="Enter account number"
+              value={form.account_number}
+              onChangeText={text =>
+                updateField('account_number', text.replace(/[^0-9]/g, ''))
+              }
+              keyboardType="number-pad"
+              maxLength={18}
+              containerStyle={styles.inputContainer}
+              inputRef={accountNumberRef}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onSubmitEditing={() => ifscRef.current?.focus()}
+            />
+
+            <Text style={styles.label}>IFSC Code</Text>
+            <TextInputView
+              placeholder="e.g. HDFC0001234"
+              value={form.ifsc_code}
+              onChangeText={text =>
+                updateField('ifsc_code', text.toUpperCase())
+              }
+              maxLength={11}
+              containerStyle={styles.inputContainer}
+              inputRef={ifscRef}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onSubmitEditing={() => bankNameRef.current?.focus()}
+            />
+
+            <Text style={styles.label}>Bank Name</Text>
+            <TextInputView
+              placeholder="Enter bank name"
+              value={form.bank_name}
+              onChangeText={text => updateField('bank_name', text)}
+              containerStyle={styles.inputContainer}
+              inputRef={bankNameRef}
+              returnKeyType="done"
+              onSubmitEditing={onSubmit}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              (!canSubmit || submitting) && styles.submitButtonDisabled,
+            ]}
+            onPress={onSubmit}
+            activeOpacity={0.85}
+            disabled={!canSubmit || submitting}
+          >
+            {submitting ? (
+              <ActivityIndicator color={COLORS.white} />
+            ) : (
+              <Text style={styles.submitButtonText}>Save Bank Details</Text>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -184,7 +217,10 @@ export default function BankDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f7fb',
+    backgroundColor: COLORS.white,
+  },
+  keyboardAvoidingContainer: {
+    flex: 1,
   },
   content: {
     paddingHorizontal: 16,

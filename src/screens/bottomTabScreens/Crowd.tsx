@@ -513,7 +513,7 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
         barStyle="dark-content"
         backgroundColor={Platform.OS === 'android' ? '#ffffff' : undefined}
       />
-      <View style={{ marginTop: 15, backgroundColor: '#ffffff' }} />
+      <View style={{ marginTop: 8, backgroundColor: '#ffffff' }} />
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Crowd Management</Text>
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: '20%',
+    marginLeft: '28%',
   },
   attendanceButtonDone: {
     backgroundColor: '#16a34a',

@@ -23,7 +23,7 @@ import TextCommonMedium from '../../components/TextCommonMedium';
 import TextCommonBold from '../../components/TextCommonBold';
 import TextInputView from '../../components/TextInputView';
 import SnackBarCommon from '../../components/SnackBarCommon';
-import { FONTS_SIZE } from '../../constants/Font';
+import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import CommonButton from '../../components/CommonButton';
 import APIWebCall from '../../common/APIWebCall';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   checkMark: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   termsText: {

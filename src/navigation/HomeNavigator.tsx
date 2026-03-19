@@ -8,6 +8,7 @@ import RewardHistoryScreen from '../screens/screen/RewardHistoryScreen';
 import BankDetailsScreen from '../screens/screen/BankDetailsScreen';
 import NotificationScreen from '../screens/screen/NotificationScreen';
 import PaymentHistoryScreen from '../screens/screen/PaymentHistoryScreen';
+import HelpSupportScreen from '../screens/screen/HelpSupportScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
@@ -35,6 +36,7 @@ const HomeNavigator = () => {
           name="PaymentHistoryScreen"
           component={PaymentHistoryScreen}
         />
+        <Stack.Screen name="HelpSupportScreen" component={HelpSupportScreen} />
       </Stack.Navigator>
     </SafeAreaView>
   );

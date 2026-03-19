@@ -16,6 +16,7 @@ import CommonModal, { ModalType } from '../../components/CommonModal';
 // import { BASE_URL } from '../utils/constant';
 import { FONTS_Family } from '../../constants/Font';
 import APIWebCall from '../../common/APIWebCall';
+import { COLORS } from '../../constants/Colors';
 
 type ModalState = {
   visible: boolean;
@@ -151,7 +152,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f6f9',
+    backgroundColor: COLORS.white,
     paddingHorizontal: 16,
   },
   card: {

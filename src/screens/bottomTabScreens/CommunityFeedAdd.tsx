@@ -405,13 +405,14 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: FONTS_SIZE.txt_25,
-    fontWeight: '700',
+
+    fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.black,
   },
 
   label: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
     marginBottom: 8,
     marginTop: 12,
   },
@@ -436,7 +437,7 @@ const styles = StyleSheet.create({
 
   personTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   input: {
@@ -456,7 +457,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   modalContainer: {
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
 
   modalTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     marginBottom: 10,
   },
 
@@ -506,12 +507,12 @@ const styles = StyleSheet.create({
 
   cancelText: {
     color: '#333',
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   yesText: {
     color: '#fff',
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
   successBox: {
     width: '85%',
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
 
   successTitle: {
     fontSize: 22,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: '#28a745',
     marginBottom: 8,
   },
@@ -553,6 +554,6 @@ const styles = StyleSheet.create({
   successButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 });

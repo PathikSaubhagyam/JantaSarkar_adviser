@@ -32,7 +32,7 @@ import moment from 'moment';
 import { useRoute, useIsFocused } from '@react-navigation/native';
 import SnackBarCommon from '../../components/SnackBarCommon';
 import TextCommonMedium from '../../components/TextCommonMedium';
-import { FONTS_SIZE } from '../../constants/Font';
+import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 const { width } = Dimensions.get('window');
 
 type Coordinates = {
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: FONTS_SIZE.txt_27,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontBold,
     // marginVertical: 20,
     marginTop: 25,
     color: '#0B1320',
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     color: '#6B7A90',
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   activeTabText: {

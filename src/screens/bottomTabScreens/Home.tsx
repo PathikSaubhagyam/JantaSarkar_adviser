@@ -13,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { onDashboardAPICall } from '../../common/APIWebCall';
+import { FONTS_Family } from '../../constants/Font';
 
 const { width } = Dimensions.get('window');
 
@@ -147,7 +148,7 @@ const CARD_WIDTH = width / 2 - 24;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#F4F6F9',
   },
 
   header: {
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
 
   welcome: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: '#0f172a',
   },
 
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
 
   cardNumber: {
     fontSize: 26,
-    fontWeight: '800',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: '#fff',
   },
 
@@ -214,12 +215,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#fff',
     opacity: 0.9,
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
   addMoney: {
     marginTop: 10,
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
   },
 
   blueCard: {

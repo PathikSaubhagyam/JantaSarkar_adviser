@@ -1,7 +1,10 @@
 import React from 'react';
 import {
+  NativeSyntheticEvent,
+  ReturnKeyTypeOptions,
   StyleSheet,
   TextInput,
+  TextInputSubmitEditingEventData,
   TextStyle,
   View,
   ViewStyle,
@@ -30,6 +33,12 @@ interface TextInputProps {
   textDisabled?: boolean;
   onTouchStart?: () => void;
   maxLength?: number;
+  returnKeyType?: ReturnKeyTypeOptions;
+  blurOnSubmit?: boolean;
+  onSubmitEditing?: (
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
+  ) => void;
+  inputRef?: React.Ref<TextInput>;
 }
 
 const TextInputView = (props: TextInputProps) => {
@@ -38,6 +47,7 @@ const TextInputView = (props: TextInputProps) => {
       <View style={props.containerStyle ?? styles.textView}>
         {props.child1 && <>{props.child1}</>}
         <TextInput
+          ref={props.inputRef}
           style={
             props.style ?? [
               styles.textInput,
@@ -52,11 +62,13 @@ const TextInputView = (props: TextInputProps) => {
           value={props.value}
           secureTextEntry={props.secureTextEntry}
           keyboardType={props.keyboardType ?? 'default'}
-          returnKeyType={'done'}
+          returnKeyType={props.returnKeyType ?? 'done'}
           editable={props.editable ?? true}
           multiline={props.desheight === 'des'}
           onPressIn={props.onPressIn}
           onTouchStart={props.onTouchStart}
+          blurOnSubmit={props.blurOnSubmit}
+          onSubmitEditing={props.onSubmitEditing}
           maxLength={props.maxLength}
         />
         {props.child2 && <>{props.child2}</>}
@@ -96,7 +108,7 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
     fontSize: FONTS_SIZE.txt_14,
-    // fontWeight: '400',
+
     flex: 1,
     fontFamily: FONTS_Family.FontMedium,
   },

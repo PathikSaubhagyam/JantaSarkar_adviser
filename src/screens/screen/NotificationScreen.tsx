@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import APIWebCall from '../../common/APIWebCall';
 import Header from '../../components/Header';
 import { FONTS_Family } from '../../constants/Font';
+import { COLORS } from '../../constants/Colors';
 
 type NotificationItem = {
   id: number;
@@ -126,7 +127,7 @@ export default function NotificationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f7fb',
+    backgroundColor: COLORS.white,
     // marginTop: 15,
   },
   loaderWrap: {

@@ -7,11 +7,19 @@ import { COLORS } from '../constants/Colors';
 import { FONTS_Family, FONTS_SIZE } from '../constants/Font';
 
 const CommonButton = (props: any) => {
+  const isDisabled = Boolean(props.disabled);
+
   return (
     <TouchableOpacity
       activeOpacity={activeOpacity}
-      style={props.btnStyle ?? styles.btnStyle}
+      style={[
+        props.btnStyle ?? styles.btnStyle,
+        isDisabled ? styles.disabledBtnStyle : null,
+      ]}
+      disabled={isDisabled}
       onPress={() => {
+        if (isDisabled) return;
+
         console.log('✅ CommonButton clicked');
         props.onPress && props.onPress();
       }}
@@ -45,5 +53,8 @@ const styles = StyleSheet.create({
     gap: 8,
     marginHorizontal: 10,
     // width: 150,
+  },
+  disabledBtnStyle: {
+    opacity: 0.5,
   },
 });

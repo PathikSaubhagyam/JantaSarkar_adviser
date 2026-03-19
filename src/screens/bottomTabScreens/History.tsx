@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/Colors';
-import { FONTS_SIZE } from '../../constants/Font';
+import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 
 const { width } = Dimensions.get('window');
 
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
 
   header: {
     fontSize: FONTS_SIZE.txt_27,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     marginBottom: 10,
     marginTop: 15,
     color: '#0B1320',
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     color: '#6B7A90',
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   activeTabText: {
@@ -196,12 +196,12 @@ const styles = StyleSheet.create({
   caseType: {
     fontSize: 12,
     color: '#7A8CA5',
-    fontWeight: '600',
+    fontFamily: FONTS_Family.FontBold,
   },
 
   title: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
     color: '#0B1320',
     marginVertical: 10,
   },
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   meta: {
     fontSize: 13,
     color: '#7A8CA5',
-    fontWeight: '500',
+    fontFamily: FONTS_Family.FontMedium,
   },
 
   statusBadge: {
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
 
   statusText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: FONTS_Family.FontExtraBold,
   },
 
   completedText: {
