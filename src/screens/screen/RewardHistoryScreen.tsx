@@ -14,6 +14,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { onAdminUserCrowdAttendanceAPICall } from '../../common/APIWebCall';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FONTS_Family } from '../../constants/Font';
+import Header from '../../components/Header';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 type RewardRecord = {
   id: string;
@@ -110,6 +112,7 @@ const formatAttendedDate = (value: string) => {
 export default function RewardHistoryScreen({
   onBack,
 }: RewardHistoryScreenProps) {
+  const navigation = useNavigation<any>();
   const [rewardRecords, setRewardRecords] = useState<RewardRecord[]>([]);
   const [totalPoints, setTotalPoints] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -208,7 +211,7 @@ export default function RewardHistoryScreen({
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#f4f7fb" barStyle="dark-content" />
 
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Pressable
           onPress={onBack}
           style={({ pressed }) => [
@@ -219,12 +222,14 @@ export default function RewardHistoryScreen({
         >
           <Ionicons name="chevron-back" size={22} color="#111827" />
         </Pressable>
+       
 
         <View style={styles.headerTextWrap}>
           <Text style={styles.headerTitle}>Reward History</Text>
           <Text style={styles.headerSubtitle}>Issue Attendance Rewards</Text>
         </View>
-      </View>
+      </View> */}
+      <Header title="Reward History" onBackPress={() => navigation.goBack()} />
 
       {loading ? (
         <View style={styles.loaderWrap}>

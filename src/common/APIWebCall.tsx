@@ -1,3 +1,13 @@
+// Withdraw request API
+export const onWithdrawRequestAPICall = params => {
+  return _REQUEST2SERVER(
+    `mobile/advisor/withdrawrequest/`,
+    params,
+    'POST',
+    false,
+    true,
+  );
+};
 // Get crowd attendance for a user (admin API)
 export const onAdminUserCrowdAttendanceAPICall = userId => {
   return _REQUEST2SERVER(

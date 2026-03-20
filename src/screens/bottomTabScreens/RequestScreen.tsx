@@ -381,7 +381,7 @@ const RequestScreen = () => {
               time={
                 activeTab === 'Ongoing' && item.accepted_time
                   ? moment(item.accepted_time, 'DD-MM-YYYY hh:mm A').fromNow()
-                  : moment(item.created_at).fromNow()
+                  : ''
               }
               location={item.city}
               date={item.created_at}
