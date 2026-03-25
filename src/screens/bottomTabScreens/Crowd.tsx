@@ -94,6 +94,11 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
     message: '',
     type: 'info',
   });
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const locationRetryCallback = useCallback(() => {
+    setLocationModalVisible(false);
+    if (locationRetryCallback) locationRetryCallback();
+  }, []);
 
   const showModal = useCallback(
     (title: string, message: string, type: ModalType = 'info') => {
@@ -548,6 +553,16 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
         message={modalState.message}
         type={modalState.type}
         onPrimaryPress={hideModal}
+      />
+      <CommonModal
+        visible={locationModalVisible}
+        title="Location Required"
+        message="This app needs your location to continue. Please allow location access."
+        onPrimaryPress={() => {
+          setLocationModalVisible(false);
+          if (locationRetryCallback) locationRetryCallback();
+        }}
+        primaryText="Retry"
       />
     </SafeAreaView>
   );

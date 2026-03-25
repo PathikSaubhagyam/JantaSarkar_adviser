@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -19,20 +20,68 @@ const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const navigation = useNavigation<any>();
+
   const [userCases, setUserCases] = useState(0);
   const [providedHelp, setProvidedHelp] = useState(0);
   const [helpRecords, setHelpRecords] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Dot animation refs
+  const dot1 = useRef(new Animated.Value(0)).current;
+  const dot2 = useRef(new Animated.Value(0)).current;
+  const dot3 = useRef(new Animated.Value(0)).current;
+  const dot4 = useRef(new Animated.Value(0)).current;
+  const dot5 = useRef(new Animated.Value(0)).current;
+  const dot6 = useRef(new Animated.Value(0)).current;
+  const dot7 = useRef(new Animated.Value(0)).current;
+  const dot8 = useRef(new Animated.Value(0)).current;
+  const dot9 = useRef(new Animated.Value(0)).current;
+  const dot10 = useRef(new Animated.Value(0)).current;
+  const dot11 = useRef(new Animated.Value(0)).current;
+  const dot12 = useRef(new Animated.Value(0)).current;
+  const dot13 = useRef(new Animated.Value(0)).current;
+  const dot14 = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     getDashboardData();
+
+    const floatDot = (
+      anim: Animated.Value,
+      duration: number,
+      toValue: number,
+    ) => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(anim, { toValue, duration, useNativeDriver: true }),
+          Animated.timing(anim, {
+            toValue: 0,
+            duration,
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start();
+    };
+
+    floatDot(dot1, 3000, -18);
+    floatDot(dot2, 4200, 22);
+    floatDot(dot3, 2800, -14);
+    floatDot(dot4, 3600, 16);
+    floatDot(dot5, 5000, -20);
+    floatDot(dot6, 3300, 12);
+    floatDot(dot7, 4700, -16);
+    floatDot(dot8, 2600, 18);
+    floatDot(dot9, 3100, -22);
+    floatDot(dot10, 4400, 20);
+    floatDot(dot11, 3800, -18);
+    floatDot(dot12, 5200, 24);
+    floatDot(dot13, 2900, -20);
+    floatDot(dot14, 4100, 16);
   }, []);
 
   const getDashboardData = async () => {
     try {
       setLoading(true);
       const response = await onDashboardAPICall();
-      console.log(response, 'ress dashboard==>>');
 
       if (response?.status || response?.success) {
         setUserCases(Number(response?.total_case) || 0);
@@ -45,7 +94,6 @@ export default function HomeScreen() {
         );
       }
     } catch (error) {
-      console.log('Dashboard API Error:', error);
       Alert.alert('Error', 'Something went wrong');
     } finally {
       setLoading(false);
@@ -55,7 +103,196 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#f8fafc" barStyle="dark-content" />
-      <View style={{ marginTop: 15, backgroundColor: '#f8fafc' }} />
+
+      {/* Colorful floating dots background */}
+      <View style={StyleSheet.absoluteFill} pointerEvents="none">
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 7,
+              height: 7,
+              backgroundColor: '#60a5fa',
+              top: '8%',
+              left: '12%',
+              transform: [{ translateY: dot1 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 5,
+              height: 5,
+              backgroundColor: '#f472b6',
+              top: '15%',
+              right: '18%',
+              transform: [{ translateY: dot2 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 6,
+              height: 6,
+              backgroundColor: '#34d399',
+              top: '28%',
+              left: '78%',
+              transform: [{ translateY: dot3 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 4,
+              height: 4,
+              backgroundColor: '#fbbf24',
+              top: '38%',
+              left: '8%',
+              transform: [{ translateY: dot4 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 6,
+              height: 6,
+              backgroundColor: '#a78bfa',
+              top: '52%',
+              right: '10%',
+              transform: [{ translateY: dot5 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 5,
+              height: 5,
+              backgroundColor: '#fb923c',
+              top: '63%',
+              left: '25%',
+              transform: [{ translateY: dot6 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 7,
+              height: 7,
+              backgroundColor: '#38bdf8',
+              top: '76%',
+              right: '28%',
+              transform: [{ translateY: dot7 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 4,
+              height: 4,
+              backgroundColor: '#f87171',
+              top: '88%',
+              left: '55%',
+              transform: [{ translateY: dot8 }],
+            },
+          ]}
+        /> */}
+
+        {/* Bottom row — slightly bigger dots */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 11,
+              height: 11,
+              backgroundColor: '#818cf8',
+              bottom: '6%',
+              left: '5%',
+              transform: [{ translateY: dot9 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 9,
+              height: 9,
+              backgroundColor: '#2dd4bf',
+              bottom: '10%',
+              left: '22%',
+              transform: [{ translateY: dot10 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 12,
+              height: 12,
+              backgroundColor: '#f9a8d4',
+              bottom: '5%',
+              left: '40%',
+              transform: [{ translateY: dot11 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 10,
+              height: 10,
+              backgroundColor: '#86efac',
+              bottom: '9%',
+              left: '58%',
+              transform: [{ translateY: dot12 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 9,
+              height: 9,
+              backgroundColor: '#fcd34d',
+              bottom: '4%',
+              left: '74%',
+              transform: [{ translateY: dot13 }],
+            },
+          ]}
+        /> */}
+        {/* <Animated.View
+          style={[
+            styles.dot,
+            {
+              width: 11,
+              height: 11,
+              backgroundColor: '#f87171',
+              bottom: '8%',
+              right: '4%',
+              transform: [{ translateY: dot14 }],
+            },
+          ]}
+        /> */}
+      </View>
+
+      <View style={{ marginTop: 15 }} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -84,7 +321,6 @@ export default function HomeScreen() {
           {/* Provided Help */}
           <TouchableOpacity
             style={[styles.card, styles.greenCard]}
-            activeOpacity={0.85}
             onPress={() =>
               navigation.navigate('Request', { initialTab: 'History' })
             }
@@ -103,7 +339,6 @@ export default function HomeScreen() {
           {/* Help Records */}
           <TouchableOpacity
             style={[styles.card, styles.orangeCard]}
-            activeOpacity={0.85}
             onPress={() => navigation.navigate('RewardHistoryScreen')}
           >
             <View style={styles.iconBox}>
@@ -116,18 +351,15 @@ export default function HomeScreen() {
               Your Rewards ⭐⭐⭐
             </Text>
           </TouchableOpacity>
+
+          {/* Payment */}
           <TouchableOpacity
             style={[styles.card, styles.purpleCard]}
-            activeOpacity={0.85}
             onPress={() => navigation.navigate('PaymentHistoryScreen')}
           >
             <View style={styles.iconBox}>
               <Icon name="wallet-outline" size={26} color="#7c3aed" />
             </View>
-
-            {/* <Text style={[styles.cardNumber, { color: '#7c3aed' }]}>
-              ₹{availableBalance}
-            </Text> */}
 
             <Text style={[styles.cardLabel, { color: '#7c3aed' }]}>
               Payment History
@@ -187,6 +419,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     borderWidth: 1,
+    backgroundColor: '#fff',
   },
 
   iconBox: {
@@ -198,46 +431,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+
+  dot: {
+    position: 'absolute',
+    borderRadius: 50,
+    opacity: 0.45,
+  },
+
   purpleCard: {
-    // backgroundColor: '#7c3aed',
-    backgroundColor: '#FFFFFF',
     borderColor: '#7c3aed',
+  },
+
+  blueCard: {
+    borderColor: '#2563eb',
+  },
+
+  greenCard: {
+    borderColor: '#16a34a',
+  },
+
+  orangeCard: {
+    borderColor: '#f97316',
   },
 
   cardNumber: {
     fontSize: 26,
     fontFamily: FONTS_Family.FontExtraBold,
-    color: '#fff',
   },
 
   cardLabel: {
     marginTop: 4,
     fontSize: 14,
-    color: '#fff',
-    opacity: 0.9,
     fontFamily: FONTS_Family.FontBold,
   },
+
   addMoney: {
     marginTop: 10,
     fontSize: 12,
     fontFamily: FONTS_Family.FontExtraBold,
-  },
-
-  blueCard: {
-    // backgroundColor: '#2563eb',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#2563eb',
-  },
-
-  greenCard: {
-    // backgroundColor: '#16a34a',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#16a34a',
-  },
-
-  orangeCard: {
-    // backgroundColor: '#f97316',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#f97316',
   },
 });

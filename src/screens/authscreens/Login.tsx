@@ -234,7 +234,10 @@ const Login = () => {
             />
           </View>
 
-          <TextCommonBold text={'Welcome'} textViewStyle={styles.welcome} />
+          <TextCommonBold
+            text={'Welcome as advisor'}
+            textViewStyle={styles.welcome}
+          />
 
           <TextCommonMedium
             text={'Sign in to access secure government'}

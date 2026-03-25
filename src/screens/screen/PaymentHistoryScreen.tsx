@@ -14,7 +14,10 @@ import {
 import LottieView from 'lottie-react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import APIWebCall, { onWithdrawRequestAPICall } from '../../common/APIWebCall';
+import APIWebCall, {
+  onWithdrawRequestAPICall,
+  onWithdrawHistoryAPICall,
+} from '../../common/APIWebCall';
 import CommonModal from '../../components/CommonModal';
 import Header from '../../components/Header';
 import { FONTS_Family } from '../../constants/Font';
@@ -54,6 +57,11 @@ export default function PaymentHistoryScreen() {
   const [withdrawing, setWithdrawing] = useState(false);
   const [showMoneyAnim, setShowMoneyAnim] = useState(false);
   const lottieRef = useRef<LottieView | null>(null);
+  const [activeTab, setActiveTab] = useState<'credited' | 'withdraw'>(
+    'credited',
+  );
+  const [withdrawHistory, setWithdrawHistory] = useState<UIItem[]>([]);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
   const successTextAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -67,6 +75,39 @@ export default function PaymentHistoryScreen() {
       successTextAnim.setValue(0);
     }
   }, [showMoneyAnim, successTextAnim]);
+
+  useEffect(() => {
+    if (activeTab === 'withdraw') {
+      fetchWithdrawHistory();
+    }
+  }, [activeTab]);
+  const fetchWithdrawHistory = useCallback(async () => {
+    try {
+      setWithdrawLoading(true);
+
+      const res = await onWithdrawHistoryAPICall(1);
+      console.log(res, 'withdrawall list');
+
+      if (res?.status) {
+        const formatted: UIItem[] = (res.results || []).map((item: any) => ({
+          id: String(item.id),
+          title: item.note || 'Withdraw Request',
+          amount: Number(item.amount || 0),
+          type: 'debit',
+          date: item.created_at,
+        }));
+
+        setWithdrawHistory(formatted);
+      } else {
+        setWithdrawHistory([]);
+      }
+    } catch (e) {
+      console.log('Withdraw history error:', e);
+      setWithdrawHistory([]);
+    } finally {
+      setWithdrawLoading(false);
+    }
+  }, []);
 
   const formatDate = (date: string) => {
     const d = new Date(date);
@@ -139,6 +180,8 @@ export default function PaymentHistoryScreen() {
       const res = await onWithdrawRequestAPICall({ amount });
       console.log(res, 'withdrawall res');
       if (res && (res.status || res.message === 'Withdraw request submitted')) {
+        fetchWithdrawHistory(); // refresh withdraw list
+        fetchPaymentHistory(); // refresh balance + credit
         setWithdrawModal(false);
         setWithdrawAmount('');
         setShowMoneyAnim(true);
@@ -161,6 +204,9 @@ export default function PaymentHistoryScreen() {
     }
   };
 
+  const creditedData = history.filter(item => item.type === 'credit');
+
+  const listData = activeTab === 'credited' ? creditedData : withdrawHistory;
   // Render Lottie money animation overlay
   const renderMoneyAnimation = () =>
     showMoneyAnim && (
@@ -264,6 +310,36 @@ export default function PaymentHistoryScreen() {
 
       <Header title="Payment History" onBackPress={() => navigation.goBack()} />
 
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tabBtn, activeTab === 'credited' && styles.activeTab]}
+          onPress={() => setActiveTab('credited')}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === 'credited' && styles.activeTabText,
+            ]}
+          >
+            Credited
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tabBtn, activeTab === 'withdraw' && styles.activeTab]}
+          onPress={() => setActiveTab('withdraw')}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === 'withdraw' && styles.activeTabText,
+            ]}
+          >
+            Withdraw
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {loading ? (
         <View style={styles.loader}>
           <ActivityIndicator size="large" color="#2563eb" />
@@ -271,7 +347,7 @@ export default function PaymentHistoryScreen() {
       ) : (
         <>
           <FlatList
-            data={history}
+            data={listData}
             keyExtractor={item => item.id}
             renderItem={renderItem}
             refreshing={refreshing}
@@ -340,6 +416,37 @@ export default function PaymentHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#e5e7eb',
+    borderRadius: 10,
+    marginHorizontal: 16,
+    marginBottom: 10,
+    padding: 4,
+  },
+
+  tabBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+
+  activeTab: {
+    backgroundColor: '#fff',
+  },
+
+  tabText: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontFamily: FONTS_Family.FontMedium,
+  },
+
+  activeTabText: {
+    color: '#2563eb',
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#f6f8fb',

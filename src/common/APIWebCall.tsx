@@ -1,3 +1,13 @@
+// Withdraw history API (paginated)
+export const onWithdrawHistoryAPICall = (page = 1) => {
+  return _REQUEST2SERVER(
+    `mobile/advisor/withdraw-requests/?page=${page}`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
 // Withdraw request API
 export const onWithdrawRequestAPICall = params => {
   return _REQUEST2SERVER(
@@ -292,7 +302,7 @@ export const onPaymentHistoryAPICall = () => {
 
 export const onPageContentAPICall = type => {
   return _REQUEST2SERVER(
-    `http://192.168.1.10:8000/mobile/page/?type=${encodeURIComponent(type)}`,
+    `mobile/page/?type=${encodeURIComponent(type)}`,
     null,
     'GET',
     false,

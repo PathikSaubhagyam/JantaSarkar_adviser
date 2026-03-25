@@ -312,6 +312,7 @@ const CommunityFeedAdd = () => {
                 flex: 1,
                 height: '100%',
                 textAlignVertical: 'top',
+                color: COLORS.black,
               }}
             />
             <Text style={styles.label}>Person Details</Text>
@@ -415,6 +416,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS_Family.FontBold,
     marginBottom: 8,
     marginTop: 12,
+    color: COLORS.black,
   },
 
   dropdown: {
@@ -438,6 +440,7 @@ const styles = StyleSheet.create({
   personTitle: {
     fontSize: 16,
     fontFamily: FONTS_Family.FontBold,
+    color: COLORS.black,
   },
 
   input: {

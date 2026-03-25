@@ -361,7 +361,7 @@ const SignUp = () => {
                         borderRadius: 8,
                         color: COLORS.black,
                       }}
-                      searchPlaceholder="Search city"
+                      searchPlaceholder="Search experience"
                       style={{
                         borderColor: COLORS.gray,
                         borderWidth: 0.5,

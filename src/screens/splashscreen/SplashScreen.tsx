@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   StatusBar,
@@ -6,12 +6,17 @@ import {
   View,
   Animated,
   Dimensions,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+import CommonModal from '../../components/CommonModal';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 export default function SplashScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -30,8 +35,39 @@ export default function SplashScreen() {
   const particle2Y = useRef(new Animated.Value(0)).current;
   const particle3Y = useRef(new Animated.Value(0)).current;
   const particle4Y = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
+    const requestLocationPermission = async () => {
+      try {
+        if (Platform.OS === 'android') {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Permission',
+              message: 'This app needs access to your location.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            setModalVisible(true);
+            return false;
+          }
+        } else {
+          // iOS: Geolocation.requestAuthorization() is called automatically on getCurrentPosition
+          // Optionally, you can use react-native-permissions for more control
+        }
+        return true;
+      } catch (err) {
+        setModalVisible(true);
+        return false;
+      }
+    };
+
     const bootstrapNavigation = async () => {
+      const hasLocation = await requestLocationPermission();
+      if (!hasLocation) return;
       try {
         const [token, fullName] = await Promise.all([
           AsyncStorage.getItem('token'),
@@ -288,6 +324,14 @@ export default function SplashScreen() {
           />
         </View>
       </Animated.View>
+
+      {/* Location permission modal */}
+      <CommonModal
+        visible={modalVisible}
+        title="Location Required"
+        message="This app needs your location permission to continue. Please allow location access."
+        onPrimaryPress={() => setModalVisible(false)}
+      />
     </View>
   );
 }
