@@ -33,6 +33,31 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+
+    // Create notification channel for Android O+ with custom sound
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      val channelId = "default_channel"
+      val channelName = "Default Notifications"
+      val soundUri = android.net.Uri.parse("android.resource://" + packageName + "/" + R.raw.notification_sound)
+      val attributes = android.media.AudioAttributes.Builder()
+        .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
+        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+        .build()
+
+      val channel = android.app.NotificationChannel(
+        channelId,
+        channelName,
+        android.app.NotificationManager.IMPORTANCE_HIGH,
+      ).apply {
+        setSound(soundUri, attributes)
+        enableLights(true)
+        enableVibration(true)
+      }
+
+      val manager = getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+      manager.createNotificationChannel(channel)
+    }
+
     loadReactNative(this)
   }
 }
