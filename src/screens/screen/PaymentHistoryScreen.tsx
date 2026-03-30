@@ -41,6 +41,7 @@ type UIItem = {
   amount: number;
   type: 'credit' | 'debit';
   date: string;
+  status?: string;
 };
 
 export default function PaymentHistoryScreen() {
@@ -62,6 +63,7 @@ export default function PaymentHistoryScreen() {
   );
   const [withdrawHistory, setWithdrawHistory] = useState<UIItem[]>([]);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [hasBankDetails, setHasBankDetails] = useState(false);
   const successTextAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -95,6 +97,7 @@ export default function PaymentHistoryScreen() {
           amount: Number(item.amount || 0),
           type: 'debit',
           date: item.created_at,
+          status: item.payment_status || item.status || '',
         }));
 
         setWithdrawHistory(formatted);
@@ -149,14 +152,50 @@ export default function PaymentHistoryScreen() {
     }
   }, []);
 
+  const fetchBankDetailsStatus = useCallback(async () => {
+    try {
+      const res = await APIWebCall.onGetBankDetailsAPICall();
+      const accountNumber = res?.bank_account?.account_number
+        ?.toString()
+        .trim();
+      const ifscCode = res?.bank_account?.ifsc_code?.toString().trim();
+
+      setHasBankDetails(Boolean(accountNumber && ifscCode));
+    } catch (e) {
+      console.log('Bank details check error:', e);
+      setHasBankDetails(false);
+    }
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       fetchPaymentHistory(true);
-    }, []),
+      fetchBankDetailsStatus();
+    }, [fetchPaymentHistory, fetchBankDetailsStatus]),
   );
+
+  const handleWithdrawTabPress = useCallback(() => {
+    // if (!hasBankDetails) {
+    //   setErrorModal({
+    //     visible: true,
+    //     message: 'Please fill bank details first',
+    //   });
+    //   return;
+    // }
+
+    setActiveTab('withdraw');
+  }, [hasBankDetails]);
 
   const handleWithdraw = async () => {
     console.log('Withdraw button clicked');
+
+    // if (!hasBankDetails) {
+    //   setErrorModal({
+    //     visible: true,
+    //     message: 'Please fill bank details first',
+    //   });
+    //   return;
+    // }
 
     const amount = Number(withdrawAmount);
 
@@ -257,6 +296,19 @@ export default function PaymentHistoryScreen() {
 
   const renderItem = ({ item }: { item: UIItem }) => {
     const isCredit = item.type === 'credit';
+    const showStatus = activeTab === 'withdraw' && !!item.status;
+
+    const statusLabel = (item.status || '').toLowerCase();
+    const statusColor =
+      statusLabel === 'approved' ||
+      statusLabel === 'success' ||
+      statusLabel === 'completed'
+        ? '#16a34a'
+        : statusLabel === 'pending'
+        ? '#d97706'
+        : statusLabel === 'rejected' || statusLabel === 'failed'
+        ? '#dc2626'
+        : '#64748b';
 
     return (
       <View style={styles.item}>
@@ -274,6 +326,11 @@ export default function PaymentHistoryScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.date}>{item.date}</Text>
+            {showStatus && (
+              <Text style={[styles.statusText, { color: statusColor }]}>
+                Status: {item.status}
+              </Text>
+            )}
           </View>
         </View>
 
@@ -298,7 +355,16 @@ export default function PaymentHistoryScreen() {
         title={'Error'}
         message={errorModal.message}
         type="error"
-        onPrimaryPress={() => setErrorModal({ visible: false, message: '' })}
+        onPrimaryPress={() => {
+          const shouldRedirectToBankDetails =
+            errorModal.message === 'Please fill bank details first';
+
+          setErrorModal({ visible: false, message: '' });
+
+          if (shouldRedirectToBankDetails) {
+            navigation.navigate('BankDetailsScreen');
+          }
+        }}
       />
       <CommonModal
         visible={successModal}
@@ -327,7 +393,7 @@ export default function PaymentHistoryScreen() {
 
         <TouchableOpacity
           style={[styles.tabBtn, activeTab === 'withdraw' && styles.activeTab]}
-          onPress={() => setActiveTab('withdraw')}
+          onPress={handleWithdrawTabPress}
         >
           <Text
             style={[
@@ -365,7 +431,17 @@ export default function PaymentHistoryScreen() {
                   <Ionicons name="cash-outline" size={18} color="#fff" />
                   <Text
                     style={styles.withdrawText}
-                    onPress={() => setWithdrawModal(true)}
+                    onPress={() => {
+                      if (!hasBankDetails) {
+                        setErrorModal({
+                          visible: true,
+                          message: 'Please fill bank details first',
+                        });
+                        return;
+                      }
+
+                      setWithdrawModal(true);
+                    }}
                   >
                     Withdraw
                   </Text>
@@ -522,6 +598,12 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     marginTop: 2,
     fontFamily: FONTS_Family.FontRegular,
+  },
+
+  statusText: {
+    marginTop: 2,
+    fontSize: 12,
+    fontFamily: FONTS_Family.FontMedium,
   },
 
   amount: {

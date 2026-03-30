@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -37,9 +37,35 @@ export default function BankDetailsScreen() {
   const navigation = useNavigation<any>();
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
   const accountNumberRef = useRef<TextInput>(null);
   const ifscRef = useRef<TextInput>(null);
   const bankNameRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    fetchBankDetails();
+  }, []);
+
+  const fetchBankDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await APIWebCall.onGetBankDetailsAPICall();
+      
+      if (response?.status && response?.bank_account) {
+        const bankDetails = response.bank_account;
+        setForm({
+          account_holder_name: bankDetails.account_holder_name || '',
+          account_number: bankDetails.account_number || '',
+          ifsc_code: bankDetails.ifsc_code || '',
+          bank_name: bankDetails.bank_name || '',
+        });
+      }
+    } catch (error) {
+      console.log('FETCH BANK DETAILS ERROR =>', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const canSubmit = useMemo(() => {
     return (
@@ -125,14 +151,20 @@ export default function BankDetailsScreen() {
         style={styles.keyboardAvoidingContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Header
-            title="Bank Details"
-            onBackPress={() => navigation.goBack()}
-          />
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary || '#00A86B'} />
+            <Text style={styles.loadingText}>Loading bank details...</Text>
+          </View>
+        ) : (
+          <ScrollView
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Header
+              title="Bank Details"
+              onBackPress={() => navigation.goBack()}
+            />
 
           <Text style={styles.subTitle}>
             Add your bank account details securely.
@@ -208,7 +240,8 @@ export default function BankDetailsScreen() {
               <Text style={styles.submitButtonText}>Save Bank Details</Text>
             )}
           </TouchableOpacity>
-        </ScrollView>
+          </ScrollView>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -221,6 +254,17 @@ const styles = StyleSheet.create({
   },
   keyboardAvoidingContainer: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#6b7280',
+    fontFamily: FONTS_Family.FontRegular,
   },
   content: {
     paddingHorizontal: 16,

@@ -21,7 +21,7 @@ export const onWithdrawRequestAPICall = params => {
 // Get crowd attendance for a user (admin API)
 export const onAdminUserCrowdAttendanceAPICall = userId => {
   return _REQUEST2SERVER(
-    `/admin_api/users/${userId}/crowd-attendance/`,
+    `admin_api/users/${userId}/crowd-attendance/`,
     null,
     'GET',
     false,
@@ -286,6 +286,16 @@ export const onAddBankDetailsAPICall = params => {
   );
 };
 
+export const onGetBankDetailsAPICall = () => {
+  return _REQUEST2SERVER(
+    `mobile/advisor/bank-details/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
 export const onNotificationListAPICall = () => {
   return _REQUEST2SERVER(`mobile/notification-list/`, null, 'GET', false, true);
 };
@@ -333,6 +343,7 @@ export default {
   onDashboardAPICall,
   onCrowdAttendanceAPICall,
   onAddBankDetailsAPICall,
+  onGetBankDetailsAPICall,
   onNotificationListAPICall,
   onPaymentHistoryAPICall,
   onPageContentAPICall,

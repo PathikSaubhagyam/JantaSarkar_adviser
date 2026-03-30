@@ -39,7 +39,7 @@
         <!-- Default channel for Android O+ -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="default_channel"
+            android:value="custom_sound_channel"
             tools:replace="android:value" />
 
         <activity

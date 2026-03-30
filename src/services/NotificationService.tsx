@@ -1,8 +1,51 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import APIWebCall from '../common/APIWebCall';
 
+const ANDROID_NOTIFICATION_CHANNEL_ID = 'custom_sound_channel';
+
 class NotificationService {
+  async createAndroidNotificationChannel() {
+    await notifee.createChannel({
+      id: ANDROID_NOTIFICATION_CHANNEL_ID,
+      name: 'Custom Sound Notifications',
+      sound: 'notification_sound',
+      importance: AndroidImportance.HIGH,
+      vibration: true,
+    });
+  }
+
+  getNotificationContent(remoteMessage: any) {
+    const title =
+      remoteMessage?.notification?.title ||
+      remoteMessage?.data?.title ||
+      'Notification';
+    const body =
+      remoteMessage?.notification?.body || remoteMessage?.data?.body || '';
+
+    return { title, body };
+  }
+
+  async displayNotification(remoteMessage: any) {
+    const { title, body } = this.getNotificationContent(remoteMessage);
+
+    await this.createAndroidNotificationChannel();
+
+    await notifee.displayNotification({
+      title,
+      body,
+      android: {
+        channelId: ANDROID_NOTIFICATION_CHANNEL_ID,
+        sound: 'notification_sound',
+        smallIcon: 'ic_launcher',
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
+  }
+
   /**
    * Request notification permission from user
    */
@@ -75,12 +118,11 @@ class NotificationService {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('Foreground notification received:', remoteMessage);
 
+      await this.displayNotification(remoteMessage);
+
       if (onNotificationReceived) {
         onNotificationReceived(remoteMessage);
       }
-
-      // You can show a local notification here using react-native-push-notification
-      // or display an in-app notification
     });
 
     return unsubscribe;
@@ -90,10 +132,18 @@ class NotificationService {
    * Setup background notification handler
    */
   setupBackgroundNotificationHandler() {
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Background notification received:', remoteMessage);
-      // Handle background notification here
-    });
+    console.log('Background notification handler is registered in index.js');
+  }
+
+  async handleBackgroundMessage(remoteMessage: any) {
+    console.log('Background notification received:', remoteMessage);
+
+    // Avoid duplicate system notifications when FCM already contains a notification payload.
+    if (remoteMessage?.notification) {
+      return;
+    }
+
+    await this.displayNotification(remoteMessage);
   }
 
   /**
@@ -152,6 +202,7 @@ class NotificationService {
     const hasPermission = await this.requestUserPermission();
 
     if (hasPermission) {
+      await this.createAndroidNotificationChannel();
       await this.getFCMToken();
       this.setupBackgroundNotificationHandler();
       this.setupTokenRefreshListener();

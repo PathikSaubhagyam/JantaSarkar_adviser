@@ -108,7 +108,7 @@ const RequestCard = ({
       {(location || date) && (
         <View style={styles.footerRow}>
           {!!location && <Text style={styles.footerText}>📍 {location}</Text>}
-          {!!date && <Text style={styles.footerText}>📅 {date}</Text>}
+          {!!date && <Text style={styles.footerText}> {date}</Text>}
         </View>
       )}
 

@@ -306,7 +306,10 @@ const ProfileDetails = () => {
             />
 
             <View style={styles.formContainer}>
-              <TextCommonBold text={'Full Name'} textViewStyle={styles.label} />
+              <TextCommonBold
+                text={'Full Name*'}
+                textViewStyle={styles.label}
+              />
               <TextInputView
                 placeholder="Adv. John Doe"
                 value={fullName}
@@ -314,7 +317,7 @@ const ProfileDetails = () => {
               />
 
               <TextCommonBold
-                text={'Mobile Number'}
+                text={'Mobile Number*'}
                 textViewStyle={styles.label}
               />
 
@@ -335,7 +338,7 @@ const ProfileDetails = () => {
                 </View>
               </View>
               <TextCommonBold
-                text={'Email Address'}
+                text={'Email Address*'}
                 textViewStyle={styles.label}
               />
               <TextInputView
