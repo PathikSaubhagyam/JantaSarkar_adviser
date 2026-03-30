@@ -50,6 +50,14 @@ const Login = () => {
     return () => clearInterval(interval);
   }, [showOtpSection, timer]);
 
+  useEffect(() => {
+    if (showOtpSection) {
+      setTimeout(() => {
+        otpInputs.current[0]?.focus();
+      }, 100);
+    }
+  }, [showOtpSection]);
+
   const handleSendOtp = async () => {
     if (phoneNumber.trim().length !== 10) {
       SnackBarCommon.displayMessage({

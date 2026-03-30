@@ -463,10 +463,10 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
           <Text style={styles.rowLabel}>Authority: </Text>
           {item.authority_name}
         </Text>
-        <Text style={styles.rowText}>
+        {/* <Text style={styles.rowText}>
           <Text style={styles.rowLabel}>Description: </Text>
           {item.description}
-        </Text>
+        </Text> */}
         <Text style={styles.rowText}>
           <Text style={styles.rowLabel}>Issue: </Text>
           {item.issue_description}

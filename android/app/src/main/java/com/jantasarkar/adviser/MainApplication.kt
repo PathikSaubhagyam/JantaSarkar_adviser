@@ -36,8 +36,8 @@ class MainApplication : Application(), ReactApplication {
 
     // Create notification channel for Android O+ with custom sound
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      val channelId = "default_channel"
-      val channelName = "Default Notifications"
+      val channelId = "custom_sound_channel"
+      val channelName = "Custom Sound Notifications"
       val soundUri = android.net.Uri.parse("android.resource://" + packageName + "/" + R.raw.notification_sound)
       val attributes = android.media.AudioAttributes.Builder()
         .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)

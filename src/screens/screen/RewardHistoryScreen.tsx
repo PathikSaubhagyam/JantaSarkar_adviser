@@ -11,7 +11,10 @@ import {
   View,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { onAdminUserCrowdAttendanceAPICall } from '../../common/APIWebCall';
+import {
+  onAdminUserCrowdAttendanceAPICall,
+  onProfileAPICall,
+} from '../../common/APIWebCall';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FONTS_Family } from '../../constants/Font';
 import Header from '../../components/Header';
@@ -117,50 +120,47 @@ export default function RewardHistoryScreen({
   const [totalPoints, setTotalPoints] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [profile, setProfile] = useState(null);
   useEffect(() => {
     fetchRewardHistory();
   }, []);
 
   const fetchRewardHistory = async (showLoader = true) => {
     try {
-      if (showLoader) {
-        setLoading(true);
-      } else {
-        setRefreshing(true);
-      }
+      console.log('STEP 1 → start fetch');
 
-      const profileString = await AsyncStorage.getItem('profile');
+      if (showLoader) setLoading(true);
+      else setRefreshing(true);
+
+      // ✅ FIRST API — PROFILE
+      const profileRes = await onProfileAPICall();
+      console.log('PROFILE RESPONSE =>', profileRes);
 
       let userId: string | null = null;
-      if (profileString) {
-        try {
-          const profile = JSON.parse(profileString);
-          const idFromProfile =
-            profile?.id ?? profile?._id ?? profile?.user_id ?? profile?.userId;
-          if (idFromProfile !== undefined && idFromProfile !== null) {
-            userId = String(idFromProfile);
-          }
-        } catch (e) {
-          console.log('Failed to parse profile:', e);
-        }
+
+      if (profileRes?.data?.id) {
+        userId = String(profileRes.data.id);
+        setProfile(profileRes.data);
       }
 
-      console.log(userId, 'userId from profile');
+      console.log('USER ID =>', userId);
 
+      // 🚨 if profile failed stop here
       if (!userId) {
+        console.log('❌ No userId found. Stop API chain.');
         setRewardRecords([]);
         setTotalPoints(0);
-        setLoading(false);
-        setRefreshing(false);
         return;
       }
 
-      const response = await onAdminUserCrowdAttendanceAPICall(userId);
-      console.log(response, 'reward res===');
+      // ✅ SECOND API — ATTENDANCE HISTORY
+      const attendanceRes = await onAdminUserCrowdAttendanceAPICall(userId);
+      console.log('ATTENDANCE RESPONSE =>', attendanceRes);
 
-      if (response?.status) {
-        setTotalPoints(Number(response?.total_points ?? 0));
-        const mappedData: RewardRecord[] = (response?.data ?? []).map(
+      if (attendanceRes?.status) {
+        setTotalPoints(Number(attendanceRes?.total_points ?? 0));
+
+        const mappedData: RewardRecord[] = (attendanceRes?.data ?? []).map(
           (item: CrowdAttendanceItem) => ({
             id: String(item.crowd_id),
             crowdName: item.crowd_name,
@@ -170,21 +170,20 @@ export default function RewardHistoryScreen({
             rewardPoint: 1,
           }),
         );
+
         setRewardRecords(mappedData);
       } else {
+        console.log('❌ Attendance API returned false status');
         setRewardRecords([]);
         setTotalPoints(0);
       }
     } catch (error) {
-      console.log('Reward history API error:', error);
+      console.log('❌ Reward history API error:', error);
       setRewardRecords([]);
       setTotalPoints(0);
     } finally {
-      if (showLoader) {
-        setLoading(false);
-      } else {
-        setRefreshing(false);
-      }
+      if (showLoader) setLoading(false);
+      else setRefreshing(false);
     }
   };
 
