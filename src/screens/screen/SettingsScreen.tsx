@@ -105,7 +105,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      <StatusBar backgroundColor="#000000" barStyle="light-content" />
 
       <CommonModal
         visible={modal.visible}

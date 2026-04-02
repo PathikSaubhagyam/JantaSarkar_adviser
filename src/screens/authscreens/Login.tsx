@@ -129,7 +129,10 @@ const Login = () => {
       if (res?.status === true || res?.status === 'true') {
         // ✅ Save Token
         if (res?.access_token) {
-          await AsyncStorage.setItem('token', res.access_token);
+          const cleanAccessToken = String(res.access_token)
+            .trim()
+            .replace(/^"+|"+$/g, '');
+          await AsyncStorage.setItem('token', cleanAccessToken);
 
           try {
             await NotificationService.getFCMToken();

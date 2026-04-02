@@ -49,6 +49,19 @@ function App() {
       if (initialized) {
         console.log('Push notifications initialized successfully');
 
+        // Register background handler once Firebase is ready
+        try {
+          messaging().setBackgroundMessageHandler(async remoteMessage => {
+            console.log(
+              'Background Message received in App.tsx:',
+              remoteMessage,
+            );
+            await NotificationService.handleBackgroundMessage(remoteMessage);
+          });
+        } catch (bgError) {
+          console.log('Background handler setup fallback:', bgError?.message);
+        }
+
         const fcmToken = await messaging().getToken();
         if (fcmToken) {
           await registerFcmTokenToServer(fcmToken);
@@ -107,7 +120,7 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'dark-content' : 'dark-content'} />
+      <StatusBar backgroundColor="#000000" barStyle="light-content" />
       <AppContent />
       <TopNotificationBanner
         visible={bannerVisible}

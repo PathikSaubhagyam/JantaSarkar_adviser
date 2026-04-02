@@ -1,11 +1,17 @@
 import messaging from '@react-native-firebase/messaging';
+import { getApps } from '@react-native-firebase/app';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import notifee, { AndroidImportance } from '@notifee/react-native';
+import { Platform } from 'react-native';
 import APIWebCall from '../common/APIWebCall';
 
 const ANDROID_NOTIFICATION_CHANNEL_ID = 'custom_sound_channel';
 
 class NotificationService {
+  isFirebaseReady() {
+    return getApps().length > 0;
+  }
+
   async createAndroidNotificationChannel() {
     await notifee.createChannel({
       id: ANDROID_NOTIFICATION_CHANNEL_ID,
@@ -50,6 +56,17 @@ class NotificationService {
    * Request notification permission from user
    */
   async requestUserPermission() {
+    if (!this.isFirebaseReady()) {
+      return false;
+    }
+
+    if (
+      Platform.OS === 'ios' &&
+      !messaging().isDeviceRegisteredForRemoteMessages
+    ) {
+      await messaging().registerDeviceForRemoteMessages();
+    }
+
     const authStatus = await messaging().requestPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -67,6 +84,10 @@ class NotificationService {
    */
   async getFCMToken() {
     try {
+      if (!this.isFirebaseReady()) {
+        return null;
+      }
+
       const token = await AsyncStorage.getItem('token');
       if (!token) {
         console.log('User not logged in, skipping FCM token registration');
@@ -115,6 +136,10 @@ class NotificationService {
   setupForegroundNotificationListener(
     onNotificationReceived?: (remoteMessage: any) => void,
   ) {
+    if (!this.isFirebaseReady()) {
+      return () => {};
+    }
+
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('Foreground notification received:', remoteMessage);
 
@@ -152,6 +177,10 @@ class NotificationService {
   setupNotificationOpenedListener(
     onNotificationOpened?: (remoteMessage: any) => void,
   ) {
+    if (!this.isFirebaseReady()) {
+      return;
+    }
+
     // Notification caused app to open from background state
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log('Notification opened app from background:', remoteMessage);
@@ -182,6 +211,10 @@ class NotificationService {
    * Handle token refresh
    */
   setupTokenRefreshListener() {
+    if (!this.isFirebaseReady()) {
+      return () => {};
+    }
+
     const unsubscribe = messaging().onTokenRefresh(async fcmToken => {
       console.log('FCM Token refreshed:', fcmToken);
 
@@ -199,6 +232,13 @@ class NotificationService {
    * Initialize all notification features
    */
   async initialize() {
+    if (!this.isFirebaseReady()) {
+      console.log(
+        'Firebase app is not initialized; skipping notification setup.',
+      );
+      return false;
+    }
+
     const hasPermission = await this.requestUserPermission();
 
     if (hasPermission) {

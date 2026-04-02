@@ -33,6 +33,15 @@ import InternetPermission from '../components/InternetPermission';
 import { BASE_URL } from '../constants/Utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const sanitizeValue = (value: any) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  // Prevent accidental encoded quotes like %22 from malformed stored values.
+  return value.trim().replace(/^"+|"+$/g, '');
+};
+
 const _REQUEST2SERVER = async (
   url,
   params = null,
@@ -51,7 +60,7 @@ const _REQUEST2SERVER = async (
       };
     }
 
-    let headers = isFormData
+    let headers: any = isFormData
       ? {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
@@ -63,7 +72,8 @@ const _REQUEST2SERVER = async (
 
     // ✅ TOKEN ONLY WHEN REQUIRED
     if (isAuthRequired) {
-      const token = await AsyncStorage.getItem('token');
+      const rawToken = await AsyncStorage.getItem('token');
+      const token = sanitizeValue(rawToken);
       console.log('token=========', token);
 
       if (token) {
@@ -71,22 +81,36 @@ const _REQUEST2SERVER = async (
       }
     }
 
-    const requestUrl = /^https?:\/\//i.test(url) ? url : BASE_URL + url;
+    const normalizedUrl = sanitizeValue(url);
+    const requestUrl = /^https?:\/\//i.test(normalizedUrl)
+      ? normalizedUrl
+      : `${BASE_URL}${normalizedUrl}`;
 
-    const config = {
+    const config: any = {
       method: method,
       url: requestUrl,
       headers: headers,
-      data: params,
+      timeout: 20000,
     };
+
+    if (String(method).toUpperCase() !== 'GET' && params != null) {
+      config.data = params;
+    }
 
     console.log('API CONFIG =>', config);
 
     const response = await axios(config);
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.log('API ERROR =>', error?.response || error);
+    console.log('API ERROR CODE =>', error?.code);
+    console.log('API ERROR MESSAGE =>', error?.message);
+    console.log('API ERROR URL =>', error?.config?.url);
+    console.log('API ERROR STATUS =>', error?.response?.status);
+    console.log('API ERROR DATA =>', error?.response?.data);
+    console.log('API ERROR REQUEST =>', error?.request);
+    console.log('API ERROR TO_JSON =>', error?.toJSON?.());
 
     return {
       success: false,

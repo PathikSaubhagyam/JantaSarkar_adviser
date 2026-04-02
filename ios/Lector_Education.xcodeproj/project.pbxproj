@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		06CD461696FF41D8BBE4A08A /* Nunito-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 472E3E3E008D433CB4D8D987 /* Nunito-Medium.otf */; };
 		089A09FB952AD2A7CF670A0A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		0A7F4B9D81154F49B1C30F91 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1C1D2D9B7A534BAA9B0C93AF /* GoogleService-Info.plist */; };
 		0C80B921A6F3F58F76C31292 /* libPods-Lector_Education.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Lector_Education.a */; };
 		120B2FD027774043A6FBF71D /* Nunito-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0B0FA473806142359B10B9CA /* Nunito-ExtraLight.otf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -34,35 +35,36 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0B0FA473806142359B10B9CA /* Nunito-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraLight.otf"; path = "../src/assets/fonts/Nunito-ExtraLight.otf"; sourceTree = "<group>"; };
+		0B0FA473806142359B10B9CA /* Nunito-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraLight.otf"; path = "../src/assets/fonts/Nunito-ExtraLight.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Lector_Education.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lector_Education.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Lector_Education/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Lector_Education/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Lector_Education/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		1DBFD9301F8F47A59699933E /* Nunito-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Light.otf"; path = "../src/assets/fonts/Nunito-Light.otf"; sourceTree = "<group>"; };
-		20DB7A299201483BB82DF45A /* Nunito-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-SemiBold.otf"; path = "../src/assets/fonts/Nunito-SemiBold.otf"; sourceTree = "<group>"; };
-		26DD5F19C3234F0480EBA2E3 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../src/assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
-		2B764CD08FDD4068BB045CC4 /* Nunito-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Regular.otf"; path = "../src/assets/fonts/Nunito-Regular.otf"; sourceTree = "<group>"; };
-		2E5DEA91D1FE41F990CBC8CC /* digital-7 (mono italic).ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7 (mono italic).ttf"; path = "../src/assets/fonts/digital-7 (mono italic).ttf"; sourceTree = "<group>"; };
+		1C1D2D9B7A534BAA9B0C93AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Lector_Education/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1DBFD9301F8F47A59699933E /* Nunito-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Light.otf"; path = "../src/assets/fonts/Nunito-Light.otf"; sourceTree = "<group>"; };
+		20DB7A299201483BB82DF45A /* Nunito-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-SemiBold.otf"; path = "../src/assets/fonts/Nunito-SemiBold.otf"; sourceTree = "<group>"; };
+		26DD5F19C3234F0480EBA2E3 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../src/assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		2B764CD08FDD4068BB045CC4 /* Nunito-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Regular.otf"; path = "../src/assets/fonts/Nunito-Regular.otf"; sourceTree = "<group>"; };
+		2E5DEA91D1FE41F990CBC8CC /* digital-7 (mono italic).ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7 (mono italic).ttf"; path = "../src/assets/fonts/digital-7 (mono italic).ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Lector_Education.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lector_Education.debug.xcconfig"; path = "Target Support Files/Pods-Lector_Education/Pods-Lector_Education.debug.xcconfig"; sourceTree = "<group>"; };
-		3FDC64026A6D4A64AC9BC8BE /* Nunito-ExtraBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraBold.otf"; path = "../src/assets/fonts/Nunito-ExtraBold.otf"; sourceTree = "<group>"; };
-		472E3E3E008D433CB4D8D987 /* Nunito-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Medium.otf"; path = "../src/assets/fonts/Nunito-Medium.otf"; sourceTree = "<group>"; };
-		48510C0365934687886EAD6F /* DS-DIGII.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "DS-DIGII.TTF"; path = "../src/assets/fonts/DS-DIGII.TTF"; sourceTree = "<group>"; };
+		3FDC64026A6D4A64AC9BC8BE /* Nunito-ExtraBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraBold.otf"; path = "../src/assets/fonts/Nunito-ExtraBold.otf"; sourceTree = "<group>"; };
+		472E3E3E008D433CB4D8D987 /* Nunito-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Medium.otf"; path = "../src/assets/fonts/Nunito-Medium.otf"; sourceTree = "<group>"; };
+		48510C0365934687886EAD6F /* DS-DIGII.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DS-DIGII.TTF"; path = "../src/assets/fonts/DS-DIGII.TTF"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Lector_Education.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lector_Education.release.xcconfig"; path = "Target Support Files/Pods-Lector_Education/Pods-Lector_Education.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Lector_Education.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Lector_Education.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		637C1E9A7AF0455C9E16581C /* digital-7 (italic).ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7 (italic).ttf"; path = "../src/assets/fonts/digital-7 (italic).ttf"; sourceTree = "<group>"; };
-		6648D2F542A54C5DA75F7388 /* digital-7.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7.ttf"; path = "../src/assets/fonts/digital-7.ttf"; sourceTree = "<group>"; };
-		73F90F2BAA64443D9B6E9CA6 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../src/assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
-		742BE4AD614848818CB9D7E3 /* digital-7 (mono).ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7 (mono).ttf"; path = "../src/assets/fonts/digital-7 (mono).ttf"; sourceTree = "<group>"; };
+		637C1E9A7AF0455C9E16581C /* digital-7 (italic).ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7 (italic).ttf"; path = "../src/assets/fonts/digital-7 (italic).ttf"; sourceTree = "<group>"; };
+		6648D2F542A54C5DA75F7388 /* digital-7.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7.ttf"; path = "../src/assets/fonts/digital-7.ttf"; sourceTree = "<group>"; };
+		73F90F2BAA64443D9B6E9CA6 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../src/assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		742BE4AD614848818CB9D7E3 /* digital-7 (mono).ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "digital-7 (mono).ttf"; path = "../src/assets/fonts/digital-7 (mono).ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Lector_Education/AppDelegate.swift; sourceTree = "<group>"; };
-		78023897AF2F4978BF869EC5 /* DS-DIGI.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "DS-DIGI.TTF"; path = "../src/assets/fonts/DS-DIGI.TTF"; sourceTree = "<group>"; };
+		78023897AF2F4978BF869EC5 /* DS-DIGI.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DS-DIGI.TTF"; path = "../src/assets/fonts/DS-DIGI.TTF"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Lector_Education/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8C8B01F69E53414AA0E1BAB0 /* Poppins-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraBold.ttf"; path = "../src/assets/fonts/Poppins-ExtraBold.ttf"; sourceTree = "<group>"; };
-		C6ECF6210FE34DB38DA7F3D7 /* Nunito-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Bold.otf"; path = "../src/assets/fonts/Nunito-Bold.otf"; sourceTree = "<group>"; };
-		DF5A32F2F6FF495F88377FEB /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLight.ttf"; path = "../src/assets/fonts/Poppins-ExtraLight.ttf"; sourceTree = "<group>"; };
-		E8EF016AC5554986AE6C44B3 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
+		8C8B01F69E53414AA0E1BAB0 /* Poppins-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraBold.ttf"; path = "../src/assets/fonts/Poppins-ExtraBold.ttf"; sourceTree = "<group>"; };
+		C6ECF6210FE34DB38DA7F3D7 /* Nunito-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Bold.otf"; path = "../src/assets/fonts/Nunito-Bold.otf"; sourceTree = "<group>"; };
+		DF5A32F2F6FF495F88377FEB /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLight.ttf"; path = "../src/assets/fonts/Poppins-ExtraLight.ttf"; sourceTree = "<group>"; };
+		E8EF016AC5554986AE6C44B3 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FB1CA1CFF4C74B92B8DD6487 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../src/assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		FB1CA1CFF4C74B92B8DD6487 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../src/assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 			children = (
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
+				1C1D2D9B7A534BAA9B0C93AF /* GoogleService-Info.plist */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
@@ -161,7 +164,6 @@
 				48510C0365934687886EAD6F /* DS-DIGII.TTF */,
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,6 +213,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				185338A92F7AAA8000347766 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -225,6 +230,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A7F4B9D81154F49B1C30F91 /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				CF2F5B4231A34A7D8A4F31C5 /* Nunito-Bold.otf in Resources */,
@@ -358,6 +364,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Lector_Education/Lector_Education.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Lector_Education/Info.plist;
@@ -386,6 +393,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Lector_Education/Lector_Education.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = Lector_Education/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -572,6 +580,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		185338A92F7AAA8000347766 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }
