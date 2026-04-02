@@ -369,6 +369,29 @@ export default function HomeScreen() {
               View Payments
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AskGiveScreen')}
+            style={[styles.card, styles.askGiveCard]}
+          >
+            <View style={styles.askGiveContent}>
+              <View style={[styles.iconBox, styles.askGiveIconBox]}>
+                <Icon
+                  name="chatbubble-ellipses-outline"
+                  size={24}
+                  color="#0f766e"
+                />
+              </View>
+
+              <View style={styles.askGiveTextWrap}>
+                <Text style={styles.askGiveTitle}>Ask & Give</Text>
+                <Text style={styles.askGiveSubtitle}>
+                  Open the community exchange
+                </Text>
+              </View>
+            </View>
+
+            <Icon name="chevron-forward" size={20} color="#0f766e" />
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
@@ -469,5 +492,45 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 12,
     fontFamily: FONTS_Family.FontExtraBold,
+  },
+  askGiveCard: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderColor: '#0f766e',
+    paddingVertical: 14,
+    elevation: 0,
+  },
+
+  askGiveContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    paddingRight: 10,
+  },
+
+  askGiveIconBox: {
+    backgroundColor: 'rgba(15,118,110,0.08)',
+    marginBottom: 0,
+    marginRight: 12,
+  },
+
+  askGiveTextWrap: {
+    flex: 1,
+  },
+
+  askGiveTitle: {
+    fontSize: 18,
+    color: '#0f766e',
+    fontFamily: FONTS_Family.FontBold,
+  },
+
+  askGiveSubtitle: {
+    marginTop: 3,
+    fontSize: 12,
+    color: '#0f766e',
+    opacity: 0.8,
+    fontFamily: FONTS_Family.FontMedium,
   },
 });

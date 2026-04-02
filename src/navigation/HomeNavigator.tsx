@@ -9,6 +9,8 @@ import BankDetailsScreen from '../screens/screen/BankDetailsScreen';
 import NotificationScreen from '../screens/screen/NotificationScreen';
 import PaymentHistoryScreen from '../screens/screen/PaymentHistoryScreen';
 import HelpSupportScreen from '../screens/screen/HelpSupportScreen';
+import AskGiveScreen from '../screens/screen/AskGiveScreen';
+import RaisedBloodRequestScreen from '../screens/screen/RaisedBloodRequestScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
@@ -37,6 +39,11 @@ const HomeNavigator = () => {
           component={PaymentHistoryScreen}
         />
         <Stack.Screen name="HelpSupportScreen" component={HelpSupportScreen} />
+        <Stack.Screen name="AskGiveScreen" component={AskGiveScreen} />
+        <Stack.Screen
+          name="RaisedBloodRequestScreen"
+          component={RaisedBloodRequestScreen}
+        />
       </Stack.Navigator>
     </SafeAreaView>
   );

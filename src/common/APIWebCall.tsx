@@ -290,6 +290,20 @@ export const onDashboardAPICall = () => {
   );
 };
 
+export const onExchangeListAPICall = () => {
+  return _REQUEST2SERVER(`/mobile/exchange/list/`, null, 'GET', false, true);
+};
+
+export const onExchangeCreateAPICall = params => {
+  return _REQUEST2SERVER(
+    `/mobile/exchange/create/`,
+    params,
+    'POST',
+    false,
+    true,
+  );
+};
+
 export const onCrowdAttendanceAPICall = (crowdId, formData) => {
   return _REQUEST2SERVER(
     `mobile/crowd/${crowdId}/attendance/`,
@@ -365,6 +379,8 @@ export default {
   onRegisterFCMTokenAPICall,
   onNotificationSettingAPICall,
   onDashboardAPICall,
+  onExchangeListAPICall,
+  onExchangeCreateAPICall,
   onCrowdAttendanceAPICall,
   onAddBankDetailsAPICall,
   onGetBankDetailsAPICall,
