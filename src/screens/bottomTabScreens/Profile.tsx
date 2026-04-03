@@ -196,8 +196,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             () => navigation.navigate('BankDetailsScreen'),
           )}
           {renderMenuItem(
-            'Raised Blood Request',
-            'Submit blood requirement details',
+            'Give / Raise Blood Request',
+            'Donate or submit requirement details',
             'water-outline',
             '#FEE2E2',
             '#DC2626',
@@ -234,6 +234,15 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             '#EEF2FF',
             '#3A7BFF',
             () => navigation.navigate('NotificationScreen'),
+          )}
+
+          {renderMenuItem(
+            'Phone Directory',
+            'Browse users and advisors',
+            'call-outline',
+            '#E8F5E9',
+            '#00A86B',
+            () => navigation.navigate('PhoneDirectoryScreen'),
           )}
 
           {renderMenuItem(

@@ -358,6 +358,51 @@ export const onPageContentAPICall = type => {
   );
 };
 
+export const onBloodRequestCreateAPICall = params => {
+  return _REQUEST2SERVER(
+    `mobile/blood-request/create/`,
+    params,
+    'POST',
+    false,
+    true,
+  );
+};
+
+export const onBloodRequestListAPICall = (cityId = null, bloodGroup = null) => {
+  const queryParts: string[] = [];
+  if (cityId) queryParts.push(`city_id=${encodeURIComponent(cityId)}`);
+  if (bloodGroup)
+    queryParts.push(`blood_group=${encodeURIComponent(bloodGroup)}`);
+  const query = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
+  return _REQUEST2SERVER(
+    `mobile/blood-request/list/${query}`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
+export const onUserAdvisorListAPICall = (
+  page = 1,
+  caste: string | null = null,
+  gender: string | null = null,
+  businessName: string | null = null,
+) => {
+  const queryParts: string[] = [`page=${page}`];
+  if (caste) queryParts.push(`caste=${encodeURIComponent(caste)}`);
+  if (gender) queryParts.push(`gender=${encodeURIComponent(gender)}`);
+  if (businessName)
+    queryParts.push(`business_name=${encodeURIComponent(businessName)}`);
+  return _REQUEST2SERVER(
+    `mobile/user-advisor/list/?${queryParts.join('&')}`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
 export default {
   onSignUPAPICall,
   onLoginAPICall,
@@ -387,4 +432,7 @@ export default {
   onNotificationListAPICall,
   onPaymentHistoryAPICall,
   onPageContentAPICall,
+  onBloodRequestCreateAPICall,
+  onBloodRequestListAPICall,
+  onUserAdvisorListAPICall,
 };
