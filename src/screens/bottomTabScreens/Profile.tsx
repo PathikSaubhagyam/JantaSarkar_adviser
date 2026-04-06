@@ -124,13 +124,13 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
         </View>
       </View>
 
-      <Icon name="chevron-forward" size={22} color="#ccc" />
+      <Icon name="chevron-forward" size={22} color="#CCCCCC" />
     </TouchableOpacity>
   );
 
   return (
     <>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -344,71 +344,72 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F6F9',
+    backgroundColor: '#F7F7F7',
   },
-
   header: {
     alignItems: 'center',
     paddingVertical: 30,
     backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEBEB',
   },
-
   imageContainer: {
     position: 'relative',
   },
-
   profileImage: {
     width: 110,
     height: 110,
     borderRadius: 55,
+    borderWidth: 3,
+    borderColor: '#1a1a1a',
   },
-
   editIcon: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#FF7A00',
+    backgroundColor: '#1a1a1a',
     width: 32,
     height: 32,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   name: {
     fontSize: 20,
     marginTop: 12,
-    color: COLORS.black,
+    color: '#000000',
   },
-
   subText: {
     fontSize: 14,
-    color: '#777',
+    color: '#555555',
     marginTop: 4,
   },
-
   govText: {
     fontSize: 13,
-    color: '#FF7A00',
+    color: '#333333',
     marginTop: 6,
   },
-
   sectionTitle: {
     marginTop: 25,
     marginLeft: 20,
-    fontSize: 12,
-    color: '#9A9A9A',
+    fontSize: 11,
+    color: '#888888',
+    letterSpacing: 0.8,
   },
-
   card: {
     backgroundColor: '#FFFFFF',
     marginHorizontal: 15,
     marginTop: 10,
-    borderRadius: 14,
+    borderRadius: 10,
     paddingVertical: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
   },
-
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -416,81 +417,80 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 15,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#EBEBEB',
   },
-
   menuLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   iconContainer: {
     width: 42,
     height: 42,
-    borderRadius: 12,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   menuTitle: {
     fontSize: 15,
-    color: COLORS.black,
+    color: '#000000',
   },
-
   menuSub: {
     fontSize: 12,
-    color: '#888',
+    color: '#888888',
     marginTop: 3,
   },
-
+  // Logout — black border, black text (no red)
   logoutBtn: {
     margin: 20,
     padding: 15,
-    backgroundColor: '#FFEAEA',
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     alignItems: 'center',
-    // borderWidth: 1,
-    // borderColor: '#FFD6F7',
+    borderWidth: 1,
+    borderColor: '#1a1a1a',
   },
-
   logoutText: {
-    color: '#FF4D4D',
+    color: '#1a1a1a',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   logoutModal: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 20,
     width: '85%',
+    borderWidth: 1,
+    borderColor: '#DCDCDC',
     ...Platform.select({
       android: { elevation: 8 },
       ios: {
         shadowColor: '#000',
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.15,
         shadowOffset: { width: 0, height: 4 },
         shadowRadius: 12,
       },
     }),
   },
   imagePickerModal: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 20,
     width: '85%',
+    borderWidth: 1,
+    borderColor: '#DCDCDC',
     ...Platform.select({
       android: { elevation: 8 },
       ios: {
         shadowColor: '#000',
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.15,
         shadowOffset: { width: 0, height: 4 },
         shadowRadius: 12,
       },
@@ -501,11 +501,12 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    color: '#1a1a1a',
+    color: '#000000',
+    fontFamily: undefined,
   },
   modalMessage: {
     fontSize: 15,
-    color: '#6b7280',
+    color: '#555555',
     marginBottom: 24,
     lineHeight: 22,
   },
@@ -520,24 +521,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#F0F0F0',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#DCDCDC',
   },
   confirmButton: {
-    backgroundColor: '#FF4D4D',
+    backgroundColor: '#1a1a1a',
   },
   cancelButtonText: {
     fontSize: 15,
-    color: '#6b7280',
+    color: '#555555',
   },
   confirmButtonText: {
     fontSize: 15,
-    color: '#ffffff',
+    color: '#FFFFFF',
   },
   imagePickerMessage: {
     fontSize: 15,
-    color: '#6b7280',
+    color: '#555555',
     marginTop: 8,
     marginBottom: 20,
     lineHeight: 22,
@@ -547,16 +548,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 12,
+    borderColor: '#DCDCDC',
+    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 14,
     marginBottom: 12,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#F7F7F7',
   },
   imagePickerOptionText: {
     fontSize: 15,
-    color: '#1f2937',
+    color: '#000000',
   },
   imagePickerCancelButton: {
     marginTop: 4,
@@ -564,10 +565,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#EBEBEB',
   },
   imagePickerCancelText: {
     fontSize: 15,
-    color: '#6b7280',
+    color: '#555555',
   },
 });

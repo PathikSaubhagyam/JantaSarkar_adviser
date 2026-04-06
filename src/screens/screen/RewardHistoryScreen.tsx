@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FONTS_Family } from '../../constants/Font';
 import Header from '../../components/Header';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { COLORS } from '../../constants/Colors';
 
 type RewardRecord = {
   id: string;
@@ -351,14 +352,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   pointsBadge: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: COLORS.black,
     borderRadius: 999,
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
   pointsText: {
     fontSize: 12,
-    color: '#166534',
+    color: COLORS.white,
     fontFamily: FONTS_Family.FontSemiBold,
   },
   issueBox: {

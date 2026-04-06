@@ -102,286 +102,94 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#f8fafc" barStyle="dark-content" />
-
-      {/* Colorful floating dots background */}
-      <View style={StyleSheet.absoluteFill} pointerEvents="none">
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 7,
-              height: 7,
-              backgroundColor: '#60a5fa',
-              top: '8%',
-              left: '12%',
-              transform: [{ translateY: dot1 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 5,
-              height: 5,
-              backgroundColor: '#f472b6',
-              top: '15%',
-              right: '18%',
-              transform: [{ translateY: dot2 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 6,
-              height: 6,
-              backgroundColor: '#34d399',
-              top: '28%',
-              left: '78%',
-              transform: [{ translateY: dot3 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 4,
-              height: 4,
-              backgroundColor: '#fbbf24',
-              top: '38%',
-              left: '8%',
-              transform: [{ translateY: dot4 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 6,
-              height: 6,
-              backgroundColor: '#a78bfa',
-              top: '52%',
-              right: '10%',
-              transform: [{ translateY: dot5 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 5,
-              height: 5,
-              backgroundColor: '#fb923c',
-              top: '63%',
-              left: '25%',
-              transform: [{ translateY: dot6 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 7,
-              height: 7,
-              backgroundColor: '#38bdf8',
-              top: '76%',
-              right: '28%',
-              transform: [{ translateY: dot7 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 4,
-              height: 4,
-              backgroundColor: '#f87171',
-              top: '88%',
-              left: '55%',
-              transform: [{ translateY: dot8 }],
-            },
-          ]}
-        /> */}
-
-        {/* Bottom row — slightly bigger dots */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 11,
-              height: 11,
-              backgroundColor: '#818cf8',
-              bottom: '6%',
-              left: '5%',
-              transform: [{ translateY: dot9 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 9,
-              height: 9,
-              backgroundColor: '#2dd4bf',
-              bottom: '10%',
-              left: '22%',
-              transform: [{ translateY: dot10 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 12,
-              height: 12,
-              backgroundColor: '#f9a8d4',
-              bottom: '5%',
-              left: '40%',
-              transform: [{ translateY: dot11 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 10,
-              height: 10,
-              backgroundColor: '#86efac',
-              bottom: '9%',
-              left: '58%',
-              transform: [{ translateY: dot12 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 9,
-              height: 9,
-              backgroundColor: '#fcd34d',
-              bottom: '4%',
-              left: '74%',
-              transform: [{ translateY: dot13 }],
-            },
-          ]}
-        /> */}
-        {/* <Animated.View
-          style={[
-            styles.dot,
-            {
-              width: 11,
-              height: 11,
-              backgroundColor: '#f87171',
-              bottom: '8%',
-              right: '4%',
-              transform: [{ translateY: dot14 }],
-            },
-          ]}
-        /> */}
-      </View>
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
       <View style={{ marginTop: 15 }} />
 
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.welcome}>Welcome</Text>
+        <View style={styles.headerAccent} />
       </View>
 
       {loading ? (
         <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#2563eb" />
+          <ActivityIndicator size="large" color="#1a1a1a" />
         </View>
       ) : (
         <View style={styles.cardContainer}>
           {/* Your Cases */}
-          <TouchableOpacity style={[styles.card, styles.blueCard]}>
-            <View style={styles.iconBox}>
-              <Icon name="document-text-outline" size={26} color="#2563eb" />
+          <TouchableOpacity style={[styles.card, styles.cardDark]}>
+            <View style={[styles.iconBox, { backgroundColor: '#1a1a1a' }]}>
+              <Icon name="document-text-outline" size={22} color="#FFFFFF" />
             </View>
-            <Text style={[styles.cardNumber, { color: '#2563eb' }]}>
+            <Text style={[styles.cardNumber, { color: '#FFFFFF' }]}>
               {userCases}
             </Text>
-            <Text style={[styles.cardLabel, { color: '#2563eb' }]}>
+            <Text style={[styles.cardLabel, { color: '#CCCCCC' }]}>
               Your Cases
             </Text>
           </TouchableOpacity>
 
           {/* Provided Help */}
           <TouchableOpacity
-            style={[styles.card, styles.greenCard]}
+            style={[styles.card, styles.cardLight]}
             onPress={() =>
               navigation.navigate('Request', { initialTab: 'History' })
             }
           >
-            <View style={styles.iconBox}>
-              <Icon name="people-outline" size={26} color="#16a34a" />
+            <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
+              <Icon name="people-outline" size={22} color="#1a1a1a" />
             </View>
-            <Text style={[styles.cardNumber, { color: '#16a34a' }]}>
+            <Text style={[styles.cardNumber, { color: '#1a1a1a' }]}>
               {providedHelp}
             </Text>
-            <Text style={[styles.cardLabel, { color: '#16a34a' }]}>
+            <Text style={[styles.cardLabel, { color: '#555555' }]}>
               Provided Help
             </Text>
           </TouchableOpacity>
 
           {/* Help Records */}
           <TouchableOpacity
-            style={[styles.card, styles.orangeCard]}
+            style={[styles.card, styles.cardLight]}
             onPress={() => navigation.navigate('RewardHistoryScreen')}
           >
-            <View style={styles.iconBox}>
-              <Icon name="time-outline" size={26} color="#f97316" />
+            <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
+              <Icon name="time-outline" size={22} color="#1a1a1a" />
             </View>
-            <Text style={[styles.cardNumber, { color: '#f97316' }]}>
+            <Text style={[styles.cardNumber, { color: '#1a1a1a' }]}>
               {helpRecords}
             </Text>
-            <Text style={[styles.cardLabel, { color: '#f97316' }]}>
-              Your Rewards ⭐⭐⭐
+            <Text style={[styles.cardLabel, { color: '#555555' }]}>
+              Your Rewards
             </Text>
           </TouchableOpacity>
 
           {/* Payment */}
           <TouchableOpacity
-            style={[styles.card, styles.purpleCard]}
+            style={[styles.card, styles.cardDark]}
             onPress={() => navigation.navigate('PaymentHistoryScreen')}
           >
-            <View style={styles.iconBox}>
-              <Icon name="wallet-outline" size={26} color="#7c3aed" />
+            <View style={[styles.iconBox, { backgroundColor: '#333333' }]}>
+              <Icon name="wallet-outline" size={22} color="#FFFFFF" />
             </View>
-
-            <Text style={[styles.cardLabel, { color: '#7c3aed' }]}>
+            <Text style={[styles.cardLabel, { color: '#CCCCCC' }]}>
               Payment History
             </Text>
-
-            <Text style={[styles.addMoney, { color: '#7c3aed' }]}>
+            <Text style={[styles.addMoney, { color: '#FFFFFF' }]}>
               View Payments
             </Text>
           </TouchableOpacity>
+
+          {/* Ask & Give */}
           <TouchableOpacity
             onPress={() => navigation.navigate('AskGiveScreen')}
-            style={[styles.card, styles.askGiveCard]}
+            style={styles.askGiveCard}
           >
             <View style={styles.askGiveContent}>
-              <View style={[styles.iconBox, styles.askGiveIconBox]}>
-                <Icon
-                  name="chatbubble-ellipses-outline"
-                  size={24}
-                  color="#0f766e"
-                />
+              <View style={styles.askGiveIconBox}>
+                <Icon name="chatbubble-ellipses-outline" size={22} color="#1a1a1a" />
               </View>
-
               <View style={styles.askGiveTextWrap}>
                 <Text style={styles.askGiveTitle}>Ask & Give</Text>
                 <Text style={styles.askGiveSubtitle}>
@@ -389,8 +197,7 @@ export default function HomeScreen() {
                 </Text>
               </View>
             </View>
-
-            <Icon name="chevron-forward" size={20} color="#0f766e" />
+            <Icon name="chevron-forward" size={20} color="#888888" />
           </TouchableOpacity>
         </View>
       )}
@@ -403,134 +210,137 @@ const CARD_WIDTH = width / 2 - 24;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F6F9',
+    backgroundColor: '#F7F7F7',
   },
-
   header: {
     paddingHorizontal: 18,
-    paddingTop: 10,
-    paddingBottom: 15,
+    paddingTop: 14,
+    paddingBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEBEB',
   },
-
   welcome: {
     fontSize: 24,
     fontFamily: FONTS_Family.FontExtraBold,
-    color: '#0f172a',
+    color: '#000000',
+    letterSpacing: 0.5,
   },
-
+  headerAccent: {
+    marginTop: 6,
+    width: 36,
+    height: 3,
+    backgroundColor: '#000000',
+    borderRadius: 2,
+  },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   cardContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingTop: 4,
   },
-
   card: {
     width: CARD_WIDTH,
-    borderRadius: 6,
+    borderRadius: 8,
     padding: 18,
     marginTop: 14,
-    elevation: 4,
+    elevation: 2,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 2 },
     borderWidth: 1,
-    backgroundColor: '#fff',
   },
-
+  // Dark card — black bg, white text
+  cardDark: {
+    backgroundColor: '#1a1a1a',
+    borderColor: '#000000',
+  },
+  // Light card — white bg, black text
+  cardLight: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#DCDCDC',
+  },
   iconBox: {
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 42,
+    height: 42,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
-
   dot: {
     position: 'absolute',
     borderRadius: 50,
     opacity: 0.45,
   },
-
-  purpleCard: {
-    borderColor: '#7c3aed',
-  },
-
-  blueCard: {
-    borderColor: '#2563eb',
-  },
-
-  greenCard: {
-    borderColor: '#16a34a',
-  },
-
-  orangeCard: {
-    borderColor: '#f97316',
-  },
-
   cardNumber: {
     fontSize: 26,
     fontFamily: FONTS_Family.FontExtraBold,
   },
-
   cardLabel: {
     marginTop: 4,
     fontSize: 14,
     fontFamily: FONTS_Family.FontBold,
   },
-
   addMoney: {
     marginTop: 10,
     fontSize: 12,
     fontFamily: FONTS_Family.FontExtraBold,
   },
+  // Ask & Give — full-width row card
   askGiveCard: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderColor: '#0f766e',
-    paddingVertical: 14,
-    elevation: 0,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#DCDCDC',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    marginTop: 14,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
-
   askGiveContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
     paddingRight: 10,
   },
-
   askGiveIconBox: {
-    backgroundColor: 'rgba(15,118,110,0.08)',
+    backgroundColor: '#F0F0F0',
+    width: 42,
+    height: 42,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 0,
     marginRight: 12,
   },
-
   askGiveTextWrap: {
     flex: 1,
   },
-
   askGiveTitle: {
-    fontSize: 18,
-    color: '#0f766e',
+    fontSize: 17,
+    color: '#000000',
     fontFamily: FONTS_Family.FontBold,
   },
-
   askGiveSubtitle: {
     marginTop: 3,
     fontSize: 12,
-    color: '#0f766e',
-    opacity: 0.8,
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
   },
 });

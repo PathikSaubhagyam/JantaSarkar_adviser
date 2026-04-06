@@ -337,8 +337,8 @@ const RequestScreen = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-      <View style={{ marginTop: 15, backgroundColor: '#f8fafc' }} />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <View style={{ marginTop: 15, backgroundColor: '#FFFFFF' }} />
 
       <Text style={styles.header}>Client Request</Text>
 
@@ -361,7 +361,7 @@ const RequestScreen = () => {
         ))}
       </View>
       {loading ? (
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color="#1a1a1a" />
       ) : (
         <FlatList
           data={formatComplaintData}
@@ -411,63 +411,56 @@ export default RequestScreen;
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#E9EDF3',
-    borderRadius: 7,
+    backgroundColor: '#EBEBEB',
+    borderRadius: 8,
     padding: 4,
     marginBottom: 20,
   },
   header: {
     fontSize: FONTS_SIZE.txt_27,
     fontFamily: FONTS_Family.FontBold,
-    // marginVertical: 20,
     marginTop: 25,
-    color: '#0B1320',
+    color: '#000000',
     marginBottom: 10,
+    letterSpacing: 0.3,
   },
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: width * 0.04,
   },
-
   tabRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     marginTop: 10,
   },
-
   tabActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#1a1a1a',
   },
-
   emptyText: {
     textAlign: 'center',
     marginTop: 50,
-    color: '#999',
+    color: '#888888',
   },
-
   tabBtn: {
     flex: 1,
     paddingVertical: 10,
     alignItems: 'center',
     borderRadius: 6,
   },
-
   activeTab: {
-    backgroundColor: 'white',
+    backgroundColor: '#1a1a1a',
     elevation: 2,
     shadowColor: '#000',
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.12,
     shadowRadius: 4,
   },
-
   tabText: {
     fontSize: 14,
-    color: '#6B7A90',
+    color: '#555555',
     fontFamily: FONTS_Family.FontBold,
   },
-
   activeTabText: {
-    color: '#0B1320',
+    color: '#FFFFFF',
   },
 });

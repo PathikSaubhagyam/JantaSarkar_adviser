@@ -213,6 +213,7 @@ export default UserAdvisorDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop:10,
     backgroundColor: '#F9F9F9',
   },
   scroll: {

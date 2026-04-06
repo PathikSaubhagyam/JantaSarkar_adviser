@@ -1,41 +1,56 @@
+// Lawyer dress code — black & white monochrome theme
 export const COLORS = {
-  //primary: '#4CAF50',
-  primary: '#2563eb',
-  secondary: '#f97316',
+  // Brand — black is the primary accent
+  primary: '#1a1a1a',
+  secondary: '#444444',
+
+  // Base
   white: '#FFFFFF',
   black: '#000000',
-  gray: '#808080',
-  lightGray: '#F5F5F5',
-  bg_success: '#14AE5C',
-  colorPrimary: '#008F68',
-  colorLightGreen: '#F8F4E1',
-  colorLightGray: '#DCE3EF',
-  color_txt_gray: '#8C8F9B',
-  colorDarkGrey: '#737373',
+
+  // Backgrounds
+  bg_color: '#F7F7F7',        // off-white page background
+  lightGray: '#F0F0F0',
+  color_card_bg: '#FFFFFF',   // card surface
+  history_Card: '#FAFAFA',
+  card_color_gray: '#F5F5F5',
+  very_light_grey: '#EBEBEB',
+  room_book_bg: '#EEEEEE',
+  color_tab_bg: '#E8E8E8',
+  errBgColor: '#F5F5F5',
+
+  // Text
+  gry_text: '#555555',
+  color_txt_gray: '#777777',
+  colorDarkGrey: '#333333',
+  card_color: '#1a1a1a',
+  white_txt: '#FAFAFA',
+
+  // Borders / separators
+  colorLightGray: '#DCDCDC',
+  color_statusbar_bg: '#FFFFFF',
+
+  // Status — kept as greyscale
+  bg_success: '#2a2a2a',
+  colorGreen: '#2a2a2a',
+  color_dark_green: '#1a1a1a',
+  colorPrimary: '#1a1a1a',
+  colorLightGreen: '#F0F0F0',
+
+  // Alerts — desaturated
+  colorRed: '#2a2a2a',
+  color_snackbar: '#1a1a1a',
+  colorYellow: '#888888',
+  color_light_yellow: '#E8E8E8',
+  card_Color: '#EFEFEF',
+  card_Color_light: '#F5F5F5',
+  play_Color: '#EBEBEB',
+
+  // Misc
+  gray: '#888888',
   transparent: 'transparent',
-  color_transparent_bg: '#1A1A1ABE',
-  background_grey: '#ffffff10',
-  colorGreen: '#15933B',
-  color_snackbar: '#D8151D',
-  colorYellow: '#fed232',
-  color_light_yellow: '#fed23260',
-  color_card_bg: '#F3F5F7',
-  color_statusbar_bg: '#f1f1f1f1',
-  very_light_grey: '#ebebeb',
-  bg_color: '#f5f5f5',
-  colorRed: '#F44336',
-  white_txt: '#fafafa',
-  gry_text: '#626769',
-  room_book_bg: '#eeeeee',
-  color_tab_bg: '#e2e2e2',
-  errBgColor: '#EBEDF5',
-  card_Color: '#e1edfb',
-  card_Color_light: '#fce9e9',
-  play_Color: '#fcd9d9',
-  history_Card: '#f9f9fb',
-  card_color_gray: '#F6F6F6',
-  card_color: '#252525',
+  color_transparent_bg: '#000000BE',
+  background_grey: '#00000015',
   bar_color: '#0000004D',
-  pie_color: '#008F6829',
-  color_dark_green: '#016E51',
+  pie_color: '#00000015',
 };

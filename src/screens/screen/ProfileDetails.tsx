@@ -502,7 +502,7 @@ const ProfileDetails = () => {
   };
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: COLORS.white }}
+      style={{ flex: 1, backgroundColor: '#F7F7F7' }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
@@ -933,36 +933,31 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 30,
   },
-
   checkbox: {
     width: 22,
     height: 22,
     borderWidth: 1.5,
-    borderColor: COLORS.primary,
+    borderColor: '#1a1a1a',
     borderRadius: 6,
     marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
   },
-
   checkboxChecked: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#1a1a1a',
   },
-
   checkMark: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 14,
     fontFamily: FONTS_Family.FontBold,
   },
-
   termsText: {
-    color: COLORS.color_txt_gray,
+    color: '#555555',
     fontSize: FONTS_SIZE.txt_14,
   },
-
   termsLink: {
-    color: COLORS.primary,
+    color: '#1a1a1a',
     fontSize: FONTS_SIZE.txt_14,
     marginTop: 2,
   },
@@ -971,23 +966,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 12,
   },
-
   halfContainer: {
     flex: 1,
   },
-
   dropdown: {
-    borderColor: '#ddd',
+    borderColor: '#DCDCDC',
     minHeight: 50,
   },
-
   dropdownContainer: {
-    borderColor: '#ddd',
+    borderColor: '#DCDCDC',
   },
-
   label: {
     marginTop: 15,
     marginBottom: 8,
+    color: '#000000',
   },
   logoContainer: {
     alignItems: 'center',
@@ -996,13 +988,14 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontSize: FONTS_SIZE.txt_16,
-    color: COLORS.black,
+    color: '#000000',
   },
+  // Tab bar — lawyer style: black active, white inactive
   tabContainer: {
     flexDirection: 'row',
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: COLORS.gray,
+    borderColor: '#1a1a1a',
     borderRadius: 0,
     overflow: 'hidden',
   },
@@ -1012,62 +1005,60 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderRightWidth: 1,
-    borderRightColor: COLORS.gray,
+    borderRightColor: '#1a1a1a',
     borderRadius: 0,
-    backgroundColor: COLORS.white,
+    backgroundColor: '#FFFFFF',
   },
   tabActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#1a1a1a',
     borderRadius: 0,
   },
   tabText: {
-    color: COLORS.black,
+    color: '#000000',
     fontSize: FONTS_SIZE.txt_12,
     fontFamily: FONTS_Family.FontSemiBold,
   },
   tabTextActive: {
-    color: COLORS.white,
+    color: '#FFFFFF',
   },
   formContainer: {
     padding: 20,
-  },
-  label: {
-    marginTop: 15,
-    marginBottom: 8,
-    color: COLORS.black,
+    backgroundColor: '#F7F7F7',
   },
   dobField: {
     borderWidth: 0.5,
-    borderColor: COLORS.gray,
-    backgroundColor: COLORS.white,
+    borderColor: '#888888',
+    backgroundColor: '#FFFFFF',
     minHeight: 50,
     justifyContent: 'center',
     paddingHorizontal: 12,
     borderRadius: 10,
   },
   dobFieldText: {
-    color: COLORS.black,
+    color: '#000000',
     fontSize: FONTS_SIZE.txt_14,
     fontFamily: FONTS_Family.FontMedium,
   },
   dobPlaceholder: {
-    color: COLORS.gray,
+    color: '#888888',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     paddingHorizontal: 16,
   },
   dobModalCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#DCDCDC',
   },
   dobModalTitle: {
     marginTop: 0,
     marginBottom: 14,
-    color: COLORS.black,
+    color: '#000000',
   },
   dobPickerRow: {
     flexDirection: 'row',
@@ -1078,17 +1069,17 @@ const styles = StyleSheet.create({
   },
   dobPickerLabel: {
     marginBottom: 6,
-    color: COLORS.black,
+    color: '#000000',
     fontFamily: FONTS_Family.FontMedium,
   },
   dobDropdown: {
-    borderColor: COLORS.gray,
+    borderColor: '#888888',
     borderWidth: 0.5,
     borderRadius: 10,
     minHeight: 48,
   },
   dobDropdownContainer: {
-    borderColor: COLORS.gray,
+    borderColor: '#888888',
   },
   dobActionRow: {
     flexDirection: 'row',
@@ -1103,17 +1094,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   dobCancelButton: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#EBEBEB',
+    borderWidth: 1,
+    borderColor: '#DCDCDC',
   },
   dobSaveButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#1a1a1a',
   },
   dobCancelText: {
-    color: COLORS.black,
+    color: '#000000',
     fontFamily: FONTS_Family.FontSemiBold,
   },
   dobSaveText: {
-    color: COLORS.white,
+    color: '#FFFFFF',
     fontFamily: FONTS_Family.FontSemiBold,
   },
   phoneRow: {
@@ -1122,23 +1115,18 @@ const styles = StyleSheet.create({
   },
   codeBox: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#DCDCDC',
     paddingHorizontal: 16,
     justifyContent: 'center',
     borderRadius: 8,
+    backgroundColor: '#FFFFFF',
   },
   dropdownInput: {
-    borderColor: COLORS.gray,
+    borderColor: '#888888',
     borderWidth: 0.5,
     borderRadius: 10,
     minHeight: 50,
-  },
-  dropdownContainer: {
-    borderBottomColor: COLORS.colorLightGray,
-    borderWidth: 1,
-  },
-  dropdown: {
-    borderColor: '#ddd',
+    backgroundColor: '#FFFFFF',
   },
   uploadRow: {
     flexDirection: 'row',
@@ -1149,13 +1137,13 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: '#ccc',
+    borderColor: '#DCDCDC',
     padding: 20,
     borderRadius: 12,
     alignItems: 'center',
   },
   button: {
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#1a1a1a',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',

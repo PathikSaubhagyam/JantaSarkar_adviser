@@ -153,7 +153,7 @@ export default function BankDetailsScreen() {
       >
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.primary || '#00A86B'} />
+            <ActivityIndicator size="large" color="#1a1a1a" />
             <Text style={styles.loadingText}>Loading bank details...</Text>
           </View>
         ) : (
@@ -235,7 +235,7 @@ export default function BankDetailsScreen() {
             disabled={!canSubmit || submitting}
           >
             {submitting ? (
-              <ActivityIndicator color={COLORS.white} />
+              <ActivityIndicator color="#FFFFFF" />
             ) : (
               <Text style={styles.submitButtonText}>Save Bank Details</Text>
             )}
@@ -250,7 +250,8 @@ export default function BankDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    marginTop: 10,
+    backgroundColor: '#F7F7F7',
   },
   keyboardAvoidingContainer: {
     flex: 1,
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#6b7280',
+    color: '#555555',
     fontFamily: FONTS_Family.FontRegular,
   },
   content: {
@@ -272,47 +273,47 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     fontSize: 13,
-    color: '#6b7280',
+    color: '#555555',
     marginTop: 4,
     marginBottom: 14,
     fontFamily: FONTS_Family.FontRegular,
   },
   formCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#E0E0E0',
   },
   label: {
     fontSize: 13,
-    color: '#374151',
+    color: '#000000',
     marginBottom: 8,
     fontFamily: FONTS_Family.FontMedium,
   },
   inputContainer: {
     marginBottom: 14,
-    borderColor: '#d1d5db',
+    borderColor: '#DCDCDC',
     borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
   submitButton: {
     marginTop: 18,
-    backgroundColor: '#00A86B',
-    borderRadius: 12,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 10,
     height: 48,
     alignItems: 'center',
     justifyContent: 'center',
   },
   submitButtonDisabled: {
-    opacity: 0.55,
+    opacity: 0.45,
   },
   submitButtonText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 15,
     fontFamily: FONTS_Family.FontSemiBold,
   },

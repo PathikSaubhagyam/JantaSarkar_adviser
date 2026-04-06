@@ -527,7 +527,7 @@ const PhoneDirectoryScreen = () => {
 export default PhoneDirectoryScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BW.bg },
+  container: { flex: 1, backgroundColor: BW.bg ,marginTop:10},
   loader: { marginTop: 50 },
 
   toolbar: {

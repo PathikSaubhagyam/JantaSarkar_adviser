@@ -21,8 +21,8 @@ const TabNavigator = () => {
       initialRouteName="Request"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.colorPrimary,
-        tabBarInactiveTintColor: COLORS.background_grey,
+        tabBarActiveTintColor: COLORS.black,
+        tabBarInactiveTintColor: COLORS.gry_text,
         tabBarItemStyle: {
           justifyContent: 'center',
           alignItems: 'center',
@@ -37,8 +37,8 @@ const TabNavigator = () => {
           height: Platform.OS === 'ios' ? 70 : 70,
           borderTopWidth: 1,
           elevation: 0,
-          borderTopColor: '#e5e7eb',
-          backgroundColor: COLORS.white, // make it transparent to show gradient
+          borderTopColor: '#DCDCDC',
+          backgroundColor: COLORS.white,
         },
       }}
     >

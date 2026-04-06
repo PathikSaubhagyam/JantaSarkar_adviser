@@ -87,7 +87,7 @@ const Community = () => {
           text={item?.department}
           textViewStyle={{
             fontSize: FONTS_SIZE.txt_16,
-            color: COLORS.primary,
+            color: '#000000',
           }}
         />
 
@@ -96,7 +96,7 @@ const Community = () => {
           text={item?.issueType}
           textViewStyle={{
             fontSize: FONTS_SIZE.txt_14,
-            color: COLORS.black,
+            color: '#1a1a1a',
             marginTop: 2,
           }}
         />
@@ -106,7 +106,7 @@ const Community = () => {
           text={item?.city}
           textViewStyle={{
             fontSize: FONTS_SIZE.txt_14,
-            color: '#666',
+            color: '#555555',
             marginTop: 2,
           }}
         />
@@ -137,7 +137,7 @@ const Community = () => {
             </View>
           ))
         ) : (
-          <Text style={{ color: '#999', marginTop: 5 }}>
+          <Text style={{ color: '#888888', marginTop: 5 }}>
             No persons available
           </Text>
         )}
@@ -177,17 +177,16 @@ const styles = StyleSheet.create({
   callButton: {
     padding: 8,
   },
-
   callIcon: {
     width: 18,
     height: 18,
-    tintColor: COLORS.primary,
+    tintColor: '#1a1a1a',
   },
   fab: {
     position: 'absolute',
     bottom: 30,
     right: 20,
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#1a1a1a',
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   fabText: {
-    color: COLORS.white,
+    color: '#FFFFFF',
     fontSize: 30,
     fontFamily: FONTS_Family.FontMedium,
     marginTop: 8,
@@ -204,59 +203,58 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONTS_SIZE.txt_27,
     fontFamily: FONTS_Family.FontExtraBold,
-    color: COLORS.black,
+    color: '#000000',
     marginTop: 15,
     marginBottom: 15,
     height: 70,
     backgroundColor: '#FFFFFF',
     width: '100%',
     padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEBEB',
   },
   container: {
     flex: 1,
-    backgroundColor: '#F4F6F9',
-    // padding: 16,
+    backgroundColor: '#F7F7F7',
   },
-
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 8,
     marginBottom: 12,
-    elevation: 3,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
     width: '99%',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
-
   department: {
     fontSize: 16,
-    color: '#007BFF',
+    color: '#000000',
   },
-
   issue: {
     fontSize: 16,
-    color: COLORS.black,
+    color: '#1a1a1a',
   },
-
   personTitle: {
     marginTop: 10,
     fontFamily: FONTS_Family.FontExtraBold,
-    color: COLORS.black,
+    color: '#000000',
   },
-
   personRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-
   personName: {
     fontSize: 14,
-    color: COLORS.black,
+    color: '#1a1a1a',
   },
-
   personMobile: {
     fontSize: 14,
-    color: '#666',
-    color: COLORS.black,
+    color: '#555555',
   },
 });

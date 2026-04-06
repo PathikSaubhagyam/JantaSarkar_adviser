@@ -478,13 +478,13 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
 
         <View style={styles.dateTimeRow}>
           <View style={styles.metaItem}>
-            <Icon name="calendar-outline" size={16} color="#64748b" />
+            <Icon name="calendar-outline" size={16} color="#555555" />
             <Text style={styles.metaText}>
               {formatEventDate(item.event_date)}
             </Text>
           </View>
           <View style={styles.metaItem}>
-            <Icon name="time-outline" size={16} color="#64748b" />
+            <Icon name="time-outline" size={16} color="#555555" />
             <Text style={styles.metaText}>
               {formatEventTime(item.event_time)}
             </Text>
@@ -516,17 +516,18 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
     <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle="dark-content"
-        backgroundColor={Platform.OS === 'android' ? '#ffffff' : undefined}
+        backgroundColor="#FFFFFF"
       />
-      <View style={{ marginTop: 8, backgroundColor: '#ffffff' }} />
+      <View style={{ marginTop: 8, backgroundColor: '#FFFFFF' }} />
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Crowd Management</Text>
+        <View style={styles.headerAccent} />
       </View>
 
       {loading ? (
         <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#2563eb" />
+          <ActivityIndicator size="large" color="#1a1a1a" />
           <Text style={styles.loaderText}>Loading crowd data...</Text>
         </View>
       ) : (
@@ -540,7 +541,7 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
           }
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Icon name="people-outline" size={56} color="#cbd5e1" />
+              <Icon name="people-outline" size={56} color="#CCCCCC" />
               <Text style={styles.emptyText}>{emptyStateText}</Text>
             </View>
           }
@@ -571,19 +572,27 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#F7F7F7',
   },
   header: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: '#EBEBEB',
   },
   headerTitle: {
     fontSize: 20,
-    color: '#0f172a',
+    color: '#000000',
     fontFamily: FONTS_Family.FontBold,
+    letterSpacing: 0.3,
+  },
+  headerAccent: {
+    marginTop: 6,
+    width: 36,
+    height: 3,
+    backgroundColor: '#000000',
+    borderRadius: 2,
   },
   loaderContainer: {
     flex: 1,
@@ -593,7 +602,7 @@ const styles = StyleSheet.create({
   loaderText: {
     marginTop: 10,
     fontSize: 14,
-    color: '#475569',
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
   },
   listContent: {
@@ -602,18 +611,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 7,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#E0E0E0',
     ...Platform.select({
       android: { elevation: 2 },
       ios: {
         shadowColor: '#000',
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.07,
         shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 6,
+        shadowRadius: 5,
       },
     }),
   },
@@ -627,7 +636,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     flex: 1,
     fontSize: 16,
-    color: '#0f172a',
+    color: '#000000',
     fontFamily: FONTS_Family.FontBold,
   },
   statusBadge: {
@@ -636,35 +645,35 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   statusPending: {
-    backgroundColor: '#fef3c7',
+    backgroundColor: '#F0F0F0',
   },
   statusAssigned: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: '#E8E8E8',
   },
   statusRejected: {
-    backgroundColor: '#fee2e2',
+    backgroundColor: '#DCDCDC',
   },
   statusText: {
     fontSize: 11,
     fontFamily: FONTS_Family.FontBold,
   },
   statusTextPending: {
-    color: '#a16207',
+    color: '#555555',
   },
   statusTextAssigned: {
-    color: '#166534',
+    color: '#1a1a1a',
   },
   statusTextRejected: {
-    color: '#b91c1c',
+    color: '#333333',
   },
   rowText: {
     fontSize: 13,
-    color: '#334155',
+    color: '#333333',
     marginBottom: 6,
     fontFamily: FONTS_Family.FontMedium,
   },
   rowLabel: {
-    color: '#0f172a',
+    color: '#000000',
     fontFamily: FONTS_Family.FontBold,
   },
   dateTimeRow: {
@@ -680,11 +689,11 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: '#64748b',
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
   },
   attendanceButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#1a1a1a',
     borderRadius: 22,
     width: 44,
     height: 44,
@@ -694,11 +703,11 @@ const styles = StyleSheet.create({
     marginLeft: '28%',
   },
   attendanceButtonDone: {
-    backgroundColor: '#16a34a',
+    backgroundColor: '#444444',
   },
   attendanceButtonText: {
     fontSize: 14,
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontFamily: FONTS_Family.FontBold,
   },
   emptyState: {
@@ -708,7 +717,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     marginTop: 10,
-    color: '#94a3b8',
+    color: '#888888',
     fontSize: 14,
     fontFamily: FONTS_Family.FontMedium,
   },

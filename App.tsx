@@ -120,7 +120,7 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar backgroundColor="#000000" barStyle="light-content" />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <AppContent />
       <TopNotificationBanner
         visible={bannerVisible}

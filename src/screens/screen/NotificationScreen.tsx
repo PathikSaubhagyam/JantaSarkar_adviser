@@ -71,7 +71,7 @@ export default function NotificationScreen() {
         <Ionicons
           name={item.is_read ? 'notifications-outline' : 'notifications'}
           size={22}
-          color={item.is_read ? '#9ca3af' : '#3A7BFF'}
+          color={item.is_read ? '#888888' : '#1a1a1a'}
         />
       </View>
 
@@ -97,7 +97,7 @@ export default function NotificationScreen() {
 
       {loading ? (
         <View style={styles.loaderWrap}>
-          <ActivityIndicator size="large" color="#3A7BFF" />
+          <ActivityIndicator size="large" color="#1a1a1a" />
         </View>
       ) : (
         <FlatList
@@ -113,7 +113,7 @@ export default function NotificationScreen() {
               <Ionicons
                 name="notifications-off-outline"
                 size={48}
-                color="#d1d5db"
+                color="#CCCCCC"
               />
               <Text style={styles.emptyText}>No notifications yet</Text>
             </View>
@@ -127,8 +127,7 @@ export default function NotificationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
-    // marginTop: 15,
+    backgroundColor: '#F7F7F7',
   },
   loaderWrap: {
     flex: 1,
@@ -142,31 +141,32 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#E0E0E0',
     ...Platform.select({
-      android: { elevation: 2 },
+      android: { elevation: 1 },
       ios: {
-        shadowColor: '#0f172a',
-        shadowOpacity: 0.07,
-        shadowOffset: { width: 0, height: 3 },
-        shadowRadius: 6,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
       },
     }),
   },
+  // Unread card — slightly darker border, off-white bg
   cardUnread: {
-    borderColor: '#bfdbfe',
-    backgroundColor: '#eff6ff',
+    borderColor: '#1a1a1a',
+    backgroundColor: '#F7F7F7',
   },
   iconWrap: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#EBEBEB',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontSize: 14,
-    color: '#111827',
+    color: '#000000',
     fontFamily: FONTS_Family.FontSemiBold,
     marginRight: 8,
   },
@@ -192,18 +192,18 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#3A7BFF',
+    backgroundColor: '#1a1a1a',
   },
   body: {
     fontSize: 13,
-    color: '#4b5563',
+    color: '#333333',
     fontFamily: FONTS_Family.FontRegular,
     lineHeight: 18,
     marginBottom: 6,
   },
   createdAt: {
     fontSize: 11,
-    color: '#9ca3af',
+    color: '#888888',
     fontFamily: FONTS_Family.FontRegular,
   },
   emptyWrap: {
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#9ca3af',
+    color: '#888888',
     fontFamily: FONTS_Family.FontRegular,
   },
 });

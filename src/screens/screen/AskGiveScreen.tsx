@@ -160,7 +160,7 @@ export default function AskGiveScreen() {
       <View style={styles.listCard}>
         <View style={styles.listHeaderRow}>
           <View style={styles.listIconWrap}>
-            <Ionicons name="hand-left-outline" size={18} color="#0f766e" />
+            <Ionicons name="hand-left-outline" size={18} color="#1a1a1a" />
           </View>
           <View style={styles.listHeaderText}>
             <Text style={styles.listTitle}>{listItem.title}</Text>
@@ -177,7 +177,7 @@ export default function AskGiveScreen() {
             style={styles.callButton}
             onPress={() => handleCall(listItem.contact_number)}
           >
-            <Ionicons name="call-outline" size={16} color="#fff" />
+            <Ionicons name="call-outline" size={16} color="#FFFFFF" />
             <Text style={styles.callButtonText}>Call</Text>
           </TouchableOpacity>
         </View>
@@ -202,6 +202,7 @@ export default function AskGiveScreen() {
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
+        {/* Hero banner — black bg, white text */}
         <View style={styles.hero}>
           <Text style={styles.heroTitle}>Community Exchange</Text>
           <Text style={styles.heroSubtitle}>
@@ -209,28 +210,21 @@ export default function AskGiveScreen() {
           </Text>
         </View>
 
+        {/* Tab switcher */}
         <View style={styles.tabContainer}>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'give' && styles.activeTab]}
             onPress={() => setActiveTab('give')}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === 'give' && styles.activeText,
-              ]}
-            >
+            <Text style={[styles.tabText, activeTab === 'give' && styles.activeText]}>
               Give
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.tab, activeTab === 'ask' && styles.activeTab]}
             onPress={() => setActiveTab('ask')}
           >
-            <Text
-              style={[styles.tabText, activeTab === 'ask' && styles.activeText]}
-            >
+            <Text style={[styles.tabText, activeTab === 'ask' && styles.activeText]}>
               Ask
             </Text>
           </TouchableOpacity>
@@ -251,7 +245,7 @@ export default function AskGiveScreen() {
                 maxLength={50}
                 value={item}
                 onChangeText={setItem}
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#888888"
               />
 
               <Text style={styles.label}>Description</Text>
@@ -262,7 +256,7 @@ export default function AskGiveScreen() {
                 maxLength={100}
                 value={desc}
                 onChangeText={setDesc}
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#888888"
                 textAlignVertical="top"
               />
 
@@ -273,7 +267,7 @@ export default function AskGiveScreen() {
                 keyboardType="number-pad"
                 value={phone}
                 onChangeText={setPhone}
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#888888"
                 maxLength={10}
               />
 
@@ -283,10 +277,10 @@ export default function AskGiveScreen() {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
                   <>
-                    <Ionicons name="send-outline" size={18} color="#fff" />
+                    <Ionicons name="send-outline" size={18} color="#FFFFFF" />
                     <Text style={styles.buttonText}>Submit Request</Text>
                   </>
                 )}
@@ -307,12 +301,12 @@ export default function AskGiveScreen() {
             ListEmptyComponent={
               loadingExchange ? (
                 <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#0f766e" />
+                  <ActivityIndicator size="large" color="#1a1a1a" />
                   <Text style={styles.loadingText}>Loading requests...</Text>
                 </View>
               ) : (
                 <View style={styles.emptyState}>
-                  <Ionicons name="sparkles-outline" size={34} color="#94a3b8" />
+                  <Ionicons name="sparkles-outline" size={34} color="#CCCCCC" />
                   <Text style={styles.emptyTitle}>No requests yet</Text>
                   <Text style={styles.emptyText}>
                     There are no requests to help with at the moment.
@@ -333,129 +327,143 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 45,
   },
-  container: { flex: 1, backgroundColor: '#eef6f5' },
-
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F7F7',
+  },
+  // Hero — solid black banner
   hero: {
     marginHorizontal: 16,
     marginTop: 4,
     marginBottom: 12,
     padding: 16,
-    borderRadius: 18,
-    backgroundColor: '#0f766e',
+    borderRadius: 10,
+    backgroundColor: '#1a1a1a',
   },
   heroTitle: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 22,
     fontFamily: FONTS_Family.FontBold,
+    letterSpacing: 0.3,
   },
   heroSubtitle: {
     marginTop: 6,
-    color: 'rgba(255,255,255,0.9)',
+    color: 'rgba(255,255,255,0.75)',
     fontSize: 13,
     lineHeight: 18,
     fontFamily: FONTS_Family.FontMedium,
   },
-
+  // Tab switcher — black/white pill
   tabContainer: {
     flexDirection: 'row',
     marginHorizontal: 16,
     marginBottom: 12,
-    backgroundColor: '#d9eeeb',
-    borderRadius: 16,
+    backgroundColor: '#EBEBEB',
+    borderRadius: 8,
     padding: 4,
   },
   tab: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 11,
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 6,
   },
-  activeTab: { backgroundColor: '#0f766e' },
-  tabText: { fontFamily: FONTS_Family.FontMedium, color: '#0f172a' },
-  activeText: { color: '#fff' },
-
-  body: { paddingHorizontal: 16, paddingBottom: 20 },
-
+  activeTab: {
+    backgroundColor: '#1a1a1a',
+  },
+  tabText: {
+    fontFamily: FONTS_Family.FontMedium,
+    color: '#555555',
+    fontSize: 14,
+  },
+  activeText: {
+    color: '#FFFFFF',
+    fontFamily: FONTS_Family.FontBold,
+  },
+  body: {
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
   scrollContent: {
     flexGrow: 1,
   },
-
   label: {
     marginTop: 14,
     marginBottom: 6,
     fontFamily: FONTS_Family.FontMedium,
-    color: '#0f172a',
+    color: '#000000',
+    fontSize: 14,
   },
-
   input: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#b7d7d2',
+    borderColor: '#DCDCDC',
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontFamily: FONTS_Family.FontMedium,
-    color: '#0f172a',
+    color: '#000000',
   },
-
   multilineInput: {
     minHeight: 100,
   },
-
   button: {
     marginTop: 24,
-    backgroundColor: '#0f766e',
+    backgroundColor: '#1a1a1a',
     paddingVertical: 14,
-    borderRadius: 14,
+    borderRadius: 10,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
   },
   buttonDisabled: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontFamily: FONTS_Family.FontBold,
     fontSize: 16,
   },
-
   listContainer: {
     paddingHorizontal: 16,
     paddingBottom: 20,
   },
-
   emptyState: {
     marginTop: 30,
     padding: 22,
-    borderRadius: 18,
-    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#dbe5e3',
+    borderColor: '#E0E0E0',
   },
   emptyTitle: {
     marginTop: 10,
     fontSize: 16,
-    color: '#0f172a',
+    color: '#000000',
     fontFamily: FONTS_Family.FontBold,
   },
   emptyText: {
     marginTop: 6,
     textAlign: 'center',
-    color: '#475569',
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
     lineHeight: 20,
   },
-
+  // List cards — white with grey border
   listCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 16,
-    borderRadius: 18,
+    borderRadius: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#dbe5e3',
+    borderColor: '#E0E0E0',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
   },
   listHeaderRow: {
     flexDirection: 'row',
@@ -464,8 +472,8 @@ const styles = StyleSheet.create({
   listIconWrap: {
     width: 40,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: '#e6f4f2',
+    borderRadius: 10,
+    backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -476,17 +484,17 @@ const styles = StyleSheet.create({
   listTitle: {
     fontSize: 16,
     fontFamily: FONTS_Family.FontBold,
-    color: '#0f172a',
+    color: '#000000',
   },
   listDesc: {
     marginTop: 12,
     fontFamily: FONTS_Family.FontMedium,
-    color: '#334155',
+    color: '#333333',
     lineHeight: 20,
   },
   listPhone: {
     marginTop: 2,
-    color: '#0f766e',
+    color: '#1a1a1a',
     fontFamily: FONTS_Family.FontBold,
   },
   callButton: {
@@ -495,26 +503,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#0f766e',
+    backgroundColor: '#1a1a1a',
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 8,
   },
   callButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontFamily: FONTS_Family.FontBold,
     fontSize: 14,
   },
   listUserName: {
     marginTop: 2,
     fontSize: 12,
-    color: '#475569',
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
   },
   listDate: {
     marginTop: 2,
     fontSize: 11,
-    color: '#94a3b8',
+    color: '#888888',
     fontFamily: FONTS_Family.FontMedium,
   },
   listFooter: {
@@ -532,7 +540,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#0f766e',
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
   },
 });

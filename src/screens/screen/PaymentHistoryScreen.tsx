@@ -303,12 +303,12 @@ export default function PaymentHistoryScreen() {
       statusLabel === 'approved' ||
       statusLabel === 'success' ||
       statusLabel === 'completed'
-        ? '#16a34a'
+        ? '#1a1a1a'
         : statusLabel === 'pending'
-        ? '#d97706'
+        ? '#555555'
         : statusLabel === 'rejected' || statusLabel === 'failed'
-        ? '#dc2626'
-        : '#64748b';
+        ? '#333333'
+        : '#888888';
 
     return (
       <View style={styles.item}>
@@ -319,7 +319,7 @@ export default function PaymentHistoryScreen() {
             <Ionicons
               name={isCredit ? 'arrow-down' : 'arrow-up'}
               size={16}
-              color={isCredit ? '#16a34a' : '#dc2626'}
+              color={isCredit ? '#1a1a1a' : '#444444'}
             />
           </View>
 
@@ -346,7 +346,7 @@ export default function PaymentHistoryScreen() {
       {renderMoneyAnimation()}
       {withdrawing && !showMoneyAnim && (
         <View style={styles.fullscreenLoader}>
-          <ActivityIndicator size="large" color="#2563eb" />
+          <ActivityIndicator size="large" color="#1a1a1a" />
           <Text style={styles.loaderText}>Submitting your request...</Text>
         </View>
       )}
@@ -428,7 +428,7 @@ export default function PaymentHistoryScreen() {
                     Available for withdrawal
                   </Text>
                   <View style={{ flex: 1 }} />
-                  <Ionicons name="cash-outline" size={18} color="#fff" />
+                  <Ionicons name="cash-outline" size={18} color="#FFFFFF" />
                   <Text
                     style={styles.withdrawText}
                     onPress={() => {
@@ -450,7 +450,7 @@ export default function PaymentHistoryScreen() {
             }
             ListEmptyComponent={
               <View style={styles.empty}>
-                <Ionicons name="wallet-outline" size={50} color="#cbd5e1" />
+                <Ionicons name="wallet-outline" size={50} color="#CCCCCC" />
                 <Text style={styles.emptyTitle}>No payment history found</Text>
               </View>
             }
@@ -494,82 +494,74 @@ export default function PaymentHistoryScreen() {
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#e5e7eb',
-    borderRadius: 10,
+    backgroundColor: '#EBEBEB',
+    borderRadius: 8,
     marginHorizontal: 16,
     marginBottom: 10,
     padding: 4,
   },
-
   tabBtn: {
     flex: 1,
     paddingVertical: 8,
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 6,
   },
-
   activeTab: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1a1a1a',
   },
-
   tabText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
   },
-
   activeTabText: {
-    color: '#2563eb',
+    color: '#FFFFFF',
     fontFamily: FONTS_Family.FontSemiBold,
   },
-
   container: {
     flex: 1,
-    backgroundColor: '#f6f8fb',
+    marginTop: 10,
+    backgroundColor: '#F7F7F7',
   },
-
   loader: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  // Balance card — solid black, white text
   balanceCard: {
-    backgroundColor: '#2563eb',
-    borderRadius: 18,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
     padding: 18,
     marginBottom: 16,
   },
-
   balanceLabel: {
-    color: '#c7d2fe',
+    color: '#AAAAAA',
     fontSize: 14,
     fontFamily: FONTS_Family.FontMedium,
   },
-
   balanceValue: {
     marginTop: 6,
     fontSize: 32,
-    color: '#fff',
+    color: '#FFFFFF',
     fontFamily: FONTS_Family.FontExtBold,
   },
-
   item: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     padding: 12,
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-
   left: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
-
   icon: {
     width: 32,
     height: 32,
@@ -578,129 +570,116 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 10,
   },
-
+  // Credit = light grey bg, dark icon
   creditBg: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: '#EBEBEB',
   },
-
+  // Debit = slightly darker grey bg
   debitBg: {
-    backgroundColor: '#fee2e2',
+    backgroundColor: '#DCDCDC',
   },
-
   title: {
     fontSize: 14,
-    color: '#111827',
+    color: '#000000',
     fontFamily: FONTS_Family.FontMedium,
   },
-
   date: {
     fontSize: 12,
-    color: '#6b7280',
+    color: '#555555',
     marginTop: 2,
     fontFamily: FONTS_Family.FontRegular,
   },
-
   statusText: {
     marginTop: 2,
     fontSize: 12,
     fontFamily: FONTS_Family.FontMedium,
   },
-
   amount: {
     fontSize: 16,
     fontFamily: FONTS_Family.FontSemiBold,
   },
-
   credit: {
-    color: '#16a34a',
+    color: '#1a1a1a',
   },
-
   debit: {
-    color: '#dc2626',
+    color: '#444444',
   },
-
   empty: {
     alignItems: 'center',
     marginTop: 80,
   },
-
   emptyTitle: {
     marginTop: 10,
-    color: '#6b7280',
+    color: '#888888',
   },
   withdrawRow: {
     marginTop: 14,
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   withdrawText: {
     marginLeft: 6,
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 14,
     fontFamily: FONTS_Family.FontSemiBold,
   },
-
   withdrawInfo: {
-    color: '#e0ecff',
+    color: '#AAAAAA',
     fontSize: 12,
   },
-
   modalOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   modalCard: {
     width: '85%',
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#DCDCDC',
   },
-
   modalTitle: {
     fontSize: 18,
-    color: '#111827',
+    color: '#000000',
     fontFamily: FONTS_Family.FontSemiBold,
   },
-
   modalSub: {
     marginTop: 6,
     fontSize: 12,
-    color: '#6b7280',
+    color: '#555555',
   },
-
   input: {
     marginTop: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#DCDCDC',
     borderRadius: 10,
     padding: 10,
-    color: '#111827',
+    color: '#000000',
+    backgroundColor: '#F7F7F7',
   },
-
   modalBtnRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginTop: 16,
+    gap: 16,
   },
-
   cancelBtn: {
-    marginRight: 16,
-    color: '#6b7280',
+    color: '#555555',
+    fontFamily: FONTS_Family.FontMedium,
+    fontSize: 15,
   },
-
   submitBtn: {
-    color: '#2563eb',
+    color: '#1a1a1a',
     fontFamily: FONTS_Family.FontSemiBold,
+    fontSize: 15,
   },
-
   fullscreenLoader: {
     position: 'absolute',
     top: 0,
@@ -710,18 +689,16 @@ const styles = StyleSheet.create({
     zIndex: 99,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: 'rgba(255,255,255,0.85)',
   },
-
   loaderText: {
     marginTop: 10,
-    color: '#1e293b',
+    color: '#000000',
     fontSize: 14,
     fontFamily: FONTS_Family.FontMedium,
   },
-
   successAnimText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 13,
     fontFamily: FONTS_Family.FontSemiBold,
   },
