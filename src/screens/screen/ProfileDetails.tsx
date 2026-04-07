@@ -32,6 +32,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
 
+type DropdownOption = {
+  label: string;
+  value: string | number;
+};
+
 const ProfileDetails = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
@@ -49,14 +54,14 @@ const ProfileDetails = () => {
   const [registorNo, setRegistorNo] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState(routePhone);
-  const [barDoc, setBarDoc] = useState(null);
-  const [idDoc, setIdDoc] = useState(null);
+  const [barDoc, setBarDoc] = useState<any>(null);
+  const [idDoc, setIdDoc] = useState<any>(null);
   const [cityOpen, setCityOpen] = useState(false);
-  const [cityValue, setCityValue] = useState(null);
+  const [cityValue, setCityValue] = useState<string | number | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [cityLoading, setCityLoading] = useState(false);
-  const [cityItems, setCityItems] = useState([]);
-  const [routeUserId, setRouteUserId] = useState([]);
+  const [cityItems, setCityItems] = useState<DropdownOption[]>([]);
+  const [routeUserId, setRouteUserId] = useState<number | null>(null);
   /* ---------------- Experience Dropdown ---------------- */
   const [expOpen, setExpOpen] = useState(false);
   const [expValue, setExpValue] = useState(null);
@@ -118,6 +123,14 @@ const ProfileDetails = () => {
 
   const [businessName, setBusinessName] = useState('');
   const [businessAddress, setBusinessAddress] = useState('');
+  const [businessCategoryOpen, setBusinessCategoryOpen] = useState(false);
+  const [businessCategoryValue, setBusinessCategoryValue] = useState<
+    string | null
+  >(null);
+  const [businessCategoryLoading, setBusinessCategoryLoading] = useState(false);
+  const [businessCategoryItems, setBusinessCategoryItems] = useState<
+    DropdownOption[]
+  >([]);
   const [businessOther, setBusinessOther] = useState('');
 
   const formatDobForDisplay = (value?: string) => {
@@ -198,6 +211,7 @@ const ProfileDetails = () => {
           setSocialLink(apiProfile?.social_link || '');
           setBusinessName(apiProfile?.business_name || '');
           setBusinessAddress(apiProfile?.business_address || '');
+          setBusinessCategoryValue(apiProfile?.business_category || null);
           setBusinessOther(apiProfile?.business_other || '');
 
           const dobParts = parseDobParts(apiProfile?.dob);
@@ -433,6 +447,7 @@ const ProfileDetails = () => {
       formData.append('social_link', socialLink || '');
       formData.append('business_name', businessName || '');
       formData.append('business_address', businessAddress || '');
+      formData.append('business_category', businessCategoryValue || '');
       formData.append('business_other', businessOther || '');
 
       if (barDoc?.uri) {
@@ -466,10 +481,13 @@ const ProfileDetails = () => {
           isSuccess: true,
         });
 
-        navigation.replace('HomeNavigator');
-        if (res.user?.id) {
-          await AsyncStorage.setItem('User_id', res.user?.id);
+        const responseUserId =
+          res?.user?.id ?? res?.data?.user?.id ?? res?.data?.id ?? null;
+        if (responseUserId !== null && responseUserId !== undefined) {
+          await AsyncStorage.setItem('User_id', String(responseUserId));
         }
+
+        navigation.replace('HomeNavigator');
       }
     } catch (error) {
       console.log('SIGNUP ERROR =>', error);
@@ -487,7 +505,7 @@ const ProfileDetails = () => {
       const res = await APIWebCall.oncityListAPICall();
 
       if (res?.status === true || res?.success === true) {
-        const formattedCities = res?.data?.map(item => ({
+        const formattedCities = res?.data?.map((item: any) => ({
           label: item.name,
           value: item.id,
         }));
@@ -500,6 +518,50 @@ const ProfileDetails = () => {
       setCityLoading(false);
     }
   };
+
+  const loadBusinessCategoryList = async () => {
+    try {
+      setBusinessCategoryLoading(true);
+
+      const res = await APIWebCall.onBusinessCategoryListAPICall();
+
+      if (res?.status === true || res?.success === true) {
+        const formattedCategories = (res?.data || []).map((item: any) => ({
+          label: item?.value,
+          value: item?.key,
+        }));
+
+        setBusinessCategoryItems(formattedCategories);
+      }
+    } catch (error) {
+      console.log('BUSINESS CATEGORY LIST ERROR => ', error);
+    } finally {
+      setBusinessCategoryLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!businessCategoryValue || businessCategoryItems.length === 0) {
+      return;
+    }
+
+    setBusinessCategoryItems(prev => {
+      const exists = prev.find(item => item.value === businessCategoryValue);
+      if (exists) {
+        return prev;
+      }
+
+      return [
+        ...prev,
+        {
+          label: String(businessCategoryValue)
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, char => char.toUpperCase()),
+          value: businessCategoryValue,
+        },
+      ];
+    });
+  }, [businessCategoryValue, businessCategoryItems.length]);
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#F7F7F7' }}
@@ -680,10 +742,9 @@ const ProfileDetails = () => {
                         value={cityValue}
                         items={cityItems}
                         loading={cityLoading}
-                        setOpen={open => {
-                          setCityOpen(open);
-
-                          if (open && cityItems.length === 0) {
+                        setOpen={setCityOpen}
+                        onOpen={() => {
+                          if (cityItems.length === 0) {
                             loadCityList();
                           }
                         }}
@@ -823,6 +884,50 @@ const ProfileDetails = () => {
                     value={businessAddress}
                     onChangeText={setBusinessAddress}
                   />
+
+                  <TextCommonBold
+                    text={'Business Category'}
+                    textViewStyle={styles.label}
+                  />
+                  <View style={{ zIndex: 2000 }}>
+                    <DropDownPicker
+                      open={businessCategoryOpen}
+                      value={businessCategoryValue}
+                      items={businessCategoryItems}
+                      loading={businessCategoryLoading}
+                      setOpen={setBusinessCategoryOpen}
+                      onOpen={() => {
+                        if (businessCategoryItems.length === 0) {
+                          loadBusinessCategoryList();
+                        }
+                      }}
+                      setValue={setBusinessCategoryValue}
+                      setItems={setBusinessCategoryItems}
+                      placeholder="Select business category"
+                      searchable={true}
+                      listMode="MODAL"
+                      modalProps={{
+                        animationType: 'slide',
+                      }}
+                      modalContentContainerStyle={{
+                        backgroundColor: '#fff',
+                      }}
+                      searchContainerStyle={{
+                        borderBottomColor: COLORS.colorLightGray,
+                        borderBottomWidth: 1,
+                        padding: 5,
+                      }}
+                      searchTextInputStyle={{
+                        borderColor: COLORS.colorLightGray,
+                        borderBottomWidth: 1,
+                        borderRadius: 8,
+                        color: COLORS.black,
+                      }}
+                      searchPlaceholder="Search category"
+                      style={styles.dropdownInput}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                    />
+                  </View>
 
                   <TextCommonBold text={'Other'} textViewStyle={styles.label} />
                   <TextInputView

@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#000000',
     padding: 14,
     borderRadius: 12,
     alignItems: 'center',
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   },
 
   yesButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#000000',
   },
 
   cancelText: {
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
   },
 
   successButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#000000',
     paddingVertical: 14,
     paddingHorizontal: 40,
     borderRadius: 30,

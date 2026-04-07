@@ -76,8 +76,8 @@ const PhoneDirectoryScreen = () => {
   const appliedFiltersRef = useRef<{
     caste: string | null;
     gender: string | null;
-    businessName: string | null;
-  }>({ caste: null, gender: null, businessName: null });
+    businessCategory: string | null;
+  }>({ caste: null, gender: null, businessCategory: null });
 
   const activeFilterCount = [appliedCaste, appliedGender, appliedBiz].filter(
     Boolean,
@@ -88,7 +88,7 @@ const PhoneDirectoryScreen = () => {
       page: number,
       caste: string | null,
       gender: string | null,
-      businessName: string | null,
+      businessCategory: string | null,
       append: boolean,
     ) => {
       try {
@@ -99,24 +99,11 @@ const PhoneDirectoryScreen = () => {
           page,
           caste,
           gender,
-          businessName,
+          businessCategory,
         );
 
         if (res?.status === true || res?.success === true) {
           const results = res?.results ?? [];
-
-          setBizItems(prev => {
-            const existing = new Set(prev.map((i: any) => i.value));
-            const newEntries = results
-              .filter(
-                (u: any) => u.business_name && !existing.has(u.business_name),
-              )
-              .map((u: any) => ({
-                label: u.business_name,
-                value: u.business_name,
-              }));
-            return [...prev, ...newEntries];
-          });
 
           setUsers(prev => (append ? [...prev, ...results] : results));
           setTotalPages(res?.total_pages ?? 1);
@@ -137,11 +124,37 @@ const PhoneDirectoryScreen = () => {
     fetchUsers(1, null, null, null, false);
   }, [fetchUsers]);
 
+  const loadBusinessCategoryList = useCallback(async () => {
+    try {
+      const res = await APIWebCall.onBusinessCategoryListAPICall();
+
+      if (res?.status === true || res?.success === true) {
+        const formattedCategories = (res?.data || []).map((item: any) => ({
+          label: item?.value,
+          value: item?.key,
+        }));
+
+        setBizItems(formattedCategories);
+      }
+    } catch (error) {
+      console.log('BUSINESS CATEGORY LIST ERROR => ', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadBusinessCategoryList();
+  }, [loadBusinessCategoryList]);
+
   const openFilterModal = () => {
     setTempCaste(appliedCaste);
     setTempGender(appliedGender);
     setTempBiz(appliedBiz);
     setBizOpen(false);
+
+    if (bizItems.length === 0) {
+      loadBusinessCategoryList();
+    }
+
     setFilterVisible(true);
   };
 
@@ -152,7 +165,7 @@ const PhoneDirectoryScreen = () => {
     appliedFiltersRef.current = {
       caste: tempCaste,
       gender: tempGender,
-      businessName: tempBiz,
+      businessCategory: tempBiz,
     };
     setFilterVisible(false);
     fetchUsers(1, tempCaste, tempGender, tempBiz, false);
@@ -172,7 +185,11 @@ const PhoneDirectoryScreen = () => {
     setAppliedCaste(nc);
     setAppliedGender(ng);
     setAppliedBiz(nb);
-    appliedFiltersRef.current = { caste: nc, gender: ng, businessName: nb };
+    appliedFiltersRef.current = {
+      caste: nc,
+      gender: ng,
+      businessCategory: nb,
+    };
     fetchUsers(1, nc, ng, nb, false);
   };
 
@@ -183,15 +200,15 @@ const PhoneDirectoryScreen = () => {
     appliedFiltersRef.current = {
       caste: null,
       gender: null,
-      businessName: null,
+      businessCategory: null,
     };
     fetchUsers(1, null, null, null, false);
   };
 
   const handleLoadMore = () => {
     if (!loadingMore && currentPage < totalPages) {
-      const { caste, gender, businessName } = appliedFiltersRef.current;
-      fetchUsers(currentPage + 1, caste, gender, businessName, true);
+      const { caste, gender, businessCategory } = appliedFiltersRef.current;
+      fetchUsers(currentPage + 1, caste, gender, businessCategory, true);
     }
   };
 
@@ -376,7 +393,7 @@ const PhoneDirectoryScreen = () => {
 
             {bizItems.length > 0 && (
               <>
-                <Text style={styles.filterSectionLabel}>Business Name</Text>
+                <Text style={styles.filterSectionLabel}>Business Category</Text>
                 <View style={{ zIndex: 9000, marginBottom: 10 }}>
                   <DropDownPicker
                     open={bizOpen}
@@ -385,11 +402,11 @@ const PhoneDirectoryScreen = () => {
                     setOpen={setBizOpen}
                     setValue={setTempBiz}
                     setItems={setBizItems}
-                    placeholder="Select business..."
+                    placeholder="Select category..."
                     listMode="MODAL"
                     modalProps={{ animationType: 'slide' }}
                     searchable
-                    searchPlaceholder="Search..."
+                    searchPlaceholder="Search category..."
                     style={styles.bizDropdown}
                     dropDownContainerStyle={styles.bizDropdownContainer}
                     searchContainerStyle={{ borderBottomColor: BW.border }}
@@ -424,6 +441,9 @@ const PhoneDirectoryScreen = () => {
       </View>
     </Modal>
   );
+
+  const appliedBizLabel =
+    bizItems.find(item => item.value === appliedBiz)?.label || appliedBiz;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -472,7 +492,9 @@ const PhoneDirectoryScreen = () => {
               appliedGender
                 ? { label: appliedGender, type: 'gender' as const }
                 : null,
-              appliedBiz ? { label: appliedBiz, type: 'biz' as const } : null,
+              appliedBizLabel
+                ? { label: appliedBizLabel, type: 'biz' as const }
+                : null,
             ].filter(Boolean) as {
               label: string;
               type: 'caste' | 'gender' | 'biz';
@@ -527,7 +549,7 @@ const PhoneDirectoryScreen = () => {
 export default PhoneDirectoryScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BW.bg ,marginTop:10},
+  container: { flex: 1, backgroundColor: BW.bg, marginTop: 10 },
   loader: { marginTop: 50 },
 
   toolbar: {

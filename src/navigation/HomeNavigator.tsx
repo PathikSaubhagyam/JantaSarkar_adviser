@@ -13,6 +13,7 @@ import AskGiveScreen from '../screens/screen/AskGiveScreen';
 import RaisedBloodRequestScreen from '../screens/screen/RaisedBloodRequestScreen';
 import PhoneDirectoryScreen from '../screens/screen/PhoneDirectoryScreen';
 import UserAdvisorDetailScreen from '../screens/screen/UserAdvisorDetailScreen';
+import CommunityDashboardScreen from '../screens/screen/CommunityDashboardScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
@@ -53,6 +54,10 @@ const HomeNavigator = () => {
         <Stack.Screen
           name="UserAdvisorDetailScreen"
           component={UserAdvisorDetailScreen}
+        />
+        <Stack.Screen
+          name="CommunityDashboardScreen"
+          component={CommunityDashboardScreen}
         />
       </Stack.Navigator>
     </SafeAreaView>

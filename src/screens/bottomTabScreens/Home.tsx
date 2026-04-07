@@ -84,7 +84,7 @@ export default function HomeScreen() {
       const response = await onDashboardAPICall();
 
       if (response?.status || response?.success) {
-        setUserCases(Number(response?.total_case) || 0);
+        setUserCases(Number(response?.get_help) || 0);
         setProvidedHelp(Number(response?.provide_help) || 0);
         setHelpRecords(Number(response?.help_reward) || 0);
       } else {
@@ -119,7 +119,10 @@ export default function HomeScreen() {
       ) : (
         <View style={styles.cardContainer}>
           {/* Your Cases */}
-          <TouchableOpacity style={[styles.card, styles.cardDark]}>
+          <TouchableOpacity
+            style={[styles.card, styles.cardDark]}
+            onPress={() => navigation.navigate('CommunityDashboardScreen')}
+          >
             <View style={[styles.iconBox, { backgroundColor: '#1a1a1a' }]}>
               <Icon name="document-text-outline" size={22} color="#FFFFFF" />
             </View>
@@ -130,7 +133,6 @@ export default function HomeScreen() {
               Your Cases
             </Text>
           </TouchableOpacity>
-
           {/* Provided Help */}
           <TouchableOpacity
             style={[styles.card, styles.cardLight]}
@@ -148,9 +150,9 @@ export default function HomeScreen() {
               Provided Help
             </Text>
           </TouchableOpacity>
-
           {/* Help Records */}
-          <TouchableOpacity
+
+          {/* <TouchableOpacity
             style={[styles.card, styles.cardLight]}
             onPress={() => navigation.navigate('RewardHistoryScreen')}
           >
@@ -163,24 +165,23 @@ export default function HomeScreen() {
             <Text style={[styles.cardLabel, { color: '#555555' }]}>
               Your Rewards
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Payment */}
           <TouchableOpacity
-            style={[styles.card, styles.cardDark]}
+            style={[styles.card, styles.cardLight]}
             onPress={() => navigation.navigate('PaymentHistoryScreen')}
           >
-            <View style={[styles.iconBox, { backgroundColor: '#333333' }]}>
-              <Icon name="wallet-outline" size={22} color="#FFFFFF" />
+            <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
+              <Icon name="wallet-outline" size={22} color="#1a1a1a" />
             </View>
-            <Text style={[styles.cardLabel, { color: '#CCCCCC' }]}>
+            <Text style={[styles.cardLabel, { color: '#1a1a1a' }]}>
               Payment History
             </Text>
-            <Text style={[styles.addMoney, { color: '#FFFFFF' }]}>
+            <Text style={[styles.addMoney, { color: '#555555' }]}>
               View Payments
             </Text>
           </TouchableOpacity>
-
           {/* Ask & Give */}
           <TouchableOpacity
             onPress={() => navigation.navigate('AskGiveScreen')}
@@ -188,7 +189,11 @@ export default function HomeScreen() {
           >
             <View style={styles.askGiveContent}>
               <View style={styles.askGiveIconBox}>
-                <Icon name="chatbubble-ellipses-outline" size={22} color="#1a1a1a" />
+                <Icon
+                  name="chatbubble-ellipses-outline"
+                  size={22}
+                  color="#1a1a1a"
+                />
               </View>
               <View style={styles.askGiveTextWrap}>
                 <Text style={styles.askGiveTitle}>Ask & Give</Text>
@@ -255,12 +260,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
-    borderWidth: 1,
+    borderWidth: 2,
+    borderColor: '#000000',
   },
   // Dark card — black bg, white text
   cardDark: {
     backgroundColor: '#1a1a1a',
     borderColor: '#000000',
+    borderWidth: 2,
   },
   // Light card — white bg, black text
   cardLight: {

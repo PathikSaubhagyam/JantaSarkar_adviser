@@ -38,6 +38,7 @@ const SignUp = () => {
   const routeUserId = route?.params?.userId || '';
 
   const [fullName, setFullName] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [registorNo, setRegistorNo] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState(routePhone);
@@ -166,6 +167,7 @@ const SignUp = () => {
       let formData = new FormData();
 
       formData.append('full_name', fullName || '');
+      formData.append('referral_code', (referralCode || '').trim());
       formData.append('email', email || '');
       formData.append('phone_number', phoneNumber || '');
       formData.append('bar_council_registration_no', registorNo || '');
@@ -431,6 +433,15 @@ const SignUp = () => {
                     }}
                   />
                 </View>
+                <TextCommonBold
+                  text={'Referral Code'}
+                  textViewStyle={styles.label}
+                />
+                <TextInputView
+                  placeholder="AF8IGDDL"
+                  value={referralCode}
+                  onChangeText={value => setReferralCode(value.toUpperCase())}
+                />
               </View>
               <TextCommonBold
                 text={'Upload Documents'}

@@ -11,6 +11,8 @@ import {
   Modal,
   Pressable,
   Platform,
+  Share,
+  Alert,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -31,8 +33,8 @@ type ProfileScreenProps = {
 
 export default function Profile({ onLogout }: ProfileScreenProps) {
   const navigation = useNavigation();
-  const [profile, setProfile] = useState({});
-  const [profileImage, setProfileImage] = useState(null);
+  const [profile, setProfile] = useState<any>({});
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   console.log('ppppppppppp', profile);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -73,7 +75,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     });
 
     if (!result.didCancel && result.assets) {
-      setProfileImage(result.assets[0].uri);
+      setProfileImage(result.assets[0].uri || null);
     }
   };
 
@@ -86,7 +88,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     });
 
     if (!result.didCancel && result.assets) {
-      setProfileImage(result.assets[0].uri);
+      setProfileImage(result.assets[0].uri || null);
     }
   };
   const handleLogout = () => {
@@ -104,6 +106,26 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     }
   };
 
+  const handleShareReferral = async () => {
+    const referralCode = profile?.referral_code;
+
+    if (!referralCode) {
+      Alert.alert(
+        'Referral code unavailable',
+        'Your referral code is not available yet.',
+      );
+      return;
+    }
+
+    try {
+      await Share.share({
+        message: `Join me on Janta Sarkar Adviser and use my referral code: ${referralCode}`,
+      });
+    } catch (error) {
+      console.log('Referral share error:', error);
+    }
+  };
+
   const renderMenuItem = (
     title,
     subtitle,
@@ -114,8 +136,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
   ) => (
     <TouchableOpacity style={styles.menuItem} onPress={onPress}>
       <View style={styles.menuLeft}>
-        <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
-          <Icon name={iconName} size={20} color={iconColor} />
+        <View style={styles.iconContainer}>
+          <Icon name={iconName} size={20} color="#111111" />
         </View>
 
         <View style={{ marginLeft: 12 }}>
@@ -153,6 +175,29 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
             text={profile?.full_name}
             textViewStyle={styles.name}
           />
+
+          <View style={styles.referralCard}>
+            <View style={styles.referralTitleRow}>
+              <Icon name="pricetag-outline" size={16} color="#111111" />
+              <Text style={styles.referralLabel}>Referral Code</Text>
+            </View>
+            <Text style={styles.referralCode}>
+              {profile?.referral_code || 'Not available'}
+            </Text>
+
+            <Text style={styles.referralHintText}>
+              Share this code with friends and get referral bonus
+            </Text>
+
+            <TouchableOpacity
+              style={styles.shareReferralButton}
+              onPress={handleShareReferral}
+              activeOpacity={0.85}
+            >
+              <Icon name="share-social-outline" size={18} color="#FFFFFF" />
+              <Text style={styles.shareReferralButtonText}>Share via App</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* <TextCommonMedium
             text={`Verified Citizen • ${profile?.phone_number || ''}`}
@@ -279,7 +324,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
                 onPress={openCamera}
                 activeOpacity={0.85}
               >
-                <Icon name="camera-outline" size={20} color="#FF7A00" />
+                <Icon name="camera-outline" size={20} color="#111111" />
                 <Text style={styles.imagePickerOptionText}>Camera</Text>
               </TouchableOpacity>
 
@@ -288,7 +333,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
                 onPress={openGallery}
                 activeOpacity={0.85}
               >
-                <Icon name="images-outline" size={20} color="#3A7BFF" />
+                <Icon name="images-outline" size={20} color="#111111" />
                 <Text style={styles.imagePickerOptionText}>Gallery</Text>
               </TouchableOpacity>
 
@@ -344,14 +389,14 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: '#F2F2F2',
   },
   header: {
     alignItems: 'center',
     paddingVertical: 30,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#EBEBEB',
+    borderBottomColor: '#D9D9D9',
   },
   imageContainer: {
     position: 'relative',
@@ -379,9 +424,58 @@ const styles = StyleSheet.create({
     marginTop: 12,
     color: '#000000',
   },
+  referralCard: {
+    marginTop: 14,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#1A1A1A',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    width: '88%',
+    alignItems: 'center',
+  },
+  referralTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  referralLabel: {
+    fontSize: 12,
+    color: '#111111',
+    letterSpacing: 0.5,
+  },
+  referralCode: {
+    fontSize: 24,
+    color: '#000000',
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  referralHintText: {
+    marginTop: 8,
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#555555',
+    textAlign: 'center',
+  },
+  shareReferralButton: {
+    marginTop: 10,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  shareReferralButtonText: {
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
   subText: {
     fontSize: 14,
-    color: '#555555',
+    color: '#4A4A4A',
     marginTop: 4,
   },
   govText: {
@@ -393,7 +487,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginLeft: 20,
     fontSize: 11,
-    color: '#888888',
+    color: '#444444',
     letterSpacing: 0.8,
   },
   card: {
@@ -403,7 +497,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#D6D6D6',
     elevation: 1,
     shadowColor: '#000',
     shadowOpacity: 0.04,
@@ -417,7 +511,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 15,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#EBEBEB',
+    borderBottomColor: '#E2E2E2',
   },
   menuLeft: {
     flexDirection: 'row',
@@ -426,6 +520,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 42,
     height: 42,
+    backgroundColor: '#EFEFEF',
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -436,7 +531,7 @@ const styles = StyleSheet.create({
   },
   menuSub: {
     fontSize: 12,
-    color: '#888888',
+    color: '#666666',
     marginTop: 3,
   },
   // Logout — black border, black text (no red)
@@ -454,7 +549,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.55)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -466,7 +561,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     width: '85%',
     borderWidth: 1,
-    borderColor: '#DCDCDC',
+    borderColor: '#CFCFCF',
     ...Platform.select({
       android: { elevation: 8 },
       ios: {
@@ -485,7 +580,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     width: '85%',
     borderWidth: 1,
-    borderColor: '#DCDCDC',
+    borderColor: '#CFCFCF',
     ...Platform.select({
       android: { elevation: 8 },
       ios: {
@@ -506,7 +601,7 @@ const styles = StyleSheet.create({
   },
   modalMessage: {
     fontSize: 15,
-    color: '#555555',
+    color: '#444444',
     marginBottom: 24,
     lineHeight: 22,
   },
@@ -521,16 +616,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#ECECEC',
     borderWidth: 1,
-    borderColor: '#DCDCDC',
+    borderColor: '#CFCFCF',
   },
   confirmButton: {
     backgroundColor: '#1a1a1a',
   },
   cancelButtonText: {
     fontSize: 15,
-    color: '#555555',
+    color: '#444444',
   },
   confirmButtonText: {
     fontSize: 15,
@@ -538,7 +633,7 @@ const styles = StyleSheet.create({
   },
   imagePickerMessage: {
     fontSize: 15,
-    color: '#555555',
+    color: '#444444',
     marginTop: 8,
     marginBottom: 20,
     lineHeight: 22,
@@ -548,12 +643,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: '#DCDCDC',
+    borderColor: '#D1D1D1',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 14,
     marginBottom: 12,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: '#F1F1F1',
   },
   imagePickerOptionText: {
     fontSize: 15,
@@ -565,10 +660,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: '#EBEBEB',
+    backgroundColor: '#E3E3E3',
   },
   imagePickerCancelText: {
     fontSize: 15,
-    color: '#555555',
+    color: '#444444',
   },
 });

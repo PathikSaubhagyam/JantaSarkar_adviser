@@ -133,14 +133,14 @@ export default function SettingsScreen() {
             value={isNotification}
             disabled={isUpdating}
             onValueChange={updateNotificationSetting}
-            trackColor={{ false: '#d1d5db', true: '#849ed3' }}
-            thumbColor={isNotification ? '#3A7BFF' : '#f3f4f6'}
+            trackColor={{ false: '#d1d5db', true: '#6b7280' }}
+            thumbColor={isNotification ? '#000000' : '#f3f4f6'}
           />
         </View>
 
         {isUpdating && (
           <View style={styles.loaderRow}>
-            <ActivityIndicator size="small" color="#3A7BFF" />
+            <ActivityIndicator size="small" color="#000000" />
             <Text style={styles.loaderText}>Updating setting...</Text>
           </View>
         )}
@@ -152,7 +152,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop:10,
+    marginTop: 10,
     backgroundColor: COLORS.white,
     paddingHorizontal: 16,
   },

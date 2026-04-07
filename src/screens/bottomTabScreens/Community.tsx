@@ -125,7 +125,8 @@ const Community = () => {
                   {person?.mobile || 'N/A'}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => handleCall(person?.mobile)}
+                  disabled={true}
+                  // onPress={() => handleCall(person?.mobile)}
                   style={styles.callButton}
                 >
                   <Image

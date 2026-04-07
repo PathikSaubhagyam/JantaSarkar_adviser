@@ -212,7 +212,7 @@ const TabNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Crowd"
         component={Crowd}
         options={{
@@ -241,7 +241,7 @@ const TabNavigator = () => {
             </View>
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

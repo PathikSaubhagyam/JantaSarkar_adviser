@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   underline: {
     height: 3,
-    backgroundColor: '#3A7BFF',
+    backgroundColor: '#000000',
     width: 40,
     marginTop: 8,
   },

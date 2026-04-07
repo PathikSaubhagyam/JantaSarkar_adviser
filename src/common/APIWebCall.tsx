@@ -188,6 +188,9 @@ export const onAdvisorHistoryAPICall = () => {
 export const oncityListAPICall = () => {
   return _REQUEST2SERVER(`mobile/city-list/`, null, 'GET', false, true);
 };
+export const onBusinessCategoryListAPICall = () => {
+  return _REQUEST2SERVER(`business-category-list/`, null, 'GET', false, true);
+};
 export const onDepartmentAPICall = () => {
   return _REQUEST2SERVER(`departments/?all=true`, null, 'GET', false, false);
 };
@@ -197,6 +200,16 @@ export const onProfileAPICall = () => {
 export const onCommunityFeedListAPICall = () => {
   return _REQUEST2SERVER(
     `mobile/community-complaint/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
+export const onCommunityDashboardAPICall = () => {
+  return _REQUEST2SERVER(
+    `mobile/community-dashboard/`,
     null,
     'GET',
     false,
@@ -387,13 +400,15 @@ export const onUserAdvisorListAPICall = (
   page = 1,
   caste: string | null = null,
   gender: string | null = null,
-  businessName: string | null = null,
+  businessCategory: string | null = null,
 ) => {
   const queryParts: string[] = [`page=${page}`];
   if (caste) queryParts.push(`caste=${encodeURIComponent(caste)}`);
   if (gender) queryParts.push(`gender=${encodeURIComponent(gender)}`);
-  if (businessName)
-    queryParts.push(`business_name=${encodeURIComponent(businessName)}`);
+  if (businessCategory)
+    queryParts.push(
+      `business_category=${encodeURIComponent(businessCategory)}`,
+    );
   return _REQUEST2SERVER(
     `mobile/user-advisor/list/?${queryParts.join('&')}`,
     null,
@@ -413,12 +428,14 @@ export default {
   onCompletedComplaintAPICall,
   onAdvisorHistoryAPICall,
   oncityListAPICall,
+  onBusinessCategoryListAPICall,
   onRequestRejectAPICall,
   onComplaintCancelAPICall,
   onDepartmentAPICall,
   onCommunityFeedAPICall,
   onProfileAPICall,
   onCommunityFeedListAPICall,
+  onCommunityDashboardAPICall,
   onUploadDocumentsAPICall,
   onGetUploadedDocumentsAPICall,
   onRegisterFCMTokenAPICall,
