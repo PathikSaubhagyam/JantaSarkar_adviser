@@ -227,11 +227,11 @@ export default function UploadDocScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Header
+        title="Upload Documents"
+        onBackPress={() => navigation.goBack()}
+      />
       <ScrollView contentContainerStyle={styles.content}>
-        <Header
-          title="Upload Documents"
-          onBackPress={() => navigation.goBack()}
-        />
         <Text style={styles.subTitle}>
           Please upload all required documents for verification.
         </Text>

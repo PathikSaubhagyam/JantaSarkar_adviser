@@ -50,7 +50,7 @@ export default function BankDetailsScreen() {
     try {
       setLoading(true);
       const response = await APIWebCall.onGetBankDetailsAPICall();
-      
+
       if (response?.status && response?.bank_account) {
         const bankDetails = response.bank_account;
         setForm({
@@ -151,6 +151,8 @@ export default function BankDetailsScreen() {
         style={styles.keyboardAvoidingContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
+        <Header title="Bank Details" onBackPress={() => navigation.goBack()} />
+
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#1a1a1a" />
@@ -161,85 +163,80 @@ export default function BankDetailsScreen() {
             contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
           >
-            <Header
-              title="Bank Details"
-              onBackPress={() => navigation.goBack()}
-            />
+            <Text style={styles.subTitle}>
+              Add your bank account details securely.
+            </Text>
 
-          <Text style={styles.subTitle}>
-            Add your bank account details securely.
-          </Text>
+            <View style={styles.formCard}>
+              <Text style={styles.label}>Account Holder Name</Text>
+              <TextInputView
+                placeholder="Enter account holder name"
+                value={form.account_holder_name}
+                onChangeText={text => updateField('account_holder_name', text)}
+                containerStyle={styles.inputContainer}
+                returnKeyType="next"
+                blurOnSubmit={false}
+                onSubmitEditing={() => accountNumberRef.current?.focus()}
+              />
 
-          <View style={styles.formCard}>
-            <Text style={styles.label}>Account Holder Name</Text>
-            <TextInputView
-              placeholder="Enter account holder name"
-              value={form.account_holder_name}
-              onChangeText={text => updateField('account_holder_name', text)}
-              containerStyle={styles.inputContainer}
-              returnKeyType="next"
-              blurOnSubmit={false}
-              onSubmitEditing={() => accountNumberRef.current?.focus()}
-            />
+              <Text style={styles.label}>Account Number</Text>
+              <TextInputView
+                placeholder="Enter account number"
+                value={form.account_number}
+                onChangeText={text =>
+                  updateField('account_number', text.replace(/[^0-9]/g, ''))
+                }
+                keyboardType="number-pad"
+                maxLength={18}
+                containerStyle={styles.inputContainer}
+                inputRef={accountNumberRef}
+                returnKeyType="next"
+                blurOnSubmit={false}
+                onSubmitEditing={() => ifscRef.current?.focus()}
+              />
 
-            <Text style={styles.label}>Account Number</Text>
-            <TextInputView
-              placeholder="Enter account number"
-              value={form.account_number}
-              onChangeText={text =>
-                updateField('account_number', text.replace(/[^0-9]/g, ''))
-              }
-              keyboardType="number-pad"
-              maxLength={18}
-              containerStyle={styles.inputContainer}
-              inputRef={accountNumberRef}
-              returnKeyType="next"
-              blurOnSubmit={false}
-              onSubmitEditing={() => ifscRef.current?.focus()}
-            />
+              <Text style={styles.label}>IFSC Code</Text>
+              <TextInputView
+                placeholder="e.g. HDFC0001234"
+                value={form.ifsc_code}
+                onChangeText={text =>
+                  updateField('ifsc_code', text.toUpperCase())
+                }
+                maxLength={11}
+                containerStyle={styles.inputContainer}
+                inputRef={ifscRef}
+                returnKeyType="next"
+                blurOnSubmit={false}
+                onSubmitEditing={() => bankNameRef.current?.focus()}
+              />
 
-            <Text style={styles.label}>IFSC Code</Text>
-            <TextInputView
-              placeholder="e.g. HDFC0001234"
-              value={form.ifsc_code}
-              onChangeText={text =>
-                updateField('ifsc_code', text.toUpperCase())
-              }
-              maxLength={11}
-              containerStyle={styles.inputContainer}
-              inputRef={ifscRef}
-              returnKeyType="next"
-              blurOnSubmit={false}
-              onSubmitEditing={() => bankNameRef.current?.focus()}
-            />
+              <Text style={styles.label}>Bank Name</Text>
+              <TextInputView
+                placeholder="Enter bank name"
+                value={form.bank_name}
+                onChangeText={text => updateField('bank_name', text)}
+                containerStyle={styles.inputContainer}
+                inputRef={bankNameRef}
+                returnKeyType="done"
+                onSubmitEditing={onSubmit}
+              />
+            </View>
 
-            <Text style={styles.label}>Bank Name</Text>
-            <TextInputView
-              placeholder="Enter bank name"
-              value={form.bank_name}
-              onChangeText={text => updateField('bank_name', text)}
-              containerStyle={styles.inputContainer}
-              inputRef={bankNameRef}
-              returnKeyType="done"
-              onSubmitEditing={onSubmit}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={[
-              styles.submitButton,
-              (!canSubmit || submitting) && styles.submitButtonDisabled,
-            ]}
-            onPress={onSubmit}
-            activeOpacity={0.85}
-            disabled={!canSubmit || submitting}
-          >
-            {submitting ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text style={styles.submitButtonText}>Save Bank Details</Text>
-            )}
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.submitButton,
+                (!canSubmit || submitting) && styles.submitButtonDisabled,
+              ]}
+              onPress={onSubmit}
+              activeOpacity={0.85}
+              disabled={!canSubmit || submitting}
+            >
+              {submitting ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.submitButtonText}>Save Bank Details</Text>
+              )}
+            </TouchableOpacity>
           </ScrollView>
         )}
       </KeyboardAvoidingView>

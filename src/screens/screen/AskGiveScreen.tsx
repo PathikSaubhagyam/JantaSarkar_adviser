@@ -85,12 +85,16 @@ export default function AskGiveScreen() {
   }, [activeTab]);
 
   const submitAsk = async () => {
-    if (!item || !desc || !phone) {
+    const normalizedItem = item.trim();
+    const normalizedDesc = desc.trim();
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+    if (!normalizedItem || !normalizedDesc || !normalizedPhone) {
       showModal('Missing details', 'Please fill all fields.', 'warning');
       return;
     }
 
-    if (phone.length !== 10) {
+    if (normalizedPhone.length !== 10) {
       showModal(
         'Invalid Phone',
         'Please enter a valid 10-digit phone number.',
@@ -102,17 +106,17 @@ export default function AskGiveScreen() {
     try {
       setIsSubmitting(true);
       const data = await onExchangeCreateAPICall({
-        title: item,
-        description: desc,
-        contact_number: phone,
+        title: normalizedItem,
+        description: normalizedDesc,
+        contact_number: normalizedPhone,
       });
 
       if (data?.status || data?.success) {
         const newAsk = {
           id: Date.now().toString(),
-          item,
-          desc,
-          phone,
+          item: normalizedItem,
+          desc: normalizedDesc,
+          phone: normalizedPhone,
         };
 
         setAskList([newAsk, ...askList]);
@@ -216,7 +220,12 @@ export default function AskGiveScreen() {
             style={[styles.tab, activeTab === 'give' && styles.activeTab]}
             onPress={() => setActiveTab('give')}
           >
-            <Text style={[styles.tabText, activeTab === 'give' && styles.activeText]}>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'give' && styles.activeText,
+              ]}
+            >
               Give
             </Text>
           </TouchableOpacity>
@@ -224,7 +233,9 @@ export default function AskGiveScreen() {
             style={[styles.tab, activeTab === 'ask' && styles.activeTab]}
             onPress={() => setActiveTab('ask')}
           >
-            <Text style={[styles.tabText, activeTab === 'ask' && styles.activeText]}>
+            <Text
+              style={[styles.tabText, activeTab === 'ask' && styles.activeText]}
+            >
               Ask
             </Text>
           </TouchableOpacity>

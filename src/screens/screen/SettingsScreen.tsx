@@ -105,45 +105,46 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#000000" barStyle="light-content" />
-
-      <CommonModal
-        visible={modal.visible}
-        type={modal.type}
-        title={modal.title}
-        message={modal.message}
-        primaryText={modal.primaryText}
-        secondaryText={modal.secondaryText}
-        onPrimaryPress={modal.onPrimaryPress}
-        onSecondaryPress={modal.onSecondaryPress}
-      />
-
       <Header title="Settings" onBackPress={() => navigation.goBack()} />
+      <View style={{ paddingHorizontal: 16 }}>
+        <StatusBar backgroundColor="#000000" barStyle="light-content" />
 
-      <View style={styles.card}>
-        <View style={styles.row}>
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>Notifications</Text>
-            <Text style={styles.subtitle}>
-              Turn app notifications on or off
-            </Text>
+        <CommonModal
+          visible={modal.visible}
+          type={modal.type}
+          title={modal.title}
+          message={modal.message}
+          primaryText={modal.primaryText}
+          secondaryText={modal.secondaryText}
+          onPrimaryPress={modal.onPrimaryPress}
+          onSecondaryPress={modal.onSecondaryPress}
+        />
+
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>Notifications</Text>
+              <Text style={styles.subtitle}>
+                Turn app notifications on or off
+              </Text>
+            </View>
+
+            <Switch
+              value={isNotification}
+              disabled={isUpdating}
+              onValueChange={updateNotificationSetting}
+              trackColor={{ false: '#d1d5db', true: '#6b7280' }}
+              thumbColor={isNotification ? '#000000' : '#f3f4f6'}
+            />
           </View>
 
-          <Switch
-            value={isNotification}
-            disabled={isUpdating}
-            onValueChange={updateNotificationSetting}
-            trackColor={{ false: '#d1d5db', true: '#6b7280' }}
-            thumbColor={isNotification ? '#000000' : '#f3f4f6'}
-          />
+          {isUpdating && (
+            <View style={styles.loaderRow}>
+              <ActivityIndicator size="small" color="#000000" />
+              <Text style={styles.loaderText}>Updating setting...</Text>
+            </View>
+          )}
         </View>
-
-        {isUpdating && (
-          <View style={styles.loaderRow}>
-            <ActivityIndicator size="small" color="#000000" />
-            <Text style={styles.loaderText}>Updating setting...</Text>
-          </View>
-        )}
       </View>
     </View>
   );
@@ -154,7 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     backgroundColor: COLORS.white,
-    paddingHorizontal: 16,
   },
   card: {
     marginTop: 20,

@@ -9,9 +9,9 @@ export const COLORS = {
   black: '#000000',
 
   // Backgrounds
-  bg_color: '#F7F7F7',        // off-white page background
+  bg_color: '#F7F7F7', // off-white page background
   lightGray: '#F0F0F0',
-  color_card_bg: '#FFFFFF',   // card surface
+  color_card_bg: '#FFFFFF', // card surface
   history_Card: '#FAFAFA',
   card_color_gray: '#F5F5F5',
   very_light_grey: '#EBEBEB',
@@ -31,7 +31,7 @@ export const COLORS = {
   color_statusbar_bg: '#FFFFFF',
 
   // Status — kept as greyscale
-  bg_success: '#2a2a2a',
+  bg_success: '#2E7D32',
   colorGreen: '#2a2a2a',
   color_dark_green: '#1a1a1a',
   colorPrimary: '#1a1a1a',
@@ -39,7 +39,7 @@ export const COLORS = {
 
   // Alerts — desaturated
   colorRed: '#2a2a2a',
-  color_snackbar: '#1a1a1a',
+  color_snackbar: '#C62828',
   colorYellow: '#888888',
   color_light_yellow: '#E8E8E8',
   card_Color: '#EFEFEF',

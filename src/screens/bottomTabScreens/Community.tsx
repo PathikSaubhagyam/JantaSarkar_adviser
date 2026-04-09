@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FONTS_SIZE.txt_27,
-    fontFamily: FONTS_Family.FontExtraBold,
+    fontFamily: FONTS_Family.FontBold,
     color: '#000000',
     marginTop: 15,
     marginBottom: 15,

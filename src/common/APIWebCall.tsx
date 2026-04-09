@@ -304,12 +304,12 @@ export const onDashboardAPICall = () => {
 };
 
 export const onExchangeListAPICall = () => {
-  return _REQUEST2SERVER(`/mobile/exchange/list/`, null, 'GET', false, true);
+  return _REQUEST2SERVER(`mobile/exchange/list/`, null, 'GET', false, true);
 };
 
 export const onExchangeCreateAPICall = params => {
   return _REQUEST2SERVER(
-    `/mobile/exchange/create/`,
+    `mobile/exchange/create/`,
     params,
     'POST',
     false,

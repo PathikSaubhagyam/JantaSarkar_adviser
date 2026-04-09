@@ -1095,36 +1095,32 @@ const styles = StyleSheet.create({
     fontSize: FONTS_SIZE.txt_16,
     color: '#000000',
   },
-  // Tab bar — lawyer style: black active, white inactive
+  // Tab bar matches Blood Request screen styling
   tabContainer: {
     flexDirection: 'row',
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#1a1a1a',
-    borderRadius: 0,
-    overflow: 'hidden',
+    borderRadius: 10,
+    backgroundColor: COLORS.colorLightGray,
+    padding: 3,
   },
   tabButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    borderRightWidth: 1,
-    borderRightColor: '#1a1a1a',
-    borderRadius: 0,
-    backgroundColor: '#FFFFFF',
+    paddingVertical: 9,
+    borderRadius: 8,
   },
   tabActive: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 0,
+    backgroundColor: COLORS.primary,
   },
   tabText: {
-    color: '#000000',
-    fontSize: FONTS_SIZE.txt_12,
-    fontFamily: FONTS_Family.FontSemiBold,
+    color: COLORS.gry_text,
+    fontSize: FONTS_SIZE.txt_13,
+    fontFamily: FONTS_Family.FontMedium,
   },
   tabTextActive: {
-    color: '#FFFFFF',
+    color: COLORS.white,
+    fontFamily: FONTS_Family.FontBold,
   },
   formContainer: {
     padding: 20,

@@ -136,7 +136,7 @@ export default function PaymentHistoryScreen() {
             title: item.note || item.source || 'Transaction',
             amount: item.amount,
             type: isCredit ? 'credit' : 'debit',
-            date: formatDate(item.created_at),
+            date: item.created_at,
           };
         });
 

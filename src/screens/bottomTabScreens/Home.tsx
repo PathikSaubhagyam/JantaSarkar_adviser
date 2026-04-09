@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 18,
-    paddingTop: 14,
+    // paddingTop: 14,
     paddingBottom: 10,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
@@ -227,9 +227,11 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 24,
-    fontFamily: FONTS_Family.FontExtraBold,
+    fontFamily: FONTS_Family.FontBold,
+    marginTop: 25,
     color: '#000000',
-    letterSpacing: 0.5,
+    marginBottom: 10,
+    letterSpacing: 0.3,
   },
   headerAccent: {
     marginTop: 6,

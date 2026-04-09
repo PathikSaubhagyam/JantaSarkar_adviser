@@ -1,13 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   Linking,
   Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -58,6 +66,7 @@ const PhoneDirectoryScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [filterVisible, setFilterVisible] = useState(false);
 
@@ -241,11 +250,46 @@ const PhoneDirectoryScreen = () => {
     }
   };
 
+  const filteredUsers = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    if (!query) {
+      return users;
+    }
+
+    return users.filter(item => {
+      const phone = String(
+        item.mobile_no ?? item.mobile ?? item.phone_no ?? item.phone ?? '',
+      );
+
+      const searchableText = [
+        item.full_name,
+        item.city,
+        item.education,
+        item.business_name,
+        item.business_category,
+        phone,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  }, [users, searchQuery]);
+
   const renderItem = ({ item }: { item: any }) => {
     const initials = (item.full_name || item.phone_number || '?')
       .trim()
       .charAt(0)
       .toUpperCase();
+    const profileImageUri = String(
+      item.profileImageUri ??
+        item.profile_image_uri ??
+        item.profile_image ??
+        item.image ??
+        '',
+    ).trim();
     const phone =
       item.mobile_no ?? item.mobile ?? item.phone_no ?? item.phone ?? '';
     const isAdvisor = item.role === 'advisor' || item.is_advisor === true;
@@ -260,7 +304,15 @@ const PhoneDirectoryScreen = () => {
       >
         <View style={styles.cardTop}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
+            {profileImageUri ? (
+              <Image
+                source={{ uri: profileImageUri }}
+                style={styles.avatarImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <Text style={styles.avatarText}>{initials}</Text>
+            )}
           </View>
 
           <View style={styles.cardInfo}>
@@ -453,6 +505,8 @@ const PhoneDirectoryScreen = () => {
         <Text style={styles.countText}>
           {loading
             ? 'Loading...'
+            : searchQuery.trim()
+            ? `${filteredUsers.length} Results`
             : `${totalCount > 0 ? totalCount : users.length} Members`}
         </Text>
 
@@ -480,6 +534,27 @@ const PhoneDirectoryScreen = () => {
               : 'Filter'}
           </Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.searchWrap}>
+        <Ionicons name="search-outline" size={18} color={BW.muted} />
+        <TextInput
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Search by name, city, phone..."
+          placeholderTextColor={BW.muted}
+          returnKeyType="search"
+        />
+        {!!searchQuery.trim() && (
+          <TouchableOpacity
+            onPress={() => setSearchQuery('')}
+            style={styles.searchClearBtn}
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          >
+            <Ionicons name="close-circle" size={18} color={BW.muted} />
+          </TouchableOpacity>
+        )}
       </View>
 
       {activeFilterCount > 0 && (
@@ -524,7 +599,7 @@ const PhoneDirectoryScreen = () => {
         />
       ) : (
         <FlatList
-          data={users}
+          data={filteredUsers}
           keyExtractor={item => String(item.id)}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
@@ -535,7 +610,11 @@ const PhoneDirectoryScreen = () => {
           ListEmptyComponent={
             <View style={styles.emptyWrap}>
               <Ionicons name="people-outline" size={52} color={BW.border} />
-              <Text style={styles.emptyText}>No records found.</Text>
+              <Text style={styles.emptyText}>
+                {searchQuery.trim()
+                  ? 'No matching records found.'
+                  : 'No records found.'}
+              </Text>
             </View>
           }
         />
@@ -566,6 +645,30 @@ const styles = StyleSheet.create({
     fontFamily: FONTS_Family.FontMedium,
     fontSize: FONTS_SIZE.txt_13,
     color: BW.secondary,
+  },
+  searchWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: 4,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: BW.border,
+    backgroundColor: BW.card,
+    borderRadius: 12,
+    minHeight: 44,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    paddingVertical: 10,
+    color: BW.ink,
+    fontFamily: FONTS_Family.FontMedium,
+    fontSize: FONTS_SIZE.txt_14,
+  },
+  searchClearBtn: {
+    marginLeft: 6,
   },
   filterBtn: {
     flexDirection: 'row',
@@ -621,7 +724,7 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
 
-  listContent: { paddingHorizontal: 16, paddingBottom: 28, paddingTop: 12 },
+  listContent: { paddingHorizontal: 16, paddingBottom: 28, paddingTop: 8 },
   emptyWrap: { marginTop: 80, alignItems: 'center', gap: 12 },
   emptyText: {
     fontFamily: FONTS_Family.FontMedium,
@@ -652,6 +755,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 23,
   },
   avatarText: {
     fontFamily: FONTS_Family.FontBold,
