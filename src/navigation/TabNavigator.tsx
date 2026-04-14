@@ -58,13 +58,18 @@ const TabNavigator = () => {
                 // elevation: 2,
               }}
             >
-              <Image
+              {/* <Image
                 source={require('../assets/images/home.png')}
                 style={{
                   height: 22,
                   width: 22,
                   tintColor: focused ? COLORS.primary : COLORS.gry_text,
                 }}
+              /> */}
+              <Ionicons
+                name="home-outline"
+                size={22}
+                color={focused ? COLORS.primary : COLORS.gry_text}
               />
               <TextCommonMedium
                 text={'Home'}

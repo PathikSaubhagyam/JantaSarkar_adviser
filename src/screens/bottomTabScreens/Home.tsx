@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -104,8 +105,6 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
-      <View style={{ marginTop: 15 }} />
-
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.welcome}>Welcome</Text>
@@ -117,94 +116,139 @@ export default function HomeScreen() {
           <ActivityIndicator size="large" color="#1a1a1a" />
         </View>
       ) : (
-        <View style={styles.cardContainer}>
-          {/* Your Cases */}
-          <TouchableOpacity
-            style={[styles.card, styles.cardDark]}
-            onPress={() => navigation.navigate('CommunityDashboardScreen')}
-          >
-            <View style={[styles.iconBox, { backgroundColor: '#1a1a1a' }]}>
-              <Icon name="document-text-outline" size={22} color="#FFFFFF" />
-            </View>
-            <Text style={[styles.cardNumber, { color: '#FFFFFF' }]}>
-              {userCases}
-            </Text>
-            <Text style={[styles.cardLabel, { color: '#CCCCCC' }]}>
-              Your Cases
-            </Text>
-          </TouchableOpacity>
-          {/* Provided Help */}
-          <TouchableOpacity
-            style={[styles.card, styles.cardLight]}
-            onPress={() =>
-              navigation.navigate('Request', { initialTab: 'History' })
-            }
-          >
-            <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
-              <Icon name="people-outline" size={22} color="#1a1a1a" />
-            </View>
-            <Text style={[styles.cardNumber, { color: '#1a1a1a' }]}>
-              {providedHelp}
-            </Text>
-            <Text style={[styles.cardLabel, { color: '#555555' }]}>
-              Provided Help
-            </Text>
-          </TouchableOpacity>
-          {/* Help Records */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Stats Grid */}
+          <View style={styles.statsGrid}>
+            {/* Your Cases */}
+            <TouchableOpacity
+              style={[styles.card, styles.cardDark]}
+              onPress={() => navigation.navigate('CommunityDashboardScreen')}
+            >
+              <View style={[styles.iconBox, { backgroundColor: '#333' }]}>
+                <Icon name="document-text-outline" size={22} color="#FFFFFF" />
+              </View>
+              <Text style={[styles.cardNumber, { color: '#FFFFFF' }]}>
+                {userCases}
+              </Text>
+              <Text style={[styles.cardLabel, { color: '#CCCCCC' }]}>
+                Your Cases
+              </Text>
+            </TouchableOpacity>
 
-          {/* <TouchableOpacity
-            style={[styles.card, styles.cardLight]}
-            onPress={() => navigation.navigate('RewardHistoryScreen')}
-          >
-            <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
-              <Icon name="time-outline" size={22} color="#1a1a1a" />
-            </View>
-            <Text style={[styles.cardNumber, { color: '#1a1a1a' }]}>
-              {helpRecords}
-            </Text>
-            <Text style={[styles.cardLabel, { color: '#555555' }]}>
-              Your Rewards
-            </Text>
-          </TouchableOpacity> */}
+            {/* Provided Help */}
+            <TouchableOpacity
+              style={[styles.card, styles.cardLight]}
+              onPress={() =>
+                navigation.navigate('Request', { initialTab: 'History' })
+              }
+            >
+              <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
+                <Icon name="people-outline" size={22} color="#1a1a1a" />
+              </View>
+              <Text style={[styles.cardNumber, { color: '#1a1a1a' }]}>
+                {providedHelp}
+              </Text>
+              <Text style={[styles.cardLabel, { color: '#555555' }]}>
+                Provided Help
+              </Text>
+            </TouchableOpacity>
 
-          {/* Payment */}
-          <TouchableOpacity
-            style={[styles.card, styles.cardLight]}
-            onPress={() => navigation.navigate('PaymentHistoryScreen')}
-          >
-            <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
-              <Icon name="wallet-outline" size={22} color="#1a1a1a" />
-            </View>
-            <Text style={[styles.cardLabel, { color: '#1a1a1a' }]}>
-              Payment History
-            </Text>
-            <Text style={[styles.addMoney, { color: '#555555' }]}>
-              View Payments
-            </Text>
-          </TouchableOpacity>
-          {/* Ask & Give */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('AskGiveScreen')}
-            style={styles.askGiveCard}
-          >
-            <View style={styles.askGiveContent}>
-              <View style={styles.askGiveIconBox}>
+            {/* Payment History */}
+            <TouchableOpacity
+              style={[styles.card, styles.cardLight]}
+              onPress={() => navigation.navigate('PaymentHistoryScreen')}
+            >
+              <View style={[styles.iconBox, { backgroundColor: '#F0F0F0' }]}>
+                <Icon name="wallet-outline" size={22} color="#1a1a1a" />
+              </View>
+              <Text style={[styles.cardLabel, { color: '#1a1a1a' }]}>
+                Payment History
+              </Text>
+              <Text style={[styles.addMoney, { color: '#888' }]}>
+                View Payments
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Quick Actions Section */}
+          <Text style={styles.quickActionsTitle}>Quick Actions</Text>
+          <View style={styles.actionsContainer}>
+            {/* Ask & Give */}
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => navigation.navigate('AskGiveScreen')}
+              activeOpacity={0.75}
+            >
+              <View
+                style={[styles.actionIconBox, { backgroundColor: '#F0F0F0' }]}
+              >
                 <Icon
                   name="chatbubble-ellipses-outline"
                   size={22}
-                  color="#1a1a1a"
+                  color="#111111"
                 />
               </View>
-              <View style={styles.askGiveTextWrap}>
-                <Text style={styles.askGiveTitle}>Ask & Give</Text>
-                <Text style={styles.askGiveSubtitle}>
+              <View style={styles.actionTextWrap}>
+                <Text style={styles.actionTitle}>Ask & Give</Text>
+                <Text style={styles.actionSubtitle}>
                   Open the community exchange
                 </Text>
               </View>
-            </View>
-            <Icon name="chevron-forward" size={20} color="#888888" />
-          </TouchableOpacity>
-        </View>
+              <View style={styles.chevronBox}>
+                <Icon name="chevron-forward" size={16} color="#888" />
+              </View>
+            </TouchableOpacity>
+
+            {/* Give / Raise Blood Request */}
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => navigation.navigate('RaisedBloodRequestScreen')}
+              activeOpacity={0.75}
+            >
+              <View
+                style={[styles.actionIconBox, { backgroundColor: '#F0F0F0' }]}
+              >
+                <Icon name="water-outline" size={22} color="#111111" />
+              </View>
+              <View style={styles.actionTextWrap}>
+                <Text style={styles.actionTitle}>
+                  Give / Raise Blood Request
+                </Text>
+                <Text style={styles.actionSubtitle}>
+                  Donate or submit requirement details
+                </Text>
+              </View>
+              <View style={styles.chevronBox}>
+                <Icon name="chevron-forward" size={16} color="#888" />
+              </View>
+            </TouchableOpacity>
+
+            {/* Phone Directory */}
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => navigation.navigate('PhoneDirectoryScreen')}
+              activeOpacity={0.75}
+            >
+              <View
+                style={[styles.actionIconBox, { backgroundColor: '#F0F0F0' }]}
+              >
+                <Icon name="call-outline" size={22} color="#111111" />
+              </View>
+              <View style={styles.actionTextWrap}>
+                <Text style={styles.actionTitle}>Phone Directory</Text>
+                <Text style={styles.actionSubtitle}>
+                  Browse users and advisors
+                </Text>
+              </View>
+              <View style={styles.chevronBox}>
+                <Icon name="chevron-forward" size={16} color="#888" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       )}
     </SafeAreaView>
   );
@@ -219,8 +263,8 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 18,
-    // paddingTop: 14,
-    paddingBottom: 10,
+    paddingTop: 0,
+    paddingBottom: 14,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#EBEBEB',
@@ -228,9 +272,8 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 24,
     fontFamily: FONTS_Family.FontBold,
-    marginTop: 25,
     color: '#000000',
-    marginBottom: 10,
+    marginBottom: 6,
     letterSpacing: 0.3,
   },
   headerAccent: {
@@ -245,12 +288,77 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardContainer: {
+  scrollContent: {
+    paddingBottom: 32,
+  },
+  statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 4,
+    paddingTop: 14,
+  },
+  quickActionsTitle: {
+    marginTop: 24,
+    marginBottom: 10,
+    marginHorizontal: 16,
+    fontSize: 11,
+    letterSpacing: 1,
+    color: '#666666',
+    fontFamily: FONTS_Family.FontBold,
+    textTransform: 'uppercase',
+  },
+  actionsContainer: {
+    marginHorizontal: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E4E4E4',
+    backgroundColor: '#FFFFFF',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  actionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  actionIconBox: {
+    width: 46,
+    height: 46,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  actionTextWrap: {
+    flex: 1,
+  },
+  actionTitle: {
+    fontSize: 15,
+    color: '#111111',
+    fontFamily: FONTS_Family.FontBold,
+  },
+  actionSubtitle: {
+    marginTop: 2,
+    fontSize: 12,
+    color: '#888888',
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  chevronBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
     width: CARD_WIDTH,
@@ -302,54 +410,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 12,
     fontFamily: FONTS_Family.FontExtraBold,
-  },
-  // Ask & Give — full-width row card
-  askGiveCard: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#DCDCDC',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
-    marginTop: 14,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  askGiveContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    paddingRight: 10,
-  },
-  askGiveIconBox: {
-    backgroundColor: '#F0F0F0',
-    width: 42,
-    height: 42,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 0,
-    marginRight: 12,
-  },
-  askGiveTextWrap: {
-    flex: 1,
-  },
-  askGiveTitle: {
-    fontSize: 17,
-    color: '#000000',
-    fontFamily: FONTS_Family.FontBold,
-  },
-  askGiveSubtitle: {
-    marginTop: 3,
-    fontSize: 12,
-    color: '#555555',
-    fontFamily: FONTS_Family.FontMedium,
   },
 });

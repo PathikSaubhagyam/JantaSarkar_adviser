@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -99,7 +100,7 @@ const CommunityDashboardScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Header title="Your Cases" onBackPress={() => navigation.goBack()} />
 
       {loading ? (
@@ -128,7 +129,7 @@ const CommunityDashboardScreen = () => {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

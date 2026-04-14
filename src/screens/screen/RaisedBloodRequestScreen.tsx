@@ -13,7 +13,6 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import DropDownPicker from 'react-native-dropdown-picker';
 
 import Header from '../../components/Header';
 import TextCommonBold from '../../components/TextCommonBold';
@@ -25,6 +24,7 @@ import SnackBarCommon from '../../components/SnackBarCommon';
 import { COLORS } from '../../constants/Colors';
 import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import APIWebCall from '../../common/APIWebCall';
+import CustomDropdown from '../../components/CustomDropdown';
 
 const BLOOD_GROUP_OPTIONS = [
   { label: 'A+', value: 'A+' },
@@ -42,14 +42,12 @@ const RaisedBloodRequestScreen = () => {
   const [activeTab, setActiveTab] = useState<'generate' | 'list'>('generate');
 
   // ─── Generate Tab state ──────────────────────────────────────────
-  const [bgOpen, setBgOpen] = useState(false);
   const [bgValue, setBgValue] = useState<string | null>(null);
   const [bgItems] = useState(BLOOD_GROUP_OPTIONS);
   const [reason, setReason] = useState('');
   const [mobileNo, setMobileNo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const [cityOpen, setCityOpen] = useState(false);
   const [cityValue, setCityValue] = useState<number | null>(null);
   const [cityItems, setCityItems] = useState<any[]>([]);
   const [cityLoading, setCityLoading] = useState(false);
@@ -58,11 +56,9 @@ const RaisedBloodRequestScreen = () => {
   const [bloodRequests, setBloodRequests] = useState<any[]>([]);
   const [listLoading, setListLoading] = useState(false);
 
-  const [filterBGOpen, setFilterBGOpen] = useState(false);
   const [filterBGValue, setFilterBGValue] = useState<string | null>(null);
   const [filterBGItems] = useState(BLOOD_GROUP_OPTIONS);
 
-  const [filterCityOpen, setFilterCityOpen] = useState(false);
   const [filterCityValue, setFilterCityValue] = useState<number | null>(null);
   const [filterCityItems, setFilterCityItems] = useState<any[]>([]);
   const [filterCityLoading, setFilterCityLoading] = useState(false);
@@ -335,31 +331,14 @@ const RaisedBloodRequestScreen = () => {
                 textViewStyle={styles.label}
               />
               <View style={[styles.dropdownWrapper, { zIndex: 3000 }]}>
-                <DropDownPicker
-                  open={bgOpen}
+                <CustomDropdown
                   value={bgValue}
                   items={bgItems}
-                  setOpen={setBgOpen}
-                  setValue={setBgValue}
-                  setItems={() => {}}
+                  onChange={value => setBgValue(String(value))}
                   placeholder="Select Blood Group"
                   searchable={true}
-                  listMode="MODAL"
-                  modalProps={{ animationType: 'slide' }}
-                  modalContentContainerStyle={{ backgroundColor: '#fff' }}
-                  searchContainerStyle={{
-                    borderBottomColor: COLORS.colorLightGray,
-                    borderBottomWidth: 1,
-                    padding: 5,
-                  }}
-                  searchTextInputStyle={{
-                    borderColor: COLORS.colorLightGray,
-                    borderRadius: 8,
-                    color: COLORS.black,
-                  }}
+                  modalTitle="Select Blood Group"
                   searchPlaceholder="Search blood group..."
-                  style={styles.dropdownInput}
-                  dropDownContainerStyle={styles.dropdownContainer}
                 />
               </View>
 
@@ -392,37 +371,20 @@ const RaisedBloodRequestScreen = () => {
 
               <TextCommonBold text={'City'} textViewStyle={styles.label} />
               <View style={styles.dropdownWrapper}>
-                <DropDownPicker
-                  open={cityOpen}
+                <CustomDropdown
                   value={cityValue}
                   items={cityItems}
                   loading={cityLoading}
-                  setOpen={open => {
-                    setCityOpen(open);
-                    if (open && cityItems.length === 0) {
+                  onOpen={() => {
+                    if (cityItems.length === 0) {
                       loadCityList(setCityItems, setCityLoading);
                     }
                   }}
-                  setValue={setCityValue}
-                  setItems={setCityItems}
+                  onChange={value => setCityValue(Number(value))}
                   placeholder="Select City"
                   searchable={true}
-                  listMode="MODAL"
-                  modalProps={{ animationType: 'slide' }}
-                  modalContentContainerStyle={{ backgroundColor: '#fff' }}
-                  searchContainerStyle={{
-                    borderBottomColor: COLORS.colorLightGray,
-                    borderBottomWidth: 1,
-                    padding: 5,
-                  }}
-                  searchTextInputStyle={{
-                    borderColor: COLORS.colorLightGray,
-                    borderRadius: 8,
-                    color: COLORS.black,
-                  }}
+                  modalTitle="Select City"
                   searchPlaceholder="Search city..."
-                  style={styles.dropdownInput}
-                  dropDownContainerStyle={styles.dropdownContainer}
                 />
               </View>
 
@@ -445,69 +407,31 @@ const RaisedBloodRequestScreen = () => {
           <View style={styles.filterCard}>
             <View style={styles.filterRow}>
               <View style={[styles.filterDropdown, { zIndex: 3000 }]}>
-                <DropDownPicker
-                  open={filterBGOpen}
+                <CustomDropdown
                   value={filterBGValue}
                   items={filterBGItems}
-                  setOpen={open => {
-                    setFilterBGOpen(open);
-                    if (open) setFilterCityOpen(false);
-                  }}
-                  setValue={setFilterBGValue}
-                  setItems={() => {}}
+                  onChange={value => setFilterBGValue(String(value))}
                   placeholder="Blood Group"
                   searchable={true}
-                  listMode="MODAL"
-                  modalProps={{ animationType: 'slide' }}
-                  modalContentContainerStyle={{ backgroundColor: '#fff' }}
-                  searchContainerStyle={{
-                    borderBottomColor: COLORS.colorLightGray,
-                    borderBottomWidth: 1,
-                    padding: 5,
-                  }}
-                  searchTextInputStyle={{
-                    borderColor: COLORS.colorLightGray,
-                    borderRadius: 8,
-                    color: COLORS.black,
-                  }}
+                  modalTitle="Select Blood Group"
                   searchPlaceholder="Search blood group..."
-                  style={styles.dropdownInput}
-                  dropDownContainerStyle={styles.dropdownContainer}
                 />
               </View>
               <View style={[styles.filterDropdown, { zIndex: 2000 }]}>
-                <DropDownPicker
-                  open={filterCityOpen}
+                <CustomDropdown
                   value={filterCityValue}
                   items={filterCityItems}
                   loading={filterCityLoading}
-                  setOpen={open => {
-                    setFilterCityOpen(open);
-                    if (open) setFilterBGOpen(false);
-                    if (open && filterCityItems.length === 0) {
+                  onOpen={() => {
+                    if (filterCityItems.length === 0) {
                       loadCityList(setFilterCityItems, setFilterCityLoading);
                     }
                   }}
-                  setValue={setFilterCityValue}
-                  setItems={setFilterCityItems}
+                  onChange={value => setFilterCityValue(Number(value))}
                   placeholder="City"
                   searchable={true}
-                  listMode="MODAL"
-                  modalProps={{ animationType: 'slide' }}
-                  modalContentContainerStyle={{ backgroundColor: '#fff' }}
-                  searchContainerStyle={{
-                    borderBottomColor: COLORS.colorLightGray,
-                    borderBottomWidth: 1,
-                    padding: 5,
-                  }}
-                  searchTextInputStyle={{
-                    borderColor: COLORS.colorLightGray,
-                    borderRadius: 8,
-                    color: COLORS.black,
-                  }}
+                  modalTitle="Select City"
                   searchPlaceholder="Search city..."
-                  style={styles.dropdownInput}
-                  dropDownContainerStyle={styles.dropdownContainer}
                 />
               </View>
             </View>
@@ -565,7 +489,7 @@ export default RaisedBloodRequestScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop:10,
+    marginTop: 10,
     backgroundColor: COLORS.white,
   },
   flex: {

@@ -396,6 +396,40 @@ export const onBloodRequestListAPICall = (cityId = null, bloodGroup = null) => {
   );
 };
 
+export const onSpecificAskListAPICall = () => {
+  return _REQUEST2SERVER(`mobile/specific-ask/list/`, null, 'GET', false, true);
+};
+
+export const onSpecificAskCreateAPICall = formData => {
+  return _REQUEST2SERVER(
+    `mobile/specific-ask/create/`,
+    formData,
+    'POST',
+    true,
+    true,
+  );
+};
+
+export const onSpecificGiveListAPICall = () => {
+  return _REQUEST2SERVER(
+    `mobile/specific-give/list/`,
+    null,
+    'GET',
+    false,
+    true,
+  );
+};
+
+export const onSpecificGiveCreateAPICall = formData => {
+  return _REQUEST2SERVER(
+    `mobile/specific-give/create/`,
+    formData,
+    'POST',
+    true,
+    true,
+  );
+};
+
 export const onUserAdvisorListAPICall = (
   page = 1,
   caste: string | null = null,
@@ -451,5 +485,9 @@ export default {
   onPageContentAPICall,
   onBloodRequestCreateAPICall,
   onBloodRequestListAPICall,
+  onSpecificAskListAPICall,
+  onSpecificAskCreateAPICall,
+  onSpecificGiveListAPICall,
+  onSpecificGiveCreateAPICall,
   onUserAdvisorListAPICall,
 };

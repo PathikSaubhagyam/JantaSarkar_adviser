@@ -16,7 +16,6 @@ import {
   Keyboard,
   Platform,
 } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {
   oncityListAPICall,
   onCommunityFeedAPICall,
@@ -27,21 +26,20 @@ import { COLORS } from '../../constants/Colors';
 import { activeOpacity } from '../../constants/Utils';
 import TextInputView from '../../components/TextInputView';
 import SnackBarCommon from '../../components/SnackBarCommon';
-DropDownPicker.setListMode('SCROLLVIEW');
+import CustomDropdown from '../../components/CustomDropdown';
+
 const CommunityFeedAdd = () => {
   const navigation = useNavigation<any>();
   const [modalVisible, setModalVisible] = useState(false);
 
   const [departmentItems, setDepartmentItems] = useState([]);
   const [departmentValue, setDepartmentValue] = useState(null);
-  const [departmentOpen, setDepartmentOpen] = useState(false);
   const [issueFeed, setIssueFeed] = useState('');
 
   const [cityItems, setCityItems] = useState([]);
   const [cityValue, setCityValue] = useState(null);
-  const [cityOpen, setCityOpen] = useState(false);
   const [cityLoading, setCityLoading] = useState(false);
-  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [departmentLoading, setDepartmentLoading] = useState(false);
 
   // Person fields
   const [persons, setPersons] = useState([
@@ -57,6 +55,7 @@ const CommunityFeedAdd = () => {
 
   const loadDepartments = async () => {
     try {
+      setDepartmentLoading(true);
       const res = await onDepartmentAPICall();
 
       // if (res?.results) {
@@ -74,6 +73,8 @@ const CommunityFeedAdd = () => {
       }
     } catch (error) {
       console.log('Department API Error:', error);
+    } finally {
+      setDepartmentLoading(false);
     }
   };
 
@@ -195,7 +196,7 @@ const CommunityFeedAdd = () => {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                marginTop: 20,
+                // marginTop: 15,
                 gap: 15,
               }}
             >
@@ -216,79 +217,34 @@ const CommunityFeedAdd = () => {
 
             <Text style={styles.label}>Select Department</Text>
             <View style={{ zIndex: 3000 }}>
-              <DropDownPicker
-                open={departmentOpen}
+              <CustomDropdown
                 value={departmentValue}
                 items={departmentItems}
-                setOpen={setDepartmentOpen}
-                setValue={setDepartmentValue}
-                setItems={setDepartmentItems}
+                loading={departmentLoading}
+                onChange={value => setDepartmentValue(value)}
                 placeholder="Select Department"
                 searchable={true}
-                listMode="MODAL" // ✅ BEST FIX
-                modalProps={{
-                  animationType: 'slide',
-                }}
-                modalContentContainerStyle={{
-                  backgroundColor: '#fff',
-                }}
-                searchContainerStyle={{
-                  borderBottomColor: COLORS.colorLightGray,
-                  borderBottomWidth: 1,
-                  padding: 5,
-                  marginTop: 5,
-                }}
-                searchTextInputStyle={{
-                  borderWidth: 1,
-                  borderColor: COLORS.colorLightGray,
-                  borderRadius: 8,
-                  color: COLORS.black,
-                }}
+                modalTitle="Select Department"
                 searchPlaceholder="Search department"
-                style={styles.dropdown}
-                dropDownContainerStyle={{
-                  borderColor: COLORS.colorLightGray,
-                  borderWidth: 1,
-                }}
               />
             </View>
 
             <Text style={styles.label}>Select City</Text>
             <View style={{ zIndex: 2000 }}>
-              <DropDownPicker
-                open={cityOpen}
+              <CustomDropdown
                 value={cityValue}
                 items={cityItems}
                 loading={cityLoading}
-                setOpen={setCityOpen}
-                setValue={setCityValue}
-                setItems={setCityItems}
+                onOpen={() => {
+                  if (cityItems.length === 0) {
+                    loadCities();
+                  }
+                }}
+                onChange={value => setCityValue(value)}
                 placeholder="Select City"
                 searchable={true}
-                listMode="MODAL"
-                modalProps={{
-                  animationType: 'slide',
-                }}
-                modalContentContainerStyle={{
-                  backgroundColor: '#fff',
-                }}
-                searchContainerStyle={{
-                  borderBottomColor: COLORS.colorLightGray,
-                  borderBottomWidth: 1,
-                  padding: 5,
-                }}
-                searchTextInputStyle={{
-                  borderColor: COLORS.colorLightGray,
-                  borderBottomWidth: 1,
-                  borderRadius: 8,
-                  color: COLORS.black,
-                }}
+                modalTitle="Select City"
                 searchPlaceholder="Search city"
-                style={styles.dropdown}
-                dropDownContainerStyle={{
-                  borderBottomColor: COLORS.colorLightGray,
-                  borderWidth: 1,
-                }}
               />
             </View>
             <Text style={styles.label}>Issue</Text>
@@ -301,7 +257,6 @@ const CommunityFeedAdd = () => {
               containerStyle={{
                 borderRadius: 8,
                 paddingHorizontal: 10,
-                // paddingVertical: 8,
                 borderColor: COLORS.gray,
                 borderWidth: 0.5,
                 backgroundColor: COLORS.white,
@@ -316,7 +271,6 @@ const CommunityFeedAdd = () => {
               }}
             />
             <Text style={styles.label}>Person Details</Text>
-
             {persons.map((person, index) => (
               <View key={index} style={styles.personBox}>
                 <Text style={styles.personTitle}>Person {index + 1}</Text>

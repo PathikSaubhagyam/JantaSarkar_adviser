@@ -14,6 +14,8 @@ import RaisedBloodRequestScreen from '../screens/screen/RaisedBloodRequestScreen
 import PhoneDirectoryScreen from '../screens/screen/PhoneDirectoryScreen';
 import UserAdvisorDetailScreen from '../screens/screen/UserAdvisorDetailScreen';
 import CommunityDashboardScreen from '../screens/screen/CommunityDashboardScreen';
+import SpecificAskCreateScreen from '../screens/screen/SpecificAskCreateScreen';
+import SpecificGiveCreateScreen from '../screens/screen/SpecificGiveCreateScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
@@ -43,6 +45,14 @@ const HomeNavigator = () => {
         />
         <Stack.Screen name="HelpSupportScreen" component={HelpSupportScreen} />
         <Stack.Screen name="AskGiveScreen" component={AskGiveScreen} />
+        <Stack.Screen
+          name="SpecificAskCreateScreen"
+          component={SpecificAskCreateScreen}
+        />
+        <Stack.Screen
+          name="SpecificGiveCreateScreen"
+          component={SpecificGiveCreateScreen}
+        />
         <Stack.Screen
           name="RaisedBloodRequestScreen"
           component={RaisedBloodRequestScreen}

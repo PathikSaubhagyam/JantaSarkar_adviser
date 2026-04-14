@@ -20,13 +20,13 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Header from '../../components/Header';
 import SnackBarCommon from '../../components/SnackBarCommon';
 import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import APIWebCall from '../../common/APIWebCall';
+import CustomDropdown from '../../components/CustomDropdown';
 
 const BW = {
   bg: '#F5F5F5',
@@ -40,7 +40,7 @@ const BW = {
   pill: '#F0F0F0',
 };
 
-const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
+const GENDER_OPTIONS = ['Male', 'Female'];
 const CASTE_OPTIONS = ['General', 'OBC', 'SC', 'ST', 'EWS'];
 
 const InfoChip = ({ icon, label }: { icon: string; label: string }) => (
@@ -73,7 +73,6 @@ const PhoneDirectoryScreen = () => {
   const [tempCaste, setTempCaste] = useState<string | null>(null);
   const [tempGender, setTempGender] = useState<string | null>(null);
   const [tempBiz, setTempBiz] = useState<string | null>(null);
-  const [bizOpen, setBizOpen] = useState(false);
   const [bizItems, setBizItems] = useState<{ label: string; value: string }[]>(
     [],
   );
@@ -139,7 +138,10 @@ const PhoneDirectoryScreen = () => {
 
       if (res?.status === true || res?.success === true) {
         const formattedCategories = (res?.data || []).map((item: any) => ({
-          label: item?.value,
+          label: String(item?.value || '')
+            .replace(/_/g, ' ')
+            .toLowerCase()
+            .replace(/\b\w/g, char => char.toUpperCase()),
           value: item?.key,
         }));
 
@@ -158,7 +160,6 @@ const PhoneDirectoryScreen = () => {
     setTempCaste(appliedCaste);
     setTempGender(appliedGender);
     setTempBiz(appliedBiz);
-    setBizOpen(false);
 
     if (bizItems.length === 0) {
       loadBusinessCategoryList();
@@ -184,7 +185,6 @@ const PhoneDirectoryScreen = () => {
     setTempCaste(null);
     setTempGender(null);
     setTempBiz(null);
-    setBizOpen(false);
   };
 
   const handleRemoveFilter = (type: 'caste' | 'gender' | 'biz') => {
@@ -447,25 +447,20 @@ const PhoneDirectoryScreen = () => {
               <>
                 <Text style={styles.filterSectionLabel}>Business Category</Text>
                 <View style={{ zIndex: 9000, marginBottom: 10 }}>
-                  <DropDownPicker
-                    open={bizOpen}
+                  <CustomDropdown
                     value={tempBiz}
                     items={bizItems}
-                    setOpen={setBizOpen}
-                    setValue={setTempBiz}
-                    setItems={setBizItems}
+                    onOpen={() => {
+                      if (bizItems.length === 0) {
+                        loadBusinessCategoryList();
+                      }
+                    }}
+                    onChange={value => setTempBiz(String(value))}
                     placeholder="Select category..."
-                    listMode="MODAL"
-                    modalProps={{ animationType: 'slide' }}
                     searchable
+                    modalTitle="Select Category"
                     searchPlaceholder="Search category..."
-                    style={styles.bizDropdown}
-                    dropDownContainerStyle={styles.bizDropdownContainer}
-                    searchContainerStyle={{ borderBottomColor: BW.border }}
-                    searchTextInputStyle={{ color: BW.ink }}
-                    placeholderStyle={{ color: BW.muted }}
-                    labelStyle={{ color: BW.ink }}
-                    listItemLabelStyle={{ color: BW.ink }}
+                    triggerStyle={styles.bizDropdown}
                   />
                 </View>
               </>

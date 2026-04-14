@@ -5,23 +5,22 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TextInput,
   FlatList,
   Linking,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
 import { FONTS_Family } from '../../constants/Font';
 import CommonModal, { ModalType } from '../../components/CommonModal';
 import {
-  onExchangeCreateAPICall,
-  onExchangeListAPICall,
+  onSpecificAskListAPICall,
+  onSpecificGiveListAPICall,
 } from '../../common/APIWebCall';
 
 type ModalState = {
@@ -33,16 +32,12 @@ type ModalState = {
 
 export default function AskGiveScreen() {
   const navigation = useNavigation<any>();
-  const [activeTab, setActiveTab] = useState<'ask' | 'give'>('give');
+  const [activeTab, setActiveTab] = useState<'ask' | 'give'>('ask');
 
-  const [item, setItem] = useState('');
-  const [desc, setDesc] = useState('');
-  const [phone, setPhone] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [askList, setAskList] = useState<any[]>([]);
-  const [exchangeList, setExchangeList] = useState<any[]>([]);
-  const [loadingExchange, setLoadingExchange] = useState(false);
+  const [specificAskList, setSpecificAskList] = useState<any[]>([]);
+  const [loadingSpecificAsk, setLoadingSpecificAsk] = useState(false);
+  const [specificGiveList, setSpecificGiveList] = useState<any[]>([]);
+  const [loadingSpecificGive, setLoadingSpecificGive] = useState(false);
   const [modal, setModal] = useState<ModalState>({
     visible: false,
     title: '',
@@ -63,88 +58,59 @@ export default function AskGiveScreen() {
     });
   };
 
-  const fetchExchangeList = async () => {
+  const fetchSpecificGiveList = async () => {
     try {
-      setLoadingExchange(true);
-      const data = await onExchangeListAPICall();
+      setLoadingSpecificGive(true);
+      const data = await onSpecificGiveListAPICall();
 
-      if (data?.status && Array.isArray(data?.data)) {
-        setExchangeList(data.data);
+      if ((data?.status || data?.success) && Array.isArray(data?.data)) {
+        setSpecificGiveList(data.data);
+      } else {
+        setSpecificGiveList([]);
       }
     } catch (error) {
-      console.log('Error fetching exchange list:', error);
+      console.log('Error fetching specific give list:', error);
+      setSpecificGiveList([]);
     } finally {
-      setLoadingExchange(false);
+      setLoadingSpecificGive(false);
+    }
+  };
+
+  const fetchSpecificAskList = async () => {
+    try {
+      setLoadingSpecificAsk(true);
+      const data = await onSpecificAskListAPICall();
+
+      if ((data?.status || data?.success) && Array.isArray(data?.data)) {
+        setSpecificAskList(data.data);
+      } else {
+        setSpecificAskList([]);
+      }
+    } catch (error) {
+      console.log('Error fetching specific ask list:', error);
+      setSpecificAskList([]);
+    } finally {
+      setLoadingSpecificAsk(false);
     }
   };
 
   useEffect(() => {
     if (activeTab === 'give') {
-      fetchExchangeList();
+      fetchSpecificGiveList();
+    } else {
+      fetchSpecificAskList();
     }
   }, [activeTab]);
 
-  const submitAsk = async () => {
-    const normalizedItem = item.trim();
-    const normalizedDesc = desc.trim();
-    const normalizedPhone = phone.replace(/\D/g, '');
-
-    if (!normalizedItem || !normalizedDesc || !normalizedPhone) {
-      showModal('Missing details', 'Please fill all fields.', 'warning');
-      return;
-    }
-
-    if (normalizedPhone.length !== 10) {
-      showModal(
-        'Invalid Phone',
-        'Please enter a valid 10-digit phone number.',
-        'warning',
-      );
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      const data = await onExchangeCreateAPICall({
-        title: normalizedItem,
-        description: normalizedDesc,
-        contact_number: normalizedPhone,
-      });
-
-      if (data?.status || data?.success) {
-        const newAsk = {
-          id: Date.now().toString(),
-          item: normalizedItem,
-          desc: normalizedDesc,
-          phone: normalizedPhone,
-        };
-
-        setAskList([newAsk, ...askList]);
-        setItem('');
-        setDesc('');
-        setPhone('');
-        showModal(
-          'Request Submitted',
-          data?.message || 'Your request has been created successfully.',
-          'success',
-        );
+  useFocusEffect(
+    React.useCallback(() => {
+      if (activeTab === 'ask') {
+        fetchSpecificAskList();
       } else {
-        showModal(
-          'Submission Failed',
-          data?.message || 'Unable to submit your request. Please try again.',
-          'error',
-        );
+        fetchSpecificGiveList();
       }
-    } catch (error) {
-      showModal(
-        'Error',
-        (error as Error)?.message || 'Something went wrong. Please try again.',
-        'error',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    }, [activeTab]),
+  );
 
   const handleCall = async (phoneNumber: string) => {
     try {
@@ -160,30 +126,91 @@ export default function AskGiveScreen() {
   };
 
   const renderGiveItem = ({ item: listItem }: { item: any }) => {
+    const contactLabel =
+      String(listItem?.contact_person || '').trim() || 'No contact person';
+    const usefulForLabel =
+      String(listItem?.useful_for || '').trim() || 'No details shared';
+    const imageUri = String(listItem?.image || '').trim();
+
     return (
       <View style={styles.listCard}>
         <View style={styles.listHeaderRow}>
           <View style={styles.listIconWrap}>
-            <Ionicons name="hand-left-outline" size={18} color="#1a1a1a" />
+            <Ionicons name="gift-outline" size={18} color="#1a1a1a" />
           </View>
           <View style={styles.listHeaderText}>
-            <Text style={styles.listTitle}>{listItem.title}</Text>
-            <Text style={styles.listUserName}>{listItem.user_name}</Text>
-            <Text style={styles.listDate}>{listItem.created_at}</Text>
+            <Text style={styles.listTitle}>{contactLabel}</Text>
+            <Text style={styles.listUserName}>
+              {listItem?.user_name || '-'}
+            </Text>
+            <Text style={styles.listDate}>{listItem?.created_at || '-'}</Text>
           </View>
         </View>
 
-        <Text style={styles.listDesc}>{listItem.description}</Text>
+        {!!imageUri && (
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.giveImage}
+            resizeMode="cover"
+          />
+        )}
 
-        <View style={styles.listFooter}>
-          <Text style={styles.listPhone}>Phone: {listItem.contact_number}</Text>
-          <TouchableOpacity
-            style={styles.callButton}
-            onPress={() => handleCall(listItem.contact_number)}
-          >
-            <Ionicons name="call-outline" size={16} color="#FFFFFF" />
-            <Text style={styles.callButtonText}>Call</Text>
-          </TouchableOpacity>
+        <Text style={styles.listDesc}>{usefulForLabel}</Text>
+
+        <View style={styles.giveMetaWrap}>
+          <Text style={styles.giveMetaText}>
+            Designation: {String(listItem?.designation || '-').trim() || '-'}
+          </Text>
+          <Text style={styles.giveMetaText}>
+            Company: {String(listItem?.company_name || '-').trim() || '-'}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderAskItem = ({ item: listItem }: { item: any }) => {
+    const contactLabel =
+      String(listItem?.contact_person || '').trim() || 'No contact person';
+    const purposeLabel =
+      String(listItem?.purpose || '').trim() || 'No purpose shared';
+    const imageUri = String(listItem?.image || '').trim();
+
+    return (
+      <View style={styles.listCard}>
+        <View style={styles.listHeaderRow}>
+          <View style={styles.listIconWrap}>
+            <Ionicons name="help-circle-outline" size={18} color="#1a1a1a" />
+          </View>
+          <View style={styles.listHeaderText}>
+            <Text style={styles.listTitle}>{contactLabel}</Text>
+            <Text style={styles.listUserName}>
+              {listItem?.user_name || '-'}
+            </Text>
+            <Text style={styles.listDate}>{listItem?.created_at || '-'}</Text>
+          </View>
+        </View>
+
+        {!!imageUri && (
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.askImage}
+            resizeMode="cover"
+          />
+        )}
+
+        <Text style={styles.listDesc}>{purposeLabel}</Text>
+
+        <View style={styles.askMetaWrap}>
+          <Text style={styles.askMetaText}>
+            Designation: {String(listItem?.designation || '-').trim() || '-'}
+          </Text>
+          <Text style={styles.askMetaText}>
+            Company: {String(listItem?.company_name || '-').trim() || '-'}
+          </Text>
+          <Text style={styles.askMetaText}>
+            Area: {String(listItem?.area || '-').trim() || '-'}
+          </Text>
         </View>
       </View>
     );
@@ -242,91 +269,85 @@ export default function AskGiveScreen() {
         </View>
 
         {activeTab === 'ask' && (
-          <ScrollView
+          <FlatList
             style={styles.flex}
-            contentContainerStyle={styles.scrollContent}
+            data={specificAskList}
+            keyExtractor={listItem => String(listItem.id)}
+            contentContainerStyle={styles.listContainer}
             keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.body}>
-              <Text style={styles.label}>Need of Item</Text>
-              <TextInput
-                placeholder="Ex: Books, Food, Clothes"
-                style={styles.input}
-                maxLength={50}
-                value={item}
-                onChangeText={setItem}
-                placeholderTextColor="#888888"
-              />
-
-              <Text style={styles.label}>Description</Text>
-              <TextInput
-                placeholder="Write details..."
-                style={[styles.input, styles.multilineInput]}
-                multiline
-                maxLength={100}
-                value={desc}
-                onChangeText={setDesc}
-                placeholderTextColor="#888888"
-                textAlignVertical="top"
-              />
-
-              <Text style={styles.label}>Contact Number</Text>
-              <TextInput
-                placeholder="Enter phone number"
-                style={styles.input}
-                keyboardType="number-pad"
-                value={phone}
-                onChangeText={setPhone}
-                placeholderTextColor="#888888"
-                maxLength={10}
-              />
-
-              <TouchableOpacity
-                style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                onPress={submitAsk}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <>
-                    <Ionicons name="send-outline" size={18} color="#FFFFFF" />
-                    <Text style={styles.buttonText}>Submit Request</Text>
-                  </>
-                )}
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+            onRefresh={fetchSpecificAskList}
+            refreshing={loadingSpecificAsk}
+            ListEmptyComponent={
+              loadingSpecificAsk ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color="#1a1a1a" />
+                  <Text style={styles.loadingText}>Loading asks...</Text>
+                </View>
+              ) : (
+                <View style={styles.emptyState}>
+                  <Ionicons
+                    name="help-buoy-outline"
+                    size={34}
+                    color="#CCCCCC"
+                  />
+                  <Text style={styles.emptyTitle}>No asks yet</Text>
+                  <Text style={styles.emptyText}>
+                    No specific ask posts available right now.
+                  </Text>
+                </View>
+              )
+            }
+            renderItem={renderAskItem}
+          />
         )}
 
         {activeTab === 'give' && (
           <FlatList
             style={styles.flex}
-            data={exchangeList}
+            data={specificGiveList}
             keyExtractor={listItem => String(listItem.id)}
             contentContainerStyle={styles.listContainer}
             keyboardShouldPersistTaps="handled"
-            onRefresh={fetchExchangeList}
-            refreshing={loadingExchange}
+            onRefresh={fetchSpecificGiveList}
+            refreshing={loadingSpecificGive}
             ListEmptyComponent={
-              loadingExchange ? (
+              loadingSpecificGive ? (
                 <View style={styles.loadingContainer}>
                   <ActivityIndicator size="large" color="#1a1a1a" />
-                  <Text style={styles.loadingText}>Loading requests...</Text>
+                  <Text style={styles.loadingText}>Loading gives...</Text>
                 </View>
               ) : (
                 <View style={styles.emptyState}>
-                  <Ionicons name="sparkles-outline" size={34} color="#CCCCCC" />
-                  <Text style={styles.emptyTitle}>No requests yet</Text>
+                  <Ionicons name="gift-outline" size={34} color="#CCCCCC" />
+                  <Text style={styles.emptyTitle}>No gives yet</Text>
                   <Text style={styles.emptyText}>
-                    There are no requests to help with at the moment.
+                    No specific give posts available right now.
                   </Text>
                 </View>
               )
             }
             renderItem={renderGiveItem}
           />
+        )}
+
+        {activeTab === 'ask' && (
+          <TouchableOpacity
+            style={styles.fabButton}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('SpecificAskCreateScreen')}
+          >
+            <Ionicons name="add" size={28} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
+
+        {activeTab === 'give' && (
+          <TouchableOpacity
+            style={styles.fabButton}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('SpecificGiveCreateScreen')}
+          >
+            <Ionicons name="add" size={28} color="#FFFFFF" />
+          </TouchableOpacity>
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -336,7 +357,7 @@ export default function AskGiveScreen() {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    marginBottom: 45,
+    // marginBottom: 45,
   },
   container: {
     flex: 1,
@@ -553,5 +574,53 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555555',
     fontFamily: FONTS_Family.FontMedium,
+  },
+  askImage: {
+    width: '100%',
+    height: 170,
+    borderRadius: 10,
+    marginTop: 12,
+    backgroundColor: '#F0F0F0',
+  },
+  askMetaWrap: {
+    marginTop: 10,
+    gap: 4,
+  },
+  askMetaText: {
+    color: '#444444',
+    fontSize: 13,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  giveImage: {
+    width: '100%',
+    height: 170,
+    borderRadius: 10,
+    marginTop: 12,
+    backgroundColor: '#F0F0F0',
+  },
+  giveMetaWrap: {
+    marginTop: 10,
+    gap: 4,
+  },
+  giveMetaText: {
+    color: '#444444',
+    fontSize: 13,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  fabButton: {
+    position: 'absolute',
+    right: 18,
+    bottom: 24,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
   },
 });

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  FlatList,
   Image,
   KeyboardAvoidingView,
   ScrollView,
@@ -12,9 +14,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Modal,
+  TextInput,
 } from 'react-native';
 
-import DropDownPicker from 'react-native-dropdown-picker';
 import { pick } from '@react-native-documents/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -31,6 +33,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
+import CustomDropdown from '../../components/CustomDropdown';
 
 type DropdownOption = {
   label: string;
@@ -56,14 +59,13 @@ const ProfileDetails = () => {
   const [phoneNumber, setPhoneNumber] = useState(routePhone);
   const [barDoc, setBarDoc] = useState<any>(null);
   const [idDoc, setIdDoc] = useState<any>(null);
-  const [cityOpen, setCityOpen] = useState(false);
   const [cityValue, setCityValue] = useState<string | number | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [cityLoading, setCityLoading] = useState(false);
   const [cityItems, setCityItems] = useState<DropdownOption[]>([]);
+  const [hasLoadedCityList, setHasLoadedCityList] = useState(false);
   const [routeUserId, setRouteUserId] = useState<number | null>(null);
   /* ---------------- Experience Dropdown ---------------- */
-  const [expOpen, setExpOpen] = useState(false);
   const [expValue, setExpValue] = useState(null);
   const [expItems, setExpItems] = useState([
     { label: '0-1 Years', value: '0-1' },
@@ -72,12 +74,11 @@ const ProfileDetails = () => {
     { label: '5+ Years', value: '5+' },
   ]);
 
-  const [genderOpen, setGenderOpen] = useState(false);
   const [genderValue, setGenderValue] = useState(null);
   const [genderItems, setGenderItems] = useState([
     { label: 'Female', value: 'female' },
     { label: 'Male', value: 'male' },
-    { label: 'Tran', value: 'tran' },
+    // { label: 'Tran', value: 'tran' },
   ]);
 
   const [caste, setCaste] = useState('');
@@ -85,9 +86,8 @@ const ProfileDetails = () => {
   const [dob, setDob] = useState('');
   const [age, setAge] = useState('');
   const [dobModalVisible, setDobModalVisible] = useState(false);
-  const [dobDayOpen, setDobDayOpen] = useState(false);
-  const [dobMonthOpen, setDobMonthOpen] = useState(false);
-  const [dobYearOpen, setDobYearOpen] = useState(false);
+  const [yearPickerVisible, setYearPickerVisible] = useState(false);
+  const [yearSearch, setYearSearch] = useState('');
   const [dobDay, setDobDay] = useState<number | null>(null);
   const [dobMonth, setDobMonth] = useState<number | null>(null);
   const [dobYear, setDobYear] = useState<number | null>(null);
@@ -131,6 +131,7 @@ const ProfileDetails = () => {
   const [businessCategoryItems, setBusinessCategoryItems] = useState<
     DropdownOption[]
   >([]);
+  const [businessCategorySearch, setBusinessCategorySearch] = useState('');
   const [businessOther, setBusinessOther] = useState('');
 
   const formatDobForDisplay = (value?: string) => {
@@ -221,7 +222,6 @@ const ProfileDetails = () => {
             setDobYear(dobParts.year);
           }
 
-          // Also make sure city label exists in dropdown
           if (apiProfile?.city && apiProfile?.city_id) {
             setCityItems(prev => {
               const exists = prev.find(
@@ -239,7 +239,6 @@ const ProfileDetails = () => {
               return prev;
             });
           }
-          // setCityValue(apiProfile?.city?.id || apiProfile?.city_id || null);
         }
       } catch (error) {
         console.log('PROFILE API ERROR =>', error);
@@ -309,7 +308,54 @@ const ProfileDetails = () => {
   };
 
   const openDobPicker = () => setDobModalVisible(true);
-  const closeDobPicker = () => setDobModalVisible(false);
+  const closeDobPicker = () => {
+    setDobModalVisible(false);
+    setYearPickerVisible(false);
+    setYearSearch('');
+  };
+
+  const openYearPicker = () => setYearPickerVisible(true);
+
+  const closeYearPicker = () => {
+    setYearPickerVisible(false);
+    setYearSearch('');
+  };
+
+  const selectDobYear = (year: number) => {
+    setDobYear(year);
+    closeYearPicker();
+  };
+
+  const filteredDobYearItems = dobYearItems.filter(item =>
+    item.label.includes(yearSearch.trim()),
+  );
+
+  const openBusinessCategoryPicker = async () => {
+    setBusinessCategoryOpen(true);
+    if (businessCategoryItems.length === 0) {
+      await loadBusinessCategoryList();
+    }
+  };
+
+  const closeBusinessCategoryPicker = () => {
+    setBusinessCategoryOpen(false);
+    setBusinessCategorySearch('');
+  };
+
+  const filteredBusinessCategoryItems = businessCategoryItems.filter(item =>
+    item.label
+      .toLowerCase()
+      .includes(businessCategorySearch.toLowerCase().trim()),
+  );
+
+  const selectedBusinessCategoryLabel =
+    businessCategoryItems.find(item => item.value === businessCategoryValue)
+      ?.label ||
+    (businessCategoryValue
+      ? String(businessCategoryValue)
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, char => char.toUpperCase())
+      : '');
 
   const confirmDobSelection = () => {
     if (!dobDay || !dobMonth || !dobYear) {
@@ -505,12 +551,39 @@ const ProfileDetails = () => {
       const res = await APIWebCall.oncityListAPICall();
 
       if (res?.status === true || res?.success === true) {
-        const formattedCities = res?.data?.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
+        const citySource = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.results)
+          ? res.results
+          : Array.isArray(res?.data?.results)
+          ? res.data.results
+          : [];
 
-        setCityItems(formattedCities);
+        const formattedCities: DropdownOption[] = citySource
+          .map((item: any) => ({
+            label: String(item?.name ?? item?.city ?? ''),
+            value: item?.id ?? item?.city_id,
+          }))
+          .filter((item: DropdownOption) => item.label && item.value != null);
+
+        if (formattedCities.length > 0) {
+          // Keep prefilled city option (if any) and merge server list without duplicates.
+          setCityItems(prev => {
+            const merged = [...prev, ...formattedCities];
+            const seen = new Set<string>();
+
+            return merged.filter(item => {
+              const key = String(item.value);
+              if (seen.has(key)) {
+                return false;
+              }
+              seen.add(key);
+              return true;
+            });
+          });
+        }
+
+        setHasLoadedCityList(true);
       }
     } catch (error) {
       console.log('CITY LIST ERROR => ', error);
@@ -527,7 +600,10 @@ const ProfileDetails = () => {
 
       if (res?.status === true || res?.success === true) {
         const formattedCategories = (res?.data || []).map((item: any) => ({
-          label: item?.value,
+          label: String(item?.value || '')
+            .replace(/_/g, ' ')
+            .toLowerCase()
+            .replace(/\b\w/g, char => char.toUpperCase()),
           value: item?.key,
         }));
 
@@ -576,7 +652,7 @@ const ProfileDetails = () => {
             contentContainerStyle={{ paddingBottom: 20 }}
           >
             <Header
-              title="Edite Profile"
+              title="Edit Profile"
               onBackPress={() => navigation.goBack()}
             />
 
@@ -695,36 +771,14 @@ const ProfileDetails = () => {
                       />
 
                       <View style={{ zIndex: 2000 }}>
-                        <DropDownPicker
-                          open={expOpen}
+                        <CustomDropdown
                           value={expValue}
                           items={expItems}
-                          setOpen={setExpOpen}
-                          setValue={setExpValue}
-                          setItems={setExpItems}
+                          onChange={value => setExpValue(String(value))}
                           placeholder="Select Experience"
-                          searchable={true}
-                          listMode="MODAL"
-                          modalProps={{
-                            animationType: 'slide',
-                          }}
-                          modalContentContainerStyle={{
-                            backgroundColor: '#fff',
-                          }}
-                          searchContainerStyle={{
-                            borderBottomColor: COLORS.colorLightGray,
-                            borderBottomWidth: 1,
-                            padding: 5,
-                          }}
-                          searchTextInputStyle={{
-                            borderColor: COLORS.colorLightGray,
-                            borderBottomWidth: 1,
-                            borderRadius: 8,
-                            color: COLORS.black,
-                          }}
-                          searchPlaceholder="Select Experience"
-                          style={styles.dropdownInput}
-                          dropDownContainerStyle={styles.dropdownContainer}
+                          searchable
+                          modalTitle="Select Experience"
+                          searchPlaceholder="Search experience"
                         />
                       </View>
                     </View>
@@ -737,42 +791,20 @@ const ProfileDetails = () => {
                     />
 
                     <View style={{ zIndex: 2000 }}>
-                      <DropDownPicker
-                        open={cityOpen}
+                      <CustomDropdown
                         value={cityValue}
                         items={cityItems}
                         loading={cityLoading}
-                        setOpen={setCityOpen}
                         onOpen={() => {
-                          if (cityItems.length === 0) {
+                          if (!hasLoadedCityList && !cityLoading) {
                             loadCityList();
                           }
                         }}
-                        setValue={setCityValue}
-                        setItems={setCityItems}
+                        onChange={value => setCityValue(value)}
                         placeholder="Select City"
-                        searchable={true}
-                        listMode="MODAL"
-                        modalProps={{
-                          animationType: 'slide',
-                        }}
-                        modalContentContainerStyle={{
-                          backgroundColor: '#fff',
-                        }}
-                        searchContainerStyle={{
-                          borderBottomColor: COLORS.colorLightGray,
-                          borderBottomWidth: 1,
-                          padding: 5,
-                        }}
-                        searchTextInputStyle={{
-                          borderColor: COLORS.colorLightGray,
-                          borderBottomWidth: 1,
-                          borderRadius: 8,
-                          color: COLORS.black,
-                        }}
+                        searchable
+                        modalTitle="Select City"
                         searchPlaceholder="Search city"
-                        style={styles.dropdownInput}
-                        dropDownContainerStyle={styles.dropdownContainer}
                       />
                     </View>
                   </View>
@@ -827,17 +859,13 @@ const ProfileDetails = () => {
                     textViewStyle={styles.label}
                   />
                   <View style={{ zIndex: 2000 }}>
-                    <DropDownPicker
-                      open={genderOpen}
+                    <CustomDropdown
                       value={genderValue}
                       items={genderItems}
-                      setOpen={setGenderOpen}
-                      setValue={setGenderValue}
-                      setItems={setGenderItems}
+                      onChange={value => setGenderValue(String(value))}
                       placeholder="Select gender"
-                      listMode="MODAL"
-                      style={styles.dropdownInput}
-                      dropDownContainerStyle={styles.dropdownContainer}
+                      modalTitle="Select Gender"
+                      searchable={false}
                     />
                   </View>
 
@@ -889,45 +917,23 @@ const ProfileDetails = () => {
                     text={'Business Category'}
                     textViewStyle={styles.label}
                   />
-                  <View style={{ zIndex: 2000 }}>
-                    <DropDownPicker
-                      open={businessCategoryOpen}
-                      value={businessCategoryValue}
-                      items={businessCategoryItems}
-                      loading={businessCategoryLoading}
-                      setOpen={setBusinessCategoryOpen}
-                      onOpen={() => {
-                        if (businessCategoryItems.length === 0) {
-                          loadBusinessCategoryList();
-                        }
-                      }}
-                      setValue={setBusinessCategoryValue}
-                      setItems={setBusinessCategoryItems}
-                      placeholder="Select business category"
-                      searchable={true}
-                      listMode="MODAL"
-                      modalProps={{
-                        animationType: 'slide',
-                      }}
-                      modalContentContainerStyle={{
-                        backgroundColor: '#fff',
-                      }}
-                      searchContainerStyle={{
-                        borderBottomColor: COLORS.colorLightGray,
-                        borderBottomWidth: 1,
-                        padding: 5,
-                      }}
-                      searchTextInputStyle={{
-                        borderColor: COLORS.colorLightGray,
-                        borderBottomWidth: 1,
-                        borderRadius: 8,
-                        color: COLORS.black,
-                      }}
-                      searchPlaceholder="Search category"
-                      style={styles.dropdownInput}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                    />
-                  </View>
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={styles.customCategoryTrigger}
+                    onPress={openBusinessCategoryPicker}
+                  >
+                    <Text
+                      style={[
+                        styles.customCategoryTriggerText,
+                        !selectedBusinessCategoryLabel &&
+                          styles.customCategoryTriggerPlaceholder,
+                      ]}
+                    >
+                      {selectedBusinessCategoryLabel ||
+                        'Select business category'}
+                    </Text>
+                    <Text style={styles.customCategoryTriggerArrow}>v</Text>
+                  </TouchableOpacity>
 
                   <TextCommonBold text={'Other'} textViewStyle={styles.label} />
                   <TextInputView
@@ -960,50 +966,45 @@ const ProfileDetails = () => {
                 <View style={styles.dobPickerRow}>
                   <View style={[styles.dobPickerColumn, { zIndex: 3000 }]}>
                     <Text style={styles.dobPickerLabel}>Day</Text>
-                    <DropDownPicker
-                      open={dobDayOpen}
+                    <CustomDropdown
                       value={dobDay}
                       items={dobDayItems}
-                      setOpen={setDobDayOpen}
-                      setValue={setDobDay}
-                      setItems={setDobDayItems}
+                      onChange={value => setDobDay(Number(value))}
                       placeholder="Day"
-                      listMode="MODAL"
-                      style={styles.dobDropdown}
-                      dropDownContainerStyle={styles.dobDropdownContainer}
+                      modalTitle="Select Day"
+                      searchPlaceholder="Search day"
                     />
                   </View>
 
                   <View style={[styles.dobPickerColumn, { zIndex: 2000 }]}>
                     <Text style={styles.dobPickerLabel}>Month</Text>
-                    <DropDownPicker
-                      open={dobMonthOpen}
+                    <CustomDropdown
                       value={dobMonth}
                       items={dobMonthItems}
-                      setOpen={setDobMonthOpen}
-                      setValue={setDobMonth}
-                      setItems={setDobMonthItems}
+                      onChange={value => setDobMonth(Number(value))}
                       placeholder="Month"
-                      listMode="MODAL"
-                      style={styles.dobDropdown}
-                      dropDownContainerStyle={styles.dobDropdownContainer}
+                      modalTitle="Select Month"
+                      searchPlaceholder="Search month"
                     />
                   </View>
 
                   <View style={[styles.dobPickerColumn, { zIndex: 1000 }]}>
                     <Text style={styles.dobPickerLabel}>Year</Text>
-                    <DropDownPicker
-                      open={dobYearOpen}
-                      value={dobYear}
-                      items={dobYearItems}
-                      setOpen={setDobYearOpen}
-                      setValue={setDobYear}
-                      setItems={setDobYearItems}
-                      placeholder="Year"
-                      listMode="MODAL"
-                      style={styles.dobDropdown}
-                      dropDownContainerStyle={styles.dobDropdownContainer}
-                    />
+                    <TouchableOpacity
+                      activeOpacity={0.85}
+                      style={styles.customYearTrigger}
+                      onPress={openYearPicker}
+                    >
+                      <Text
+                        style={[
+                          styles.customYearTriggerText,
+                          !dobYear && styles.customYearTriggerPlaceholder,
+                        ]}
+                      >
+                        {dobYear ? String(dobYear) : 'Select year'}
+                      </Text>
+                      <Text style={styles.customYearTriggerArrow}>v</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
 
@@ -1021,6 +1022,167 @@ const ProfileDetails = () => {
                     <Text style={styles.dobSaveText}>Done</Text>
                   </TouchableOpacity>
                 </View>
+              </View>
+            </View>
+          </Modal>
+
+          <Modal
+            visible={yearPickerVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={closeYearPicker}
+          >
+            <View style={styles.yearPickerOverlay}>
+              <View style={styles.yearPickerCard}>
+                <View style={styles.yearPickerHeader}>
+                  <Text style={styles.yearPickerTitle}>Select Year</Text>
+                  <TouchableOpacity onPress={closeYearPicker}>
+                    <Text style={styles.yearPickerCloseText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <TextInput
+                  value={yearSearch}
+                  onChangeText={setYearSearch}
+                  placeholder="Search year"
+                  placeholderTextColor="#8A8A8A"
+                  keyboardType="number-pad"
+                  style={styles.yearPickerSearchInput}
+                />
+
+                <FlatList
+                  data={filteredDobYearItems}
+                  keyExtractor={item => String(item.value)}
+                  keyboardShouldPersistTaps="handled"
+                  renderItem={({ item }) => {
+                    const isSelected = dobYear === item.value;
+
+                    return (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={[
+                          styles.yearPickerItem,
+                          isSelected && styles.yearPickerItemSelected,
+                        ]}
+                        onPress={() => selectDobYear(Number(item.value))}
+                      >
+                        <Text
+                          style={[
+                            styles.yearPickerItemText,
+                            isSelected && styles.yearPickerItemTextSelected,
+                          ]}
+                        >
+                          {item.label}
+                        </Text>
+                        {isSelected ? (
+                          <Text style={styles.yearPickerSelectedTag}>
+                            Selected
+                          </Text>
+                        ) : null}
+                      </TouchableOpacity>
+                    );
+                  }}
+                  ItemSeparatorComponent={() => (
+                    <View style={styles.yearPickerSeparator} />
+                  )}
+                  ListEmptyComponent={
+                    <View style={styles.yearPickerEmptyWrap}>
+                      <Text style={styles.yearPickerEmptyText}>
+                        No matching year
+                      </Text>
+                    </View>
+                  }
+                />
+              </View>
+            </View>
+          </Modal>
+
+          <Modal
+            visible={businessCategoryOpen}
+            transparent
+            animationType="slide"
+            onRequestClose={closeBusinessCategoryPicker}
+          >
+            <View style={styles.categoryPickerOverlay}>
+              <View style={styles.categoryPickerCard}>
+                <View style={styles.categoryPickerHeader}>
+                  <Text style={styles.categoryPickerTitle}>
+                    Business Category
+                  </Text>
+                  <TouchableOpacity onPress={closeBusinessCategoryPicker}>
+                    <Text style={styles.categoryPickerCloseText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <TextInput
+                  value={businessCategorySearch}
+                  onChangeText={setBusinessCategorySearch}
+                  placeholder="Search category"
+                  placeholderTextColor="#8A8A8A"
+                  style={styles.categoryPickerSearchInput}
+                />
+
+                {businessCategoryLoading ? (
+                  <View style={styles.categoryLoadingWrap}>
+                    <ActivityIndicator color="#1a1a1a" size="small" />
+                    <Text style={styles.categoryLoadingText}>
+                      Loading categories...
+                    </Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    data={filteredBusinessCategoryItems}
+                    keyExtractor={item => String(item.value)}
+                    keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={styles.categoryPickerListContent}
+                    renderItem={({ item, index }) => {
+                      const isSelected = businessCategoryValue === item.value;
+
+                      return (
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          style={[
+                            styles.categoryPickerItem,
+                            isSelected && styles.categoryPickerItemSelected,
+                          ]}
+                          onPress={() => {
+                            setBusinessCategoryValue(String(item.value));
+                            closeBusinessCategoryPicker();
+                          }}
+                        >
+                          <View style={styles.categoryPickerItemLeft}>
+                            <Text
+                              style={[
+                                styles.categoryPickerItemText,
+                                isSelected &&
+                                  styles.categoryPickerItemTextSelected,
+                              ]}
+                            >
+                              {item.label}
+                            </Text>
+                          </View>
+                          {isSelected ? (
+                            <Text style={styles.categoryPickerSelectedTag}>
+                              Selected
+                            </Text>
+                          ) : (
+                            <View style={styles.categoryPickerItemDot} />
+                          )}
+                        </TouchableOpacity>
+                      );
+                    }}
+                    ItemSeparatorComponent={() => (
+                      <View style={styles.categoryPickerSeparator} />
+                    )}
+                    ListEmptyComponent={
+                      <View style={styles.categoryPickerEmptyWrap}>
+                        <Text style={styles.categoryPickerEmptyText}>
+                          No matching category
+                        </Text>
+                      </View>
+                    }
+                  />
+                )}
               </View>
             </View>
           </Modal>
@@ -1174,13 +1336,317 @@ const styles = StyleSheet.create({
     fontFamily: FONTS_Family.FontMedium,
   },
   dobDropdown: {
-    borderColor: '#888888',
-    borderWidth: 0.5,
-    borderRadius: 10,
-    minHeight: 48,
+    borderColor: '#DCDCDC',
+    borderWidth: 1.2,
+    borderRadius: 12,
+    minHeight: 50,
+    backgroundColor: '#FFFFFF',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
   },
   dobDropdownContainer: {
-    borderColor: '#888888',
+    borderColor: '#DCDCDC',
+  },
+  dobLabelStyle: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  dobModalContentContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingBottom: 20,
+    paddingHorizontal: 16,
+  },
+  dobSelectedItemContainer: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#1a1a1a',
+  },
+  dobSelectedItemLabel: {
+    fontSize: 14,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontBold,
+  },
+  dobItemContainer: {
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#F0F0F0',
+    marginVertical: 2,
+  },
+  dobItemLabel: {
+    fontSize: 14,
+    color: '#333333',
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  customYearTrigger: {
+    borderColor: '#DCDCDC',
+    borderWidth: 1.2,
+    borderRadius: 12,
+    minHeight: 50,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  customYearTriggerText: {
+    color: '#1a1a1a',
+    fontSize: 15,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  customYearTriggerPlaceholder: {
+    color: '#888888',
+  },
+  customYearTriggerArrow: {
+    color: '#444444',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontBold,
+  },
+  yearPickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'flex-end',
+  },
+  yearPickerCard: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingTop: 14,
+    paddingHorizontal: 14,
+    paddingBottom: 16,
+    maxHeight: '72%',
+  },
+  yearPickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  yearPickerTitle: {
+    color: '#111111',
+    fontSize: 18,
+    fontFamily: FONTS_Family.FontBold,
+  },
+  yearPickerCloseText: {
+    color: '#333333',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+  yearPickerSearchInput: {
+    borderColor: '#DCDCDC',
+    borderWidth: 1,
+    borderRadius: 11,
+    backgroundColor: '#FAFAFA',
+    paddingHorizontal: 12,
+    minHeight: 44,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontMedium,
+    marginBottom: 12,
+  },
+  yearPickerItem: {
+    minHeight: 50,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  yearPickerItemSelected: {
+    backgroundColor: '#F3F3F3',
+    borderWidth: 1,
+    borderColor: '#1a1a1a',
+  },
+  yearPickerItemText: {
+    color: '#222222',
+    fontSize: 15,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  yearPickerItemTextSelected: {
+    color: '#111111',
+    fontFamily: FONTS_Family.FontBold,
+  },
+  yearPickerSelectedTag: {
+    color: '#111111',
+    fontSize: 12,
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+  yearPickerSeparator: {
+    height: 1,
+    backgroundColor: '#EFEFEF',
+    marginHorizontal: 2,
+  },
+  yearPickerEmptyWrap: {
+    paddingVertical: 28,
+    alignItems: 'center',
+  },
+  yearPickerEmptyText: {
+    color: '#666666',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  customCategoryTrigger: {
+    borderColor: '#DCDCDC',
+    borderWidth: 1.2,
+    borderRadius: 12,
+    minHeight: 50,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  customCategoryTriggerText: {
+    flex: 1,
+    color: '#1a1a1a',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  customCategoryTriggerPlaceholder: {
+    color: '#888888',
+  },
+  customCategoryTriggerArrow: {
+    color: '#444444',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontBold,
+    marginLeft: 10,
+  },
+  categoryPickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'flex-end',
+  },
+  categoryPickerCard: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingTop: 14,
+    paddingHorizontal: 14,
+    paddingBottom: 16,
+    maxHeight: '76%',
+  },
+  categoryPickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  categoryPickerTitle: {
+    color: '#111111',
+    fontSize: 18,
+    fontFamily: FONTS_Family.FontBold,
+  },
+  categoryPickerCloseText: {
+    color: '#333333',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+  categoryPickerSearchInput: {
+    borderColor: '#DCDCDC',
+    borderWidth: 1,
+    borderRadius: 11,
+    backgroundColor: '#FAFAFA',
+    paddingHorizontal: 12,
+    minHeight: 44,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontMedium,
+    marginBottom: 12,
+  },
+  categoryLoadingWrap: {
+    paddingVertical: 24,
+    alignItems: 'center',
+    gap: 8,
+  },
+  categoryLoadingText: {
+    color: '#666666',
+    fontSize: 13,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  categoryPickerListContent: {
+    paddingBottom: 6,
+  },
+  categoryPickerItem: {
+    minHeight: 56,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#ECECEC',
+  },
+  categoryPickerItemSelected: {
+    backgroundColor: '#F6F6F6',
+    borderColor: '#1a1a1a',
+  },
+  categoryPickerItemLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  categoryPickerIndexBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F1F1F1',
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryPickerIndexBadgeSelected: {
+    backgroundColor: '#1a1a1a',
+    borderColor: '#1a1a1a',
+  },
+  categoryPickerIndexText: {
+    color: '#3A3A3A',
+    fontSize: 12,
+    fontFamily: FONTS_Family.FontSemiBold,
+  },
+  categoryPickerIndexTextSelected: {
+    color: '#FFFFFF',
+  },
+  categoryPickerItemText: {
+    flex: 1,
+    color: '#1f1f1f',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  categoryPickerItemTextSelected: {
+    color: '#111111',
+    fontFamily: FONTS_Family.FontBold,
+  },
+  categoryPickerSelectedTag: {
+    color: '#111111',
+    fontSize: 12,
+    fontFamily: FONTS_Family.FontSemiBold,
+    marginLeft: 8,
+  },
+  categoryPickerItemDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#D9D9D9',
+    marginRight: 6,
+    marginLeft: 8,
+  },
+  categoryPickerSeparator: {
+    height: 8,
+  },
+  categoryPickerEmptyWrap: {
+    paddingVertical: 28,
+    alignItems: 'center',
+  },
+  categoryPickerEmptyText: {
+    color: '#666666',
+    fontSize: 14,
+    fontFamily: FONTS_Family.FontMedium,
   },
   dobActionRow: {
     flexDirection: 'row',
@@ -1223,11 +1689,66 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   dropdownInput: {
-    borderColor: '#888888',
-    borderWidth: 0.5,
+    borderColor: '#DCDCDC',
+    borderWidth: 1.2,
     borderRadius: 10,
     minHeight: 50,
     backgroundColor: '#FFFFFF',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+  },
+  dropdownLabelStyle: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontMedium,
+  },
+  dropdownModaContentContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingBottom: 20,
+    paddingHorizontal: 0,
+  },
+  dropdownSearchContainer: {
+    borderBottomColor: '#EBEBEB',
+    borderBottomWidth: 1,
+    padding: 12,
+    paddingHorizontal: 16,
+  },
+  dropdownSearchInput: {
+    borderColor: '#DCDCDC',
+    borderWidth: 1.2,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontMedium,
+    backgroundColor: '#F9F9F9',
+  },
+  dropdownSelectedItemContainer: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 0,
+    borderLeftWidth: 4,
+    borderLeftColor: '#1a1a1a',
+    paddingHorizontal: 16,
+  },
+  dropdownSelectedItemLabel: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontFamily: FONTS_Family.FontBold,
+  },
+  dropdownItemContainer: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 0.8,
+    borderBottomColor: '#F5F5F5',
+  },
+  dropdownItemLabel: {
+    fontSize: 14,
+    color: '#333333',
+    fontFamily: FONTS_Family.FontMedium,
   },
   uploadRow: {
     flexDirection: 'row',

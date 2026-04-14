@@ -4,11 +4,11 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  SafeAreaView,
   TouchableOpacity,
   Linking,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import { COLORS } from '../../constants/Colors';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -147,9 +147,11 @@ const Community = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View>
-        <Text style={styles.title}>Community Feed</Text>
+        <View style={styles.headerView}>
+          <Text style={styles.title}>Community Feed</Text>
+        </View>
         <View style={{ padding: 16 }}>
           <FlatList
             data={requestList}
@@ -175,6 +177,15 @@ const Community = () => {
 
 export default Community;
 const styles = StyleSheet.create({
+  headerView: {
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEBEB',
+    paddingTop: 12,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+    justifyContent: 'flex-start',
+  },
   callButton: {
     padding: 8,
   },
@@ -202,17 +213,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   title: {
-    fontSize: FONTS_SIZE.txt_27,
+    textAlignVertical: 'top',
+    marginTop: -10,
+    fontSize: 24,
     fontFamily: FONTS_Family.FontBold,
     color: '#000000',
-    marginTop: 15,
-    marginBottom: 15,
-    height: 70,
-    backgroundColor: '#FFFFFF',
-    width: '100%',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EBEBEB',
+    letterSpacing: 0.3,
   },
   container: {
     flex: 1,

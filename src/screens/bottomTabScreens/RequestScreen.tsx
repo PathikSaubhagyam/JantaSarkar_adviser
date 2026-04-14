@@ -5,13 +5,13 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
   Dimensions,
   StatusBar,
   ActivityIndicator,
   PermissionsAndroid,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from '@react-native-community/geolocation';
@@ -338,8 +338,6 @@ const RequestScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      <View style={{ marginTop: 15, backgroundColor: '#FFFFFF' }} />
-
       <Text style={styles.header}>Client Request</Text>
 
       <View style={styles.tabContainer}>
@@ -417,11 +415,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   header: {
-    fontSize: FONTS_SIZE.txt_27,
+    paddingTop: 1,
+    paddingBottom: 10,
+    letterSpacing: 0.3,
+    fontSize: 24,
     fontFamily: FONTS_Family.FontBold,
-    marginTop: 25,
     color: '#000000',
-    marginBottom: 10,
+    // marginBottom: 6,
     letterSpacing: 0.3,
   },
   container: {

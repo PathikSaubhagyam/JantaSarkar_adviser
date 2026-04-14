@@ -13,7 +13,6 @@ import {
   Keyboard,
 } from 'react-native';
 
-import DropDownPicker from 'react-native-dropdown-picker';
 import { pick } from '@react-native-documents/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -29,6 +28,7 @@ import APIWebCall from '../../common/APIWebCall';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomDropdown from '../../components/CustomDropdown';
 
 const SignUp = () => {
   const navigation = useNavigation<any>();
@@ -44,13 +44,11 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState(routePhone);
   const [barDoc, setBarDoc] = useState(null);
   const [idDoc, setIdDoc] = useState(null);
-  const [cityOpen, setCityOpen] = useState(false);
   const [cityValue, setCityValue] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [cityLoading, setCityLoading] = useState(false);
   const [cityItems, setCityItems] = useState([]);
   /* ---------------- Experience Dropdown ---------------- */
-  const [expOpen, setExpOpen] = useState(false);
   const [expValue, setExpValue] = useState(null);
   const [expItems, setExpItems] = useState([
     { label: '0-1 Years', value: '0-1' },
@@ -332,48 +330,14 @@ const SignUp = () => {
                   />
 
                   <View style={{ zIndex: 2000 }}>
-                    <DropDownPicker
-                      open={expOpen}
+                    <CustomDropdown
                       value={expValue}
                       items={expItems}
-                      setOpen={setExpOpen}
-                      setValue={callback => {
-                        const value = callback(cityValue);
-                        setCityValue(value);
-                      }}
-                      setValue={setExpValue}
-                      setItems={setExpItems}
+                      onChange={value => setExpValue(String(value))}
                       placeholder="Select Experience"
                       searchable={true}
-                      listMode="MODAL"
-                      modalProps={{
-                        animationType: 'slide',
-                      }}
-                      modalContentContainerStyle={{
-                        backgroundColor: '#fff',
-                      }}
-                      searchContainerStyle={{
-                        borderBottomColor: COLORS.colorLightGray,
-                        borderBottomWidth: 1,
-                        padding: 5,
-                      }}
-                      searchTextInputStyle={{
-                        borderColor: COLORS.colorLightGray,
-                        borderBottomWidth: 1,
-                        borderRadius: 8,
-                        color: COLORS.black,
-                      }}
                       searchPlaceholder="Search experience"
-                      style={{
-                        borderColor: COLORS.gray,
-                        borderWidth: 0.5,
-                        borderRadius: 10,
-                        minHeight: 50,
-                      }}
-                      dropDownContainerStyle={{
-                        borderBottomColor: COLORS.colorLightGray,
-                        borderWidth: 1,
-                      }}
+                      modalTitle="Select Experience"
                     />
                   </View>
                 </View>
@@ -382,55 +346,20 @@ const SignUp = () => {
                 <TextCommonBold text={'City*'} textViewStyle={styles.label} />
 
                 <View style={{ zIndex: 2000 }}>
-                  <DropDownPicker
-                    open={cityOpen}
+                  <CustomDropdown
                     value={cityValue}
                     items={cityItems}
                     loading={cityLoading}
-                    setOpen={open => {
-                      setCityOpen(open);
-
-                      if (open && cityItems.length === 0) {
+                    onOpen={() => {
+                      if (cityItems.length === 0) {
                         loadCityList();
                       }
                     }}
-                    setValue={callback => {
-                      const value = callback(cityValue);
-                      setCityValue(value);
-                    }}
-                    setValue={setCityValue}
-                    setItems={setCityItems}
+                    onChange={value => setCityValue(value)}
                     placeholder="Select City"
                     searchable={true}
-                    listMode="MODAL"
-                    modalProps={{
-                      animationType: 'slide',
-                    }}
-                    modalContentContainerStyle={{
-                      backgroundColor: '#fff',
-                    }}
-                    searchContainerStyle={{
-                      borderBottomColor: COLORS.colorLightGray,
-                      borderBottomWidth: 1,
-                      padding: 5,
-                    }}
-                    searchTextInputStyle={{
-                      borderColor: COLORS.colorLightGray,
-                      borderBottomWidth: 1,
-                      borderRadius: 8,
-                      color: COLORS.black,
-                    }}
                     searchPlaceholder="Search city"
-                    style={{
-                      borderColor: COLORS.gray,
-                      borderWidth: 0.5,
-                      borderRadius: 10,
-                      minHeight: 50,
-                    }}
-                    dropDownContainerStyle={{
-                      borderBottomColor: COLORS.colorLightGray,
-                      borderWidth: 1,
-                    }}
+                    modalTitle="Select City"
                   />
                 </View>
                 <TextCommonBold
