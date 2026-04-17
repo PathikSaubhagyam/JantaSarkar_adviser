@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/splashscreen/SplashScreen';
 import AuthNavigator from './AuthNavigator';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/Colors';
 import HomeNavigator from './HomeNavigator';
 import ProfileDetails from '../screens/screen/ProfileDetails';
@@ -14,13 +14,15 @@ import RequestScreen from '../screens/bottomTabScreens/RequestScreen';
 import BankDetailsScreen from '../screens/screen/BankDetailsScreen';
 import NotificationScreen from '../screens/screen/NotificationScreen';
 import PaymentHistoryScreen from '../screens/screen/PaymentHistoryScreen';
-// import BottomTabs from './BottomTabs';
 
 const Stack = createNativeStackNavigator();
 
 export default function MainNavigator() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.black }}>
+    <SafeAreaView 
+      style={{ flex: 1, backgroundColor: COLORS.white }}
+      edges={['top', 'bottom']}
+    >
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{ headerShown: false, animation: 'slide_from_right' }}

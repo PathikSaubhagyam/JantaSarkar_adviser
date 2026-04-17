@@ -11,13 +11,12 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Geolocation from '@react-native-community/geolocation';
-import { COLORS } from '../../constants/Colors';
 import RequestCard from '../../components/RequestCard';
-import { BASE_URL, DOBFormat } from '../../constants/Utils';
+import { BASE_URL } from '../../constants/Utils';
 import {
   onAdvisorComplaintsAPICall,
   onAdvisorHistoryAPICall,
@@ -31,8 +30,7 @@ import NotificationService from '../../services/NotificationService';
 import moment from 'moment';
 import { useRoute, useIsFocused } from '@react-navigation/native';
 import SnackBarCommon from '../../components/SnackBarCommon';
-import TextCommonMedium from '../../components/TextCommonMedium';
-import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
+import { FONTS_Family } from '../../constants/Font';
 const { width } = Dimensions.get('window');
 
 type Coordinates = {
@@ -41,6 +39,7 @@ type Coordinates = {
 };
 
 const RequestScreen = () => {
+  const insets = useSafeAreaInsets();
   const TABS = ['New', 'Ongoing', 'History'];
   const route = useRoute<any>();
   const [refreshing, setRefreshing] = useState(false);
@@ -48,11 +47,6 @@ const RequestScreen = () => {
   const [formatComplaintData, setFormatComplaintData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [DATA, setDATA] = useState({
-    new: [],
-    pending: [],
-    history: [],
-  });
   const [tabCounts, setTabCounts] = useState({
     New: 0,
     Ongoing: 0,
@@ -336,9 +330,9 @@ const RequestScreen = () => {
     }
   };
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      <Text style={styles.header}>Client Request</Text>
+      <Text style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}>Client Request</Text>
 
       <View style={styles.tabContainer}>
         {TABS.map(tab => (
@@ -400,7 +394,7 @@ const RequestScreen = () => {
           )}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -417,7 +411,6 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 1,
     paddingBottom: 10,
-    letterSpacing: 0.3,
     fontSize: 24,
     fontFamily: FONTS_Family.FontBold,
     color: '#000000',

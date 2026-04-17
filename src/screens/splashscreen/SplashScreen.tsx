@@ -318,7 +318,7 @@ export default function SplashScreen() {
       >
         <View style={styles.logoBackground}>
           <Image
-            source={require('../../assets/images/logo.png')}
+            source={require('../../assets/images/Logo2.png')}
             style={styles.logo}
             resizeMode="contain"
           />

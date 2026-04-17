@@ -197,6 +197,10 @@ export const onDepartmentAPICall = () => {
 export const onProfileAPICall = () => {
   return _REQUEST2SERVER(`mobile/profile/`, null, 'GET', false, true);
 };
+
+export const onProfileImageUpdateAPICall = formData => {
+  return _REQUEST2SERVER(`mobile/profile/`, formData, 'PATCH', true, true);
+};
 export const onCommunityFeedListAPICall = () => {
   return _REQUEST2SERVER(
     `mobile/community-complaint/`,
@@ -468,6 +472,7 @@ export default {
   onDepartmentAPICall,
   onCommunityFeedAPICall,
   onProfileAPICall,
+  onProfileImageUpdateAPICall,
   onCommunityFeedListAPICall,
   onCommunityDashboardAPICall,
   onUploadDocumentsAPICall,

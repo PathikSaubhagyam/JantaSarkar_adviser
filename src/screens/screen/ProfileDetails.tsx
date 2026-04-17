@@ -651,11 +651,12 @@ const ProfileDetails = () => {
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ paddingBottom: 20 }}
           >
-            <Header
-              title="Edit Profile"
-              onBackPress={() => navigation.goBack()}
-            />
-
+            <View style={{ marginTop: -15 }}>
+              <Header
+                title="Edit Profile"
+                onBackPress={() => navigation.goBack()}
+              />
+            </View>
             <View style={styles.formContainer}>
               <View style={styles.tabContainer}>
                 <TouchableOpacity

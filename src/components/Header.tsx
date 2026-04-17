@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FONTS_Family } from '../constants/Font';
 
 type HeaderProps = {
@@ -13,8 +14,10 @@ export default function Header({
   onBackPress,
   showBackButton = true,
 }: HeaderProps) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: Math.max(insets.top, 12) }]}>
       <View style={styles.header}>
         {showBackButton ? (
           <Pressable style={styles.backButton} onPress={onBackPress}>
@@ -33,32 +36,33 @@ export default function Header({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 12,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 8,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backArrow: {
-    fontSize: 24,
-    color: '#1f2937',
-  },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: FONTS_Family.FontExtraBold,
     color: '#1f2937',
+    flex: 1,
+    textAlign: 'center',
   },
   underline: {
     height: 3,
     backgroundColor: '#000000',
     width: 40,
-    marginTop: 8,
+    marginLeft: 16,
+    marginTop: 4,
   },
 });

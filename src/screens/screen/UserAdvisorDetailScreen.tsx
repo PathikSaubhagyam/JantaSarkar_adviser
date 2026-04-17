@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Image,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -27,6 +28,14 @@ const UserAdvisorDetailScreen = () => {
     .trim()
     .charAt(0)
     .toUpperCase();
+
+  const profileImageUri = String(
+    user?.profileImageUri ??
+      user?.profile_image_uri ??
+      user?.profile_image ??
+      user?.image ??
+      '',
+  ).trim();
 
   const isAdvisor = user.role === 'Advisor';
 
@@ -62,7 +71,15 @@ const UserAdvisorDetailScreen = () => {
         {/* ─── Hero card ──────────────────────────────────────────────────── */}
         <View style={styles.heroCard}>
           <View style={styles.avatarWrap}>
-            <Text style={styles.avatarText}>{initials}</Text>
+            {profileImageUri ? (
+              <Image
+                source={{ uri: profileImageUri }}
+                style={styles.avatarImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <Text style={styles.avatarText}>{initials}</Text>
+            )}
           </View>
 
           <Text style={styles.heroName}>
@@ -213,7 +230,7 @@ export default UserAdvisorDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop:10,
+    marginTop: 10,
     backgroundColor: '#F9F9F9',
   },
   scroll: {
@@ -230,13 +247,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarWrap: {
-    width: 74,
-    height: 74,
-    borderRadius: 37,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 50,
   },
   avatarText: {
     fontSize: 32,

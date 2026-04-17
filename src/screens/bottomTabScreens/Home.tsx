@@ -13,6 +13,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { onDashboardAPICall } from '../../common/APIWebCall';
 import { FONTS_Family } from '../../constants/Font';
@@ -21,6 +22,7 @@ const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
 
   const [userCases, setUserCases] = useState(0);
   const [providedHelp, setProvidedHelp] = useState(0);
@@ -102,15 +104,18 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.welcome}>Welcome</Text>
-        <View style={styles.headerAccent} />
+      <View
+        style={[
+          styles.headerContainer,
+          { paddingTop: Math.max(insets.top, 16) },
+        ]}
+      >
+        <Text style={styles.header}>Welcome</Text>
       </View>
-
       {loading ? (
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color="#1a1a1a" />
@@ -250,7 +255,7 @@ export default function HomeScreen() {
           </View>
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -261,27 +266,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F7F7F7',
   },
-  header: {
-    paddingHorizontal: 18,
-    paddingTop: 0,
-    paddingBottom: 14,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EBEBEB',
+  headerContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 6,
+    backgroundColor: '#F7F7F7',
   },
-  welcome: {
+  header: {
     fontSize: 24,
+    lineHeight: 30,
     fontFamily: FONTS_Family.FontBold,
     color: '#000000',
-    marginBottom: 6,
     letterSpacing: 0.3,
-  },
-  headerAccent: {
-    marginTop: 6,
-    width: 36,
-    height: 3,
-    backgroundColor: '#000000',
-    borderRadius: 2,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   loaderContainer: {
     flex: 1,

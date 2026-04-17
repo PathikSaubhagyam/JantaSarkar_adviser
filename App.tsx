@@ -11,7 +11,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {
   SafeAreaProvider,
-  useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import MainNavigator from './src/navigation/MainNavigator';
 import TopNotificationBanner from './src/components/TopNotificationBanner';
@@ -21,8 +20,6 @@ import APIWebCall from './src/common/APIWebCall';
 const FCM_TOKEN_STORAGE_KEY = 'fcm_token';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   // Notification banner state
   const [bannerVisible, setBannerVisible] = useState(false);
   const [bannerTitle, setBannerTitle] = useState('');

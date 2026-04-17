@@ -256,7 +256,7 @@ const SignUp = () => {
           >
             <View style={styles.logoContainer}>
               <Image
-                source={require('../../assets/images/app_img.jpg')}
+                source={require('../../assets/images/Logo2.png')}
                 style={{ height: 200, width: 200 }}
               />
             </View>

@@ -5,13 +5,13 @@ import {
   PermissionsAndroid,
   Platform,
   RefreshControl,
-  SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from '@react-native-community/geolocation';
@@ -76,6 +76,7 @@ type Coordinates = {
 const CROWD_API_URL = `${BASE_URL}admin_api/crowd/`;
 
 export default function Crowd({ onLogout }: CrowdScreenProps) {
+  const insets = useSafeAreaInsets();
   const [crowdData, setCrowdData] = useState<CrowdItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -513,14 +514,13 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="#FFFFFF"
       />
-      <View style={{ marginTop: 8, backgroundColor: '#FFFFFF' }} />
 
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}>
         <Text style={styles.headerTitle}>Crowd Management</Text>
         <View style={styles.headerAccent} />
       </View>
@@ -565,7 +565,7 @@ export default function Crowd({ onLogout }: CrowdScreenProps) {
         }}
         primaryText="Retry"
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

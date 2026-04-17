@@ -16,23 +16,21 @@ import {
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS } from '../../constants/Colors';
-import { BASE_URL } from '../../constants/Utils';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TextCommonMedium from '../../components/TextCommonMedium';
 import TextCommonRegular from '../../components/TextCommonRegular';
 import TextCommonBold from '../../components/TextCommonBold';
-import { onProfileAPICall } from '../../common/APIWebCall';
-const { width, height } = Dimensions.get('window');
+import APIWebCall, { onProfileAPICall } from '../../common/APIWebCall';
 
 type ProfileScreenProps = {
   onLogout?: () => void;
 };
 
-export default function Profile({ onLogout }: ProfileScreenProps) {
+export default function Profile({}: ProfileScreenProps) {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [profile, setProfile] = useState<any>({});
   const [profileImage, setProfileImage] = useState<string | null>(null);
   console.log('ppppppppppp', profile);
@@ -66,6 +64,45 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
     setShowImagePickerModal(true);
   };
 
+  const uploadProfileImage = async (asset: any) => {
+    if (!asset?.uri) {
+      Alert.alert('Error', 'Please select a valid image');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('profile_image', {
+        uri:
+          Platform.OS === 'android'
+            ? asset.uri
+            : asset.uri.replace('file://', ''),
+        name: asset.fileName || `profile_${Date.now()}.jpg`,
+        type: asset.type || 'image/jpeg',
+      } as any);
+
+      const response = await APIWebCall.onProfileImageUpdateAPICall(formData);
+
+      if (response?.status === true || response?.success === true) {
+        const updatedProfile = response?.data || {};
+        setProfile(prev => ({ ...prev, ...updatedProfile }));
+        setProfileImage(updatedProfile?.profile_image || asset.uri || null);
+        Alert.alert(
+          'Success',
+          response?.message || 'Profile updated successfully',
+        );
+      } else {
+        Alert.alert(
+          'Upload failed',
+          response?.message || 'Could not update profile image',
+        );
+      }
+    } catch (error) {
+      console.log('PROFILE IMAGE UPDATE ERROR =>', error);
+      Alert.alert('Error', 'Something went wrong while updating profile image');
+    }
+  };
+
   // 📷 Open Camera
   const openCamera = async () => {
     setShowImagePickerModal(false);
@@ -74,8 +111,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
       quality: 0.8,
     });
 
-    if (!result.didCancel && result.assets) {
-      setProfileImage(result.assets[0].uri || null);
+    if (!result.didCancel && result.assets?.length) {
+      await uploadProfileImage(result.assets[0]);
     }
   };
 
@@ -87,8 +124,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
       quality: 0.8,
     });
 
-    if (!result.didCancel && result.assets) {
-      setProfileImage(result.assets[0].uri || null);
+    if (!result.didCancel && result.assets?.length) {
+      await uploadProfileImage(result.assets[0]);
     }
   };
   const handleLogout = () => {
@@ -155,7 +192,7 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
           <View style={styles.imageContainer}>
             <Image
               source={{
@@ -285,10 +322,8 @@ export default function Profile({ onLogout }: ProfileScreenProps) {
 
         {/* Logout */}
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-          <TextCommonMedium
-            text={'Log Out'}
-            textViewStyle={styles.logoutText}
-          />
+          <Icon name="log-out-outline" size={20} color="#1a1a1a" />
+          <TextCommonBold text={'Log Out'} textViewStyle={styles.logoutText} />
         </TouchableOpacity>
 
         <Modal
@@ -376,7 +411,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingVertical: 30,
+    paddingBottom: 30,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#D9D9D9',
@@ -523,12 +558,16 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     borderWidth: 1,
     borderColor: '#1a1a1a',
   },
   logoutText: {
     color: '#1a1a1a',
+    fontSize: 15,
   },
   modalOverlay: {
     flex: 1,

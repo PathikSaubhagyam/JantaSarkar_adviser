@@ -9,7 +9,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/Colors';
 import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 
@@ -48,6 +48,7 @@ const CASES = [
 ];
 
 export default function History() {
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('All');
 
   const filteredData = useMemo(() => {
@@ -93,9 +94,9 @@ export default function History() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
-      <Text style={styles.header}>Case History</Text>
+      <Text style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}>Case History</Text>
 
       {/* Tabs */}
       <View style={styles.tabContainer}>
@@ -125,7 +126,7 @@ export default function History() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 const styles = StyleSheet.create({

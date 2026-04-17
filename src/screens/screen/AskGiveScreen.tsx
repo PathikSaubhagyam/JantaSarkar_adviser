@@ -219,7 +219,9 @@ export default function AskGiveScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      <Header title="Ask & Give" onBackPress={() => navigation.goBack()} />
+      <View style={{ marginTop: -15 }}>
+        <Header title="Ask & Give" onBackPress={() => navigation.goBack()} />
+      </View>
 
       <CommonModal
         visible={modal.visible}

@@ -205,6 +205,18 @@ const Login = () => {
     setServerOtp('');
   };
 
+  const handleOpenExternalUrl = async (url: string) => {
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      console.log('OPEN URL ERROR =>', error);
+      SnackBarCommon.displayMessage({
+        message: 'Unable to open link',
+        isSuccess: false,
+      });
+    }
+  };
+
   const handlePhoneNumberChange = (value: string) => {
     const onlyDigits = value.replace(/\D/g, '');
     setPhoneNumber(onlyDigits);
@@ -240,7 +252,7 @@ const Login = () => {
         <View>
           <View style={styles.logoContainer}>
             <Image
-              source={require('../../assets/images/app_img.jpg')}
+              source={require('../../assets/images/Logo2.png')}
               style={{ height: 200, width: 200 }}
             />
           </View>
@@ -395,7 +407,11 @@ const Login = () => {
               }}
             />
 
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+            <TouchableOpacity
+              onPress={() =>
+                handleOpenExternalUrl('http://192.168.1.10:8000/advisor-terms/')
+              }
+            >
               <TextCommonMedium
                 text="Terms of Service"
                 textViewStyle={{
@@ -414,7 +430,11 @@ const Login = () => {
             />
 
             <TouchableOpacity
-              onPress={() => navigation.navigate('PrivacyPolicy')}
+              onPress={() =>
+                handleOpenExternalUrl(
+                  'https://jantasarkar.saubhagyam.org/privacy-policy/',
+                )
+              }
             >
               <TextCommonMedium
                 text="Privacy Policy"

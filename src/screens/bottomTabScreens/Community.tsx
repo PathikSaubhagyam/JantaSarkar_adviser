@@ -8,7 +8,7 @@ import {
   Linking,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FONTS_Family, FONTS_SIZE } from '../../constants/Font';
 import { COLORS } from '../../constants/Colors';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -18,6 +18,7 @@ import { onCommunityFeedListAPICall } from '../../common/APIWebCall';
 
 const Community = () => {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
   // Sample data (later replace with API data)
   const [requestList, setRequestList] = useState([]);
 
@@ -147,9 +148,9 @@ const Community = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
       <View>
-        <View style={styles.headerView}>
+        <View style={[styles.headerView, { paddingTop: Math.max(insets.top, 16) }]}>
           <Text style={styles.title}>Community Feed</Text>
         </View>
         <View style={{ padding: 16 }}>
@@ -171,7 +172,7 @@ const Community = () => {
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 

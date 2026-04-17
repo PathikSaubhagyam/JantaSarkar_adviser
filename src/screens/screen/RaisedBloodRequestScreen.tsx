@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Linking,
   Platform,
@@ -318,11 +319,13 @@ const RaisedBloodRequestScreen = () => {
       {activeTab === 'generate' && (
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
         >
           <ScrollView
             contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.formCard}>
@@ -364,8 +367,11 @@ const RaisedBloodRequestScreen = () => {
               <TextInputView
                 placeholder="Enter 10 digit number"
                 value={mobileNo}
-                onChangeText={setMobileNo}
+                onChangeText={text => setMobileNo(text.replace(/[^0-9]/g, ''))}
                 keyboardType="number-pad"
+                returnKeyType="done"
+                blurOnSubmit={true}
+                onSubmitEditing={() => Keyboard.dismiss()}
                 maxLength={10}
               />
 
@@ -496,7 +502,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 24,
+    flexGrow: 1,
+    paddingBottom: 120,
   },
   // ─── Tab bar ─────────────────────────────────────────────────────
   tabBar: {

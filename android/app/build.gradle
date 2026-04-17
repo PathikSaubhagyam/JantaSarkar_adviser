@@ -35,6 +35,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('JANTASARKAR_RELEASE_STORE_FILE')) {
+                storeFile file(JANTASARKAR_RELEASE_STORE_FILE)
+                storePassword JANTASARKAR_RELEASE_STORE_PASSWORD
+                keyAlias JANTASARKAR_RELEASE_KEY_ALIAS
+                keyPassword JANTASARKAR_RELEASE_KEY_PASSWORD
+            }
+        }
     }
 
     buildTypes {
@@ -42,7 +50,8 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug
+            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

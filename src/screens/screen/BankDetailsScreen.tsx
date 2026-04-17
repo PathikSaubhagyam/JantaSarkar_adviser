@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -149,7 +150,8 @@ export default function BankDetailsScreen() {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
       >
         <Header title="Bank Details" onBackPress={() => navigation.goBack()} />
 
@@ -162,6 +164,7 @@ export default function BankDetailsScreen() {
           <ScrollView
             contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
           >
             <Text style={styles.subTitle}>
               Add your bank account details securely.
@@ -218,7 +221,11 @@ export default function BankDetailsScreen() {
                 containerStyle={styles.inputContainer}
                 inputRef={bankNameRef}
                 returnKeyType="done"
-                onSubmitEditing={onSubmit}
+                blurOnSubmit={true}
+                onSubmitEditing={() => {
+                  Keyboard.dismiss();
+                  onSubmit();
+                }}
               />
             </View>
 
@@ -265,8 +272,9 @@ const styles = StyleSheet.create({
     fontFamily: FONTS_Family.FontRegular,
   },
   content: {
+    flexGrow: 1,
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 120,
   },
   subTitle: {
     fontSize: 13,

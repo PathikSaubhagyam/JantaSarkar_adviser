@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import { View } from 'react-native';
 import TabNavigator from './TabNavigator';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/Colors';
 import CommunityFeedAdd from '../screens/bottomTabScreens/CommunityFeedAdd';
 import RewardHistoryScreen from '../screens/screen/RewardHistoryScreen';
@@ -20,10 +20,7 @@ const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
   return (
-    <SafeAreaView
-      edges={['bottom']}
-      style={{ flex: 1, backgroundColor: COLORS.white }}
-    >
+    <View style={{ flex: 1, backgroundColor: COLORS.white }}>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
         initialRouteName="TabNavigator"
@@ -70,7 +67,7 @@ const HomeNavigator = () => {
           component={CommunityDashboardScreen}
         />
       </Stack.Navigator>
-    </SafeAreaView>
+    </View>
   );
 };
 
