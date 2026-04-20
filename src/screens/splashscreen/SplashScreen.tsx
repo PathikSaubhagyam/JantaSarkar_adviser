@@ -365,6 +365,8 @@ const styles = StyleSheet.create({
   logo: {
     width: width * 0.38,
     height: width * 0.38,
+    borderRadius: (width * 0.38) / 2,
+    overflow: 'hidden',
   },
   backgroundCircle: {
     position: 'absolute',
