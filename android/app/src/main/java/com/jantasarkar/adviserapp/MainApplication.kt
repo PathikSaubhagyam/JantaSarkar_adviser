@@ -1,4 +1,4 @@
-package com.jantasarkar.adviser
+package com.jantasarkar.adviserapp
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,4 +1,4 @@
-package com.jantasarkar.adviser
+package com.jantasarkar.adviserapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

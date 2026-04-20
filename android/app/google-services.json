@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:175150488273:android:c62ebae95c04e8499f43f0",
+        "mobilesdk_app_id": "1:175150488273:android:5d41dec7b93fd0239f43f0",
         "android_client_info": {
-          "package_name": "com.jantasarkar.adviser"
+          "package_name": "com.jantasarkar.adviserapp"
         }
       },
       "oauth_client": [],

@@ -434,6 +434,16 @@ export const onSpecificGiveCreateAPICall = formData => {
   );
 };
 
+export const onAppVersionAPICall = (appName = 'Advisor') => {
+  return _REQUEST2SERVER(
+    `mobile/app_versions/list/?app_name=${encodeURIComponent(appName)}`,
+    null,
+    'GET',
+    false,
+    false,
+  );
+};
+
 export const onUserAdvisorListAPICall = (
   page = 1,
   caste: string | null = null,
@@ -495,4 +505,5 @@ export default {
   onSpecificGiveListAPICall,
   onSpecificGiveCreateAPICall,
   onUserAdvisorListAPICall,
+  onAppVersionAPICall,
 };

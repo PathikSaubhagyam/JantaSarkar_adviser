@@ -11,7 +11,7 @@ npm install @react-native-firebase/app @react-native-firebase/messaging
 1. Go to Firebase Console: https://console.firebase.google.com/
 2. Select your project (or create new one)
 3. Go to Project Settings → Add App → Android
-4. Enter package name: `com.jantasarkar.adviser`
+4. Enter package name: `com.jantasarkar.adviserapp`
 5. Download `google-services.json`
 6. **IMPORTANT**: Place it here: `android/app/google-services.json`
 
@@ -76,7 +76,7 @@ npm install --legacy-peer-deps @react-native-firebase/app @react-native-firebase
 ### Build error: "google-services.json not found"?
 
 - Make sure file is at: `android/app/google-services.json`
-- Package name in Firebase matches: `com.jantasarkar.adviser`
+- Package name in Firebase matches: `com.jantasarkar.adviserapp`
 
 ### No FCM token in logs?
 

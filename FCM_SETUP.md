@@ -19,7 +19,7 @@ npm run android
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Create a new project or select existing project
 3. Click on "Add app" and select Android
-4. Enter your package name: `com.jantasarkar.adviser`
+4. Enter your package name: `com.jantasarkar.adviserapp`
 5. Download the `google-services.json` file
 6. Place it in `android/app/` directory
 
