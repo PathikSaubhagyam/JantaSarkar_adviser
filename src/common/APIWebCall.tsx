@@ -188,6 +188,12 @@ export const onAdvisorHistoryAPICall = () => {
 export const oncityListAPICall = () => {
   return _REQUEST2SERVER(`mobile/city-list/`, null, 'GET', false, true);
 };
+export const onAreaListAPICall = (cityId?: string | number) => {
+  const url = cityId
+    ? `mobile/area/list/?city_id=${cityId}`
+    : `mobile/area/list/`;
+  return _REQUEST2SERVER(url, null, 'GET', false, true);
+};
 export const onBusinessCategoryListAPICall = () => {
   return _REQUEST2SERVER(`business-category-list/`, null, 'GET', false, true);
 };
@@ -201,6 +207,21 @@ export const onProfileAPICall = () => {
 export const onProfileImageUpdateAPICall = formData => {
   return _REQUEST2SERVER(`mobile/profile/`, formData, 'PATCH', true, true);
 };
+
+export const onProfessionalJobSaveAPICall = params => {
+  return _REQUEST2SERVER(
+    `mobile/professional/job/`,
+    params,
+    'POST',
+    false,
+    true,
+  );
+};
+
+export const onGetProfessionalJobAPICall = () => {
+  return _REQUEST2SERVER(`mobile/professional/job/`, null, 'GET', false, true);
+};
+
 export const onCommunityFeedListAPICall = () => {
   return _REQUEST2SERVER(
     `mobile/community-complaint/`,
@@ -434,6 +455,10 @@ export const onSpecificGiveCreateAPICall = formData => {
   );
 };
 
+export const onCasteListAPICall = () => {
+  return _REQUEST2SERVER(`mobile/caste/list/`, null, 'GET', false, true);
+};
+
 export const onAppVersionAPICall = (appName = 'Advisor') => {
   return _REQUEST2SERVER(
     `mobile/app_versions/list/?app_name=${encodeURIComponent(appName)}`,
@@ -476,6 +501,7 @@ export default {
   onCompletedComplaintAPICall,
   onAdvisorHistoryAPICall,
   oncityListAPICall,
+  onAreaListAPICall,
   onBusinessCategoryListAPICall,
   onRequestRejectAPICall,
   onComplaintCancelAPICall,
@@ -483,6 +509,8 @@ export default {
   onCommunityFeedAPICall,
   onProfileAPICall,
   onProfileImageUpdateAPICall,
+  onProfessionalJobSaveAPICall,
+  onGetProfessionalJobAPICall,
   onCommunityFeedListAPICall,
   onCommunityDashboardAPICall,
   onUploadDocumentsAPICall,
@@ -504,6 +532,7 @@ export default {
   onSpecificAskCreateAPICall,
   onSpecificGiveListAPICall,
   onSpecificGiveCreateAPICall,
+  onCasteListAPICall,
   onUserAdvisorListAPICall,
   onAppVersionAPICall,
 };

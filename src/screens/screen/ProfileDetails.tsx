@@ -40,6 +40,23 @@ type DropdownOption = {
   value: string | number;
 };
 
+const normalizeDropdownValue = (value: string | number | null | undefined) =>
+  String(value ?? '');
+
+const mergeDropdownItems = (
+  prevItems: DropdownOption[],
+  nextItems: DropdownOption[],
+) => {
+  const merged = [...prevItems, ...nextItems];
+  const byValue = new Map<string, DropdownOption>();
+
+  merged.forEach(item => {
+    byValue.set(normalizeDropdownValue(item.value).toLowerCase(), item);
+  });
+
+  return Array.from(byValue.values());
+};
+
 const ProfileDetails = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
@@ -66,7 +83,7 @@ const ProfileDetails = () => {
   const [hasLoadedCityList, setHasLoadedCityList] = useState(false);
   const [routeUserId, setRouteUserId] = useState<number | null>(null);
   /* ---------------- Experience Dropdown ---------------- */
-  const [expValue, setExpValue] = useState(null);
+  const [expValue, setExpValue] = useState<string | number | null>(null);
   const [expItems, setExpItems] = useState([
     { label: '0-1 Years', value: '0-1' },
     { label: '1-3 Years', value: '1-3' },
@@ -74,7 +91,7 @@ const ProfileDetails = () => {
     { label: '5+ Years', value: '5+' },
   ]);
 
-  const [genderValue, setGenderValue] = useState(null);
+  const [genderValue, setGenderValue] = useState<string | number | null>(null);
   const [genderItems, setGenderItems] = useState([
     { label: 'Female', value: 'female' },
     { label: 'Male', value: 'male' },
@@ -82,6 +99,52 @@ const ProfileDetails = () => {
   ]);
 
   const [caste, setCaste] = useState('');
+  const [casteValue, setCasteValue] = useState<string | number | null>(null);
+  const [casteItems, setCasteItems] = useState<DropdownOption[]>([]);
+  const [casteLoading, setCasteLoading] = useState(false);
+  const [hasLoadedCasteList, setHasLoadedCasteList] = useState(false);
+
+  const loadCasteList = async () => {
+    try {
+      setCasteLoading(true);
+      const res = await APIWebCall.onCasteListAPICall();
+      console.log(res, 'cast list==');
+
+      if (res?.status === true || res?.success === true) {
+        const casteSource = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.results)
+          ? res.results
+          : Array.isArray(res?.data?.results)
+          ? res.data.results
+          : [];
+
+        const formattedCastes: DropdownOption[] = casteSource
+          .map((item: any) => ({
+            label: String(item?.name ?? ''),
+            value: Number(item?.id ?? item?.value),
+          }))
+          .filter((item: DropdownOption) => item.label.length > 0);
+
+        setCasteItems(prev => {
+          const merged = [...prev, ...formattedCastes];
+          const byValue = new Map<string, DropdownOption>();
+
+          merged.forEach(item => {
+            byValue.set(normalizeDropdownValue(item.value).toLowerCase(), item);
+          });
+
+          return Array.from(byValue.values());
+        });
+        setHasLoadedCasteList(true);
+      }
+    } catch (error) {
+      console.log('CASTE LIST ERROR => ', error);
+    } finally {
+      setCasteLoading(false);
+    }
+  };
+
   const [bloodGroup, setBloodGroup] = useState('');
   const [dob, setDob] = useState('');
   const [age, setAge] = useState('');
@@ -133,6 +196,37 @@ const ProfileDetails = () => {
   >([]);
   const [businessCategorySearch, setBusinessCategorySearch] = useState('');
   const [businessOther, setBusinessOther] = useState('');
+  const [professionalType, setProfessionalType] = useState<'business' | 'job'>(
+    'business',
+  );
+  const [isJobTypeLocked, setIsJobTypeLocked] = useState(false);
+
+  const [jobTitle, setJobTitle] = useState('Egthbfgh updt');
+  const [jobCompanyName, setJobCompanyName] = useState('Dbgnbfnfd');
+  const [jobOther, setJobOther] = useState('Fun n fun h gbnbfm fmgjnhnm');
+  const [jobDepartmentValue, setJobDepartmentValue] = useState<
+    string | number | null
+  >(null);
+  const [jobDepartmentItems, setJobDepartmentItems] = useState<
+    DropdownOption[]
+  >([]);
+  const [jobDepartmentLoading, setJobDepartmentLoading] = useState(false);
+  const [hasLoadedJobDepartmentList, setHasLoadedJobDepartmentList] =
+    useState(false);
+
+  const [jobCityValue, setJobCityValue] = useState<string | number | null>(
+    null,
+  );
+  const [jobCityItems, setJobCityItems] = useState<DropdownOption[]>([]);
+  const [jobCityLoading, setJobCityLoading] = useState(false);
+  const [hasLoadedJobCityList, setHasLoadedJobCityList] = useState(false);
+
+  const [jobAreaValue, setJobAreaValue] = useState<string | number | null>(
+    null,
+  );
+  const [jobAreaItems, setJobAreaItems] = useState<DropdownOption[]>([]);
+  const [jobAreaLoading, setJobAreaLoading] = useState(false);
+  const [hasLoadedJobAreaList, setHasLoadedJobAreaList] = useState(false);
 
   const formatDobForDisplay = (value?: string) => {
     if (!value) {
@@ -203,7 +297,38 @@ const ProfileDetails = () => {
           setExpValue(apiProfile?.experience || null);
           setCityValue(apiProfile?.city_id || null);
           setRouteUserId(apiProfile?.id || null);
-          setCaste(apiProfile?.caste || '');
+          const profileProfessionalType =
+            apiProfile?.professional_type === 'job' ? 'job' : 'business';
+          setProfessionalType(profileProfessionalType);
+          setIsJobTypeLocked(profileProfessionalType === 'job');
+          if (profileProfessionalType === 'job') {
+            setActiveTab('business');
+          }
+
+          if (apiProfile?.caste_id || apiProfile?.caste) {
+            const casteId = Number(apiProfile?.caste_id || apiProfile?.caste);
+            const casteName = apiProfile?.caste_name || apiProfile?.caste;
+            setCasteValue(casteId);
+            // Pre-fill casteItems if name is available (or use value as label)
+            setCasteItems(prev => {
+              const exists = prev.find(
+                item =>
+                  normalizeDropdownValue(item.value) ===
+                  normalizeDropdownValue(casteId),
+              );
+              if (!exists && casteName) {
+                return [
+                  ...prev,
+                  {
+                    label: casteName,
+                    value: casteId,
+                  },
+                ];
+              }
+              return prev;
+            });
+          }
+
           setBloodGroup(apiProfile?.blood_group || '');
           setDob(formatDobForDisplay(apiProfile?.dob));
           setAge(apiProfile?.age ? String(apiProfile.age) : '');
@@ -214,6 +339,52 @@ const ProfileDetails = () => {
           setBusinessAddress(apiProfile?.business_address || '');
           setBusinessCategoryValue(apiProfile?.business_category || null);
           setBusinessOther(apiProfile?.business_other || '');
+
+          setJobTitle(apiProfile?.job_title || '');
+          setJobCompanyName(apiProfile?.company_name || '');
+          setJobOther(apiProfile?.job_other || '');
+
+          if (apiProfile?.job_department) {
+            setJobDepartmentValue(apiProfile.job_department);
+            if (apiProfile?.job_department_name) {
+              setJobDepartmentItems(prev =>
+                mergeDropdownItems(prev, [
+                  {
+                    label: String(apiProfile.job_department_name),
+                    value: apiProfile.job_department,
+                  },
+                ]),
+              );
+            }
+          }
+
+          if (apiProfile?.job_city) {
+            setJobCityValue(apiProfile.job_city);
+            if (apiProfile?.job_city_name) {
+              setJobCityItems(prev =>
+                mergeDropdownItems(prev, [
+                  {
+                    label: String(apiProfile.job_city_name),
+                    value: apiProfile.job_city,
+                  },
+                ]),
+              );
+            }
+          }
+
+          if (apiProfile?.job_area) {
+            setJobAreaValue(apiProfile.job_area);
+            if (apiProfile?.job_area_name) {
+              setJobAreaItems(prev =>
+                mergeDropdownItems(prev, [
+                  {
+                    label: String(apiProfile.job_area_name),
+                    value: apiProfile.job_area,
+                  },
+                ]),
+              );
+            }
+          }
 
           const dobParts = parseDobParts(apiProfile?.dob);
           if (dobParts) {
@@ -247,6 +418,83 @@ const ProfileDetails = () => {
 
     fetchProfileDetails();
   }, [routePhone]);
+
+  // Fetch job profile data
+  useEffect(() => {
+    const fetchJobProfile = async () => {
+      try {
+        const res = await APIWebCall.onGetProfessionalJobAPICall();
+        console.log(res, 'get job profile data');
+
+        if (res?.status === true || res?.success === true) {
+          const jobData = res?.data || {};
+          const hasJobData = Boolean(
+            jobData?.job_title ||
+              jobData?.company_name ||
+              jobData?.job_department ||
+              jobData?.job_city ||
+              jobData?.job_area,
+          );
+
+          if (hasJobData) {
+            setProfessionalType('job');
+            setIsJobTypeLocked(true);
+            setActiveTab('business');
+          }
+
+          setJobTitle(jobData?.job_title || '');
+          setJobCompanyName(jobData?.company_name || '');
+          setJobOther(jobData?.job_other || '');
+
+          if (jobData?.job_department) {
+            setJobDepartmentValue(jobData.job_department);
+            if (jobData?.job_department_name) {
+              setJobDepartmentItems(prev =>
+                mergeDropdownItems(prev, [
+                  {
+                    label: String(jobData.job_department_name),
+                    value: jobData.job_department,
+                  },
+                ]),
+              );
+            }
+          }
+
+          if (jobData?.job_city) {
+            setJobCityValue(jobData.job_city);
+            if (jobData?.job_city_name) {
+              setJobCityItems(prev =>
+                mergeDropdownItems(prev, [
+                  {
+                    label: String(jobData.job_city_name),
+                    value: jobData.job_city,
+                  },
+                ]),
+              );
+            }
+          }
+
+          if (jobData?.job_area) {
+            setJobAreaValue(jobData.job_area);
+            if (jobData?.job_area_name) {
+              setJobAreaItems(prev =>
+                mergeDropdownItems(prev, [
+                  {
+                    label: String(jobData.job_area_name),
+                    value: jobData.job_area,
+                  },
+                ]),
+              );
+            }
+          }
+        }
+      } catch (error) {
+        console.log('JOB PROFILE API ERROR =>', error);
+      }
+    };
+
+    fetchJobProfile();
+  }, []);
 
   useEffect(() => {
     const dobParts = parseDobParts(dob);
@@ -459,6 +707,40 @@ const ProfileDetails = () => {
         isSuccess: false,
       });
     }
+
+    if (professionalType === 'job') {
+      if (!jobTitle.trim()) {
+        return SnackBarCommon.displayMessage({
+          message: 'Enter Job Title',
+          isSuccess: false,
+        });
+      }
+      if (!jobDepartmentValue) {
+        return SnackBarCommon.displayMessage({
+          message: 'Select Job Department',
+          isSuccess: false,
+        });
+      }
+      if (!jobCityValue) {
+        return SnackBarCommon.displayMessage({
+          message: 'Select Job City',
+          isSuccess: false,
+        });
+      }
+      if (!jobAreaValue) {
+        return SnackBarCommon.displayMessage({
+          message: 'Select Job Area',
+          isSuccess: false,
+        });
+      }
+      if (!jobCompanyName.trim()) {
+        return SnackBarCommon.displayMessage({
+          message: 'Enter Company Name',
+          isSuccess: false,
+        });
+      }
+    }
+
     // if (!isChecked) {
     //   return SnackBarCommon.displayMessage({
     //     message: 'Please Check Terms Of Condition',
@@ -470,6 +752,76 @@ const ProfileDetails = () => {
 
   const handleSignupApiCall = async () => {
     try {
+      if (professionalType === 'job') {
+        const jobPayload = {
+          job_title: jobTitle.trim(),
+          job_department: Number(jobDepartmentValue),
+          job_city: Number(jobCityValue),
+          job_area: Number(jobAreaValue),
+          company_name: jobCompanyName.trim(),
+          job_other: jobOther.trim(),
+        };
+
+        const jobRes = await APIWebCall.onProfessionalJobSaveAPICall(
+          jobPayload,
+        );
+
+        if (!(jobRes?.status === true || jobRes?.success === true)) {
+          return SnackBarCommon.displayMessage({
+            message: jobRes?.message || 'Unable to save job details',
+            isSuccess: false,
+          });
+        }
+
+        const savedJob = jobRes?.data || {};
+
+        setJobTitle(savedJob?.job_title || jobTitle);
+        setJobCompanyName(savedJob?.company_name || jobCompanyName);
+        setJobOther(savedJob?.job_other || jobOther);
+
+        if (savedJob?.job_department) {
+          setJobDepartmentValue(savedJob.job_department);
+          if (savedJob?.job_department_name) {
+            setJobDepartmentItems(prev =>
+              mergeDropdownItems(prev, [
+                {
+                  label: String(savedJob.job_department_name),
+                  value: savedJob.job_department,
+                },
+              ]),
+            );
+          }
+        }
+
+        if (savedJob?.job_city) {
+          setJobCityValue(savedJob.job_city);
+          if (savedJob?.job_city_name) {
+            setJobCityItems(prev =>
+              mergeDropdownItems(prev, [
+                {
+                  label: String(savedJob.job_city_name),
+                  value: savedJob.job_city,
+                },
+              ]),
+            );
+          }
+        }
+
+        if (savedJob?.job_area) {
+          setJobAreaValue(savedJob.job_area);
+          if (savedJob?.job_area_name) {
+            setJobAreaItems(prev =>
+              mergeDropdownItems(prev, [
+                {
+                  label: String(savedJob.job_area_name),
+                  value: savedJob.job_area,
+                },
+              ]),
+            );
+          }
+        }
+      }
+
       let formData = new FormData();
 
       const dobParts = parseDobParts(dob);
@@ -485,16 +837,27 @@ const ProfileDetails = () => {
       formData.append('bar_council_registration_no', registorNo || '');
       formData.append('experience', expValue || '');
       formData.append('city_id', cityValue || '');
-      formData.append('caste', caste || '');
+      formData.append('caste_id', casteValue || '');
+      formData.append('professional_type', professionalType || 'business');
       formData.append('blood_group', bloodGroup || '');
       formData.append('dob', apiDob || '');
       formData.append('gender', genderValue || '');
       formData.append('education', education || '');
       formData.append('social_link', socialLink || '');
-      formData.append('business_name', businessName || '');
-      formData.append('business_address', businessAddress || '');
-      formData.append('business_category', businessCategoryValue || '');
-      formData.append('business_other', businessOther || '');
+
+      if (professionalType === 'business') {
+        formData.append('business_name', businessName || '');
+        formData.append('business_address', businessAddress || '');
+        formData.append('business_category', businessCategoryValue || '');
+        formData.append('business_other', businessOther || '');
+      } else {
+        formData.append('job_title', jobTitle || '');
+        formData.append('job_department', jobDepartmentValue || '');
+        formData.append('job_city', jobCityValue || '');
+        formData.append('job_area', jobAreaValue || '');
+        formData.append('company_name', jobCompanyName || '');
+        formData.append('job_other', jobOther || '');
+      }
 
       if (barDoc?.uri) {
         formData.append('bar_certificate', {
@@ -616,6 +979,107 @@ const ProfileDetails = () => {
     }
   };
 
+  const loadJobDepartmentList = async () => {
+    try {
+      setJobDepartmentLoading(true);
+      const res = await APIWebCall.onDepartmentAPICall();
+
+      if (
+        res?.status === true ||
+        res?.success === true ||
+        Array.isArray(res?.data)
+      ) {
+        const source = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.results)
+          ? res.results
+          : [];
+
+        const formatted: DropdownOption[] = source
+          .map((item: any) => ({
+            label: String(item?.name ?? ''),
+            value: Number(item?.id ?? item?.value),
+          }))
+          .filter((item: DropdownOption) => item.label && item.value != null);
+
+        setJobDepartmentItems(prev => mergeDropdownItems(prev, formatted));
+        setHasLoadedJobDepartmentList(true);
+      }
+    } catch (error) {
+      console.log('JOB DEPARTMENT LIST ERROR => ', error);
+    } finally {
+      setJobDepartmentLoading(false);
+    }
+  };
+
+  const loadJobCityList = async () => {
+    try {
+      setJobCityLoading(true);
+      const res = await APIWebCall.oncityListAPICall();
+
+      if (
+        res?.status === true ||
+        res?.success === true ||
+        Array.isArray(res?.data)
+      ) {
+        const source = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.results)
+          ? res.results
+          : [];
+
+        const formatted: DropdownOption[] = source
+          .map((item: any) => ({
+            label: String(item?.name ?? item?.city ?? ''),
+            value: Number(item?.id ?? item?.city_id),
+          }))
+          .filter((item: DropdownOption) => item.label && item.value != null);
+
+        setJobCityItems(prev => mergeDropdownItems(prev, formatted));
+        setHasLoadedJobCityList(true);
+      }
+    } catch (error) {
+      console.log('JOB CITY LIST ERROR => ', error);
+    } finally {
+      setJobCityLoading(false);
+    }
+  };
+
+  const loadJobAreaList = async () => {
+    try {
+      setJobAreaLoading(true);
+      const res = await APIWebCall.onAreaListAPICall(
+        jobCityValue ? jobCityValue : undefined,
+      );
+
+      if (
+        res?.status === true ||
+        res?.success === true ||
+        Array.isArray(res?.data)
+      ) {
+        const source = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.results)
+          ? res.results
+          : [];
+
+        const formatted: DropdownOption[] = source
+          .map((item: any) => ({
+            label: String(item?.name ?? ''),
+            value: Number(item?.id ?? item?.value),
+          }))
+          .filter((item: DropdownOption) => item.label && item.value != null);
+
+        setJobAreaItems(prev => mergeDropdownItems(prev, formatted));
+        setHasLoadedJobAreaList(true);
+      }
+    } catch (error) {
+      console.log('JOB AREA LIST ERROR => ', error);
+    } finally {
+      setJobAreaLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!businessCategoryValue || businessCategoryItems.length === 0) {
       return;
@@ -704,7 +1168,7 @@ const ProfileDetails = () => {
                       activeTab === 'business' && styles.tabTextActive,
                     ]}
                   >
-                    Business Info
+                    Professional Info
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -815,11 +1279,51 @@ const ProfileDetails = () => {
               {activeTab === 'personal' && (
                 <>
                   <TextCommonBold text={'Caste'} textViewStyle={styles.label} />
-                  <TextInputView
-                    placeholder="Enter caste"
-                    value={caste}
-                    onChangeText={setCaste}
-                  />
+                  <View style={{ zIndex: 3000 }}>
+                    <CustomDropdown
+                      value={casteValue}
+                      items={casteItems}
+                      loading={casteLoading}
+                      onOpen={() => {
+                        if (!hasLoadedCasteList && !casteLoading) {
+                          loadCasteList();
+                        }
+                      }}
+                      onChange={value => {
+                        setCasteValue(value);
+                        // Ensure the selected item is in casteItems for proper display
+                        const selectedItem = casteItems.find(
+                          item =>
+                            normalizeDropdownValue(item.value) ===
+                            normalizeDropdownValue(value),
+                        );
+                        if (!selectedItem && value) {
+                          // Search in loaded items or add placeholder
+                          setCasteItems(prev => {
+                            const exists = prev.find(
+                              item =>
+                                normalizeDropdownValue(item.value) ===
+                                normalizeDropdownValue(value),
+                            );
+                            if (!exists) {
+                              return [
+                                ...prev,
+                                {
+                                  label: String(value),
+                                  value: value,
+                                },
+                              ];
+                            }
+                            return prev;
+                          });
+                        }
+                      }}
+                      placeholder="Select Caste"
+                      searchable
+                      modalTitle="Select Caste"
+                      searchPlaceholder="Search caste"
+                    />
+                  </View>
 
                   <TextCommonBold
                     text={'Blood Group'}
@@ -893,56 +1397,217 @@ const ProfileDetails = () => {
               )}
 
               {activeTab === 'business' && (
-                <>
+                <View>
                   <TextCommonBold
-                    text={'Business Name'}
+                    text={'Professional Type'}
                     textViewStyle={styles.label}
                   />
-                  <TextInputView
-                    placeholder="Enter business name"
-                    value={businessName}
-                    onChangeText={setBusinessName}
-                  />
-
-                  <TextCommonBold
-                    text={'Business Address'}
-                    textViewStyle={styles.label}
-                  />
-                  <TextInputView
-                    placeholder="Enter business address"
-                    value={businessAddress}
-                    onChangeText={setBusinessAddress}
-                  />
-
-                  <TextCommonBold
-                    text={'Business Category'}
-                    textViewStyle={styles.label}
-                  />
-                  <TouchableOpacity
-                    activeOpacity={0.85}
-                    style={styles.customCategoryTrigger}
-                    onPress={openBusinessCategoryPicker}
-                  >
-                    <Text
-                      style={[
-                        styles.customCategoryTriggerText,
-                        !selectedBusinessCategoryLabel &&
-                          styles.customCategoryTriggerPlaceholder,
-                      ]}
+                  <View style={styles.professionalTypeRow}>
+                    <TouchableOpacity
+                      activeOpacity={0.85}
+                      style={styles.professionalTypeOption}
+                      disabled={isJobTypeLocked}
+                      onPress={() => {
+                        if (!isJobTypeLocked) {
+                          setProfessionalType('business');
+                        }
+                      }}
                     >
-                      {selectedBusinessCategoryLabel ||
-                        'Select business category'}
-                    </Text>
-                    <Text style={styles.customCategoryTriggerArrow}>v</Text>
-                  </TouchableOpacity>
+                      <View
+                        style={[
+                          styles.professionalTypeOuter,
+                          professionalType === 'business' &&
+                            styles.professionalTypeOuterActive,
+                        ]}
+                      >
+                        {professionalType === 'business' ? (
+                          <View style={styles.professionalTypeInner} />
+                        ) : null}
+                      </View>
+                      <Text style={styles.professionalTypeText}>Business</Text>
+                    </TouchableOpacity>
 
-                  <TextCommonBold text={'Other'} textViewStyle={styles.label} />
-                  <TextInputView
-                    placeholder="Other details"
-                    value={businessOther}
-                    onChangeText={setBusinessOther}
-                  />
-                </>
+                    <TouchableOpacity
+                      activeOpacity={0.85}
+                      style={styles.professionalTypeOption}
+                      onPress={() => setProfessionalType('job')}
+                    >
+                      <View
+                        style={[
+                          styles.professionalTypeOuter,
+                          professionalType === 'job' &&
+                            styles.professionalTypeOuterActive,
+                        ]}
+                      >
+                        {professionalType === 'job' ? (
+                          <View style={styles.professionalTypeInner} />
+                        ) : null}
+                      </View>
+                      <Text style={styles.professionalTypeText}>Job</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {professionalType === 'business' ? (
+                    <View>
+                      <TextCommonBold
+                        text={'Business Name'}
+                        textViewStyle={styles.label}
+                      />
+                      <TextInputView
+                        placeholder="Enter business name"
+                        value={businessName}
+                        onChangeText={setBusinessName}
+                      />
+
+                      <TextCommonBold
+                        text={'Business Address'}
+                        textViewStyle={styles.label}
+                      />
+                      <TextInputView
+                        placeholder="Enter business address"
+                        value={businessAddress}
+                        onChangeText={setBusinessAddress}
+                      />
+
+                      <TextCommonBold
+                        text={'Business Category'}
+                        textViewStyle={styles.label}
+                      />
+                      <TouchableOpacity
+                        activeOpacity={0.85}
+                        style={styles.customCategoryTrigger}
+                        onPress={openBusinessCategoryPicker}
+                      >
+                        <Text
+                          style={[
+                            styles.customCategoryTriggerText,
+                            !selectedBusinessCategoryLabel &&
+                              styles.customCategoryTriggerPlaceholder,
+                          ]}
+                        >
+                          {selectedBusinessCategoryLabel ||
+                            'Select business category'}
+                        </Text>
+                        <Text style={styles.customCategoryTriggerArrow}>v</Text>
+                      </TouchableOpacity>
+
+                      <TextCommonBold
+                        text={'Other'}
+                        textViewStyle={styles.label}
+                      />
+                      <TextInputView
+                        placeholder="Other details"
+                        value={businessOther}
+                        onChangeText={setBusinessOther}
+                      />
+                    </View>
+                  ) : (
+                    <View>
+                      <TextCommonBold
+                        text={'Job Title *'}
+                        textViewStyle={styles.label}
+                      />
+                      <TextInputView
+                        placeholder="Job title"
+                        value={jobTitle}
+                        onChangeText={setJobTitle}
+                      />
+
+                      <TextCommonBold
+                        text={'Job Department *'}
+                        textViewStyle={styles.label}
+                      />
+                      <View style={{ zIndex: 3000 }}>
+                        <CustomDropdown
+                          value={jobDepartmentValue}
+                          items={jobDepartmentItems}
+                          loading={jobDepartmentLoading}
+                          onOpen={() => {
+                            if (
+                              !hasLoadedJobDepartmentList &&
+                              !jobDepartmentLoading
+                            ) {
+                              loadJobDepartmentList();
+                            }
+                          }}
+                          onChange={value => setJobDepartmentValue(value)}
+                          placeholder="Select department"
+                          modalTitle="Select Department"
+                          searchable
+                          searchPlaceholder="Search department"
+                        />
+                      </View>
+
+                      <TextCommonBold
+                        text={'Job City *'}
+                        textViewStyle={styles.label}
+                      />
+                      <View style={{ zIndex: 2000 }}>
+                        <CustomDropdown
+                          value={jobCityValue}
+                          items={jobCityItems}
+                          loading={jobCityLoading}
+                          onOpen={() => {
+                            if (!hasLoadedJobCityList && !jobCityLoading) {
+                              loadJobCityList();
+                            }
+                          }}
+                          onChange={value => setJobCityValue(value)}
+                          placeholder="Select city"
+                          modalTitle="Select City"
+                          searchable
+                          searchPlaceholder="Search city"
+                        />
+                      </View>
+
+                      <TextCommonBold
+                        text={'Job Area *'}
+                        textViewStyle={styles.label}
+                      />
+                      <View style={{ zIndex: 1000 }}>
+                        <CustomDropdown
+                          value={jobAreaValue}
+                          items={jobAreaItems}
+                          loading={jobAreaLoading}
+                          onOpen={() => {
+                            if (
+                              jobCityValue &&
+                              !hasLoadedJobAreaList &&
+                              !jobAreaLoading
+                            ) {
+                              loadJobAreaList();
+                            }
+                          }}
+                          onChange={value => setJobAreaValue(value)}
+                          placeholder="Select area"
+                          modalTitle="Select Area"
+                          searchable
+                          searchPlaceholder="Search area"
+                        />
+                      </View>
+
+                      <TextCommonBold
+                        text={'Company Name *'}
+                        textViewStyle={styles.label}
+                      />
+                      <TextInputView
+                        placeholder="Company name"
+                        value={jobCompanyName}
+                        onChangeText={setJobCompanyName}
+                      />
+
+                      <TextCommonBold
+                        text={'Other'}
+                        textViewStyle={styles.label}
+                      />
+                      <TextInputView
+                        placeholder="Other details"
+                        value={jobOther}
+                        onChangeText={setJobOther}
+                      />
+                    </View>
+                  )}
+                </View>
               )}
 
               <View style={{ marginTop: 30 }}>
@@ -1284,6 +1949,41 @@ const styles = StyleSheet.create({
   tabTextActive: {
     color: COLORS.white,
     fontFamily: FONTS_Family.FontBold,
+  },
+  professionalTypeRow: {
+    flexDirection: 'row',
+    gap: 18,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  professionalTypeOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  professionalTypeOuter: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: '#9AA6B2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  professionalTypeOuterActive: {
+    borderColor: COLORS.primary,
+  },
+  professionalTypeInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: COLORS.primary,
+  },
+  professionalTypeText: {
+    color: '#2B2B2B',
+    fontSize: FONTS_SIZE.txt_14,
+    fontFamily: FONTS_Family.FontMedium,
   },
   formContainer: {
     padding: 20,

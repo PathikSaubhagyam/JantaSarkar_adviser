@@ -11,6 +11,7 @@ import {
   Pressable,
   Linking,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { COLORS } from '../../constants/Colors';
@@ -68,6 +69,7 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
       const payload = {
         phone_number: phoneNumber.trim(),
       };
@@ -104,6 +106,8 @@ const Login = () => {
           error?.response?.data?.message || 'Server error. Please try again.',
         isSuccess: false,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,6 +123,7 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
       const payload = {
         phone_number: phoneNumber.trim(),
         otp: Number(otpCode),
@@ -178,6 +183,8 @@ const Login = () => {
         message: error?.response?.data?.message || 'OTP verification failed',
         isSuccess: false,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -300,7 +307,7 @@ const Login = () => {
             <CommonButton
               text="Send OTP"
               onPress={handleSendOtp}
-              disabled={!isPhoneNumberValid}
+              disabled={!isPhoneNumberValid || loading}
             />
           </View>
 
@@ -373,6 +380,7 @@ const Login = () => {
                 <CommonButton
                   text="Identify & Verify"
                   onPress={handleVerifyOtp}
+                  disabled={loading}
                   btnStyle={{
                     backgroundColor: COLORS.secondary,
                     paddingVertical: 12,
@@ -447,6 +455,11 @@ const Login = () => {
           </View>
         </View>
       </ScrollView>
+      {loading && (
+        <View style={styles.loadingOverlay} pointerEvents="box-only">
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 };
@@ -455,7 +468,7 @@ export default Login;
 
 const styles = StyleSheet.create({
   inputLabel: {
-    fontSize: FONTS_SIZE.txt_15,
+    fontSize: FONTS_SIZE.txt_16,
     color: COLORS.black,
     marginBottom: 8,
   },
@@ -464,13 +477,13 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   welcome: {
-    fontSize: FONTS_SIZE.txt_28,
+    fontSize: FONTS_SIZE.txt_30,
     color: COLORS.black,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: FONTS_SIZE.txt_14,
+    fontSize: FONTS_SIZE.txt_15,
     color: COLORS.gry_text,
     textAlign: 'center',
   },
@@ -488,18 +501,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   countryCodeText: {
-    fontSize: FONTS_SIZE.txt_14,
+    fontSize: FONTS_SIZE.txt_15,
     color: '#111827',
   },
 
   verificationHeader: {
     textAlign: 'center',
-    fontSize: FONTS_SIZE.txt_16,
+    fontSize: FONTS_SIZE.txt_18,
     marginBottom: 15,
     color: COLORS.black,
   },
   otpLabel: {
-    fontSize: FONTS_SIZE.txt_14,
+    fontSize: FONTS_SIZE.txt_15,
     marginBottom: 3,
   },
   otpContainer: {
@@ -513,7 +526,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 50,
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 20,
     color: COLORS.black,
   },
   resendContainer: {
@@ -524,6 +537,7 @@ const styles = StyleSheet.create({
   resendText: {
     color: COLORS.color_cyan_dark,
     fontFamily: FONTS_Family.FontExtraBold,
+    fontSize: FONTS_SIZE.txt_15,
   },
   resendDisabled: {
     color: COLORS.gray,
@@ -531,5 +545,16 @@ const styles = StyleSheet.create({
   timerText: {
     fontFamily: FONTS_Family.FontExtraBold,
     color: COLORS.black,
+    fontSize: FONTS_SIZE.txt_15,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

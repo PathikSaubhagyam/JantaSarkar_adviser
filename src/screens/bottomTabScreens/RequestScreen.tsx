@@ -289,10 +289,6 @@ const RequestScreen = () => {
         });
 
         fetchComplaints(false);
-        SnackBarCommon.displayMessage({
-          message: res?.message || 'Failed',
-          isSuccess: true,
-        });
       }
     } catch (error) {
       console.log('ERROR =>', error);
@@ -306,9 +302,6 @@ const RequestScreen = () => {
     }
   };
 
-  const getTabCount = tab => {
-    return complaintsList.filter(item => item.status === tab).length;
-  };
   const canShowCancelButton = accepted_time => {
     if (!accepted_time) return false;
 
@@ -359,36 +352,39 @@ const RequestScreen = () => {
           data={formatComplaintData}
           keyExtractor={item => item.id}
           contentContainerStyle={{ padding: 0 }}
-          refreshing={refreshing} // ✅ ADD THIS
+          refreshing={refreshing}
           onRefresh={onRefresh}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <RequestCard
-              initials={item.short_name}
-              authority_person_name={item.authority_person_name}
-              name={item.user_name}
-              description_issue={item.description_issue}
-              department={item.department}
-              tagColor={item.tagColor}
-              time={
-                activeTab === 'Ongoing' && item.accepted_time
-                  ? moment(item.accepted_time, 'DD-MM-YYYY hh:mm A').fromNow()
-                  : ''
-              }
-              location={item.city}
-              date={item.created_at}
-              onAccept={() => onAcceptPress(item.complaint_id)}
-              acceptLabel={activeTab === 'Ongoing' ? 'Complete' : 'Accept'}
-              onReject={() => onCancelOrRejectPress(item.complaint_id)}
-              rejectLabel={activeTab === 'Ongoing' ? 'Cancel' : 'Reject'}
-              showButtons={activeTab !== 'History'}
-              showCancelButton={
-                activeTab === 'Ongoing'
-                  ? canShowCancelButton(item.accepted_time)
-                  : true
-              }
-            />
-          )}
+          renderItem={({ item }) => {
+            if (!item) return null;
+            return (
+              <RequestCard
+                initials={item.short_name || 'NA'}
+                authority_person_name={item.authority_person_name || 'N/A'}
+                name={item.user_name || 'Unknown'}
+                description_issue={item.description_issue || ''}
+                department={item.department || ''}
+                tagColor={item.tagColor || '#EEE'}
+                time={
+                  activeTab === 'Ongoing' && item.accepted_time
+                    ? moment(item.accepted_time, 'DD-MM-YYYY hh:mm A').fromNow()
+                    : ''
+                }
+                location={item.city || ''}
+                date={item.created_at || ''}
+                onAccept={() => onAcceptPress(item.complaint_id)}
+                acceptLabel={activeTab === 'Ongoing' ? 'Complete' : 'Accept'}
+                onReject={() => onCancelOrRejectPress(item.complaint_id)}
+                rejectLabel={activeTab === 'Ongoing' ? 'Cancel' : 'Reject'}
+                showButtons={activeTab !== 'History'}
+                showCancelButton={
+                  activeTab === 'Ongoing'
+                    ? canShowCancelButton(item.accepted_time)
+                    : true
+                }
+              />
+            );
+          }}
           ListEmptyComponent={() => (
             <Text style={styles.emptyText}>No Data Found</Text>
           )}
@@ -414,7 +410,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: FONTS_Family.FontBold,
     color: '#000000',
-    // marginBottom: 6,
     letterSpacing: 0.3,
   },
   container: {

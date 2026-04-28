@@ -66,8 +66,8 @@ export default function SplashScreen() {
     };
 
     const bootstrapNavigation = async () => {
-      const hasLocation = await requestLocationPermission();
-      if (!hasLocation) return;
+      await requestLocationPermission();
+      // Proceed with navigation regardless of location permission status
       try {
         const [token, fullName] = await Promise.all([
           AsyncStorage.getItem('token'),

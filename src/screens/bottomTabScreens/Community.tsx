@@ -36,27 +36,27 @@ const Community = () => {
 
       if (res && res.data && Array.isArray(res.data)) {
         const formattedData = res.data.map(item => ({
-          id: item.id.toString(),
-          department: item.department_name,
-          issueType: item.description_issue,
-          city: item.city_name,
+          id: item?.id?.toString() || Math.random().toString(),
+          department: item?.department_name || 'N/A',
+          issueType: item?.description_issue || 'N/A',
+          city: item?.city_name || 'N/A',
 
           persons: [
-            item.person1_name
+            item?.person1_name
               ? {
                   name: item.person1_name,
                   mobile: item.person1_mobile,
                 }
               : null,
 
-            item.person2_name
+            item?.person2_name
               ? {
                   name: item.person2_name,
                   mobile: item.person2_mobile,
                 }
               : null,
 
-            item.person3_name
+            item?.person3_name
               ? {
                   name: item.person3_name,
                   mobile: item.person3_mobile,

@@ -19,6 +19,9 @@ type DropdownItem = {
   value: string | number;
 };
 
+const normalizeValue = (value: string | number | null | undefined) =>
+  String(value ?? '');
+
 type CustomDropdownProps = {
   items: DropdownItem[];
   value: string | number | null;
@@ -54,7 +57,9 @@ const CustomDropdown = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const selectedLabel = useMemo(() => {
-    const matched = items.find(item => item.value === value);
+    const matched = items.find(
+      item => normalizeValue(item.value) === normalizeValue(value),
+    );
     if (matched) {
       return matched.label;
     }
@@ -161,7 +166,8 @@ const CustomDropdown = ({
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={styles.listContent}
                 renderItem={({ item, index }) => {
-                  const isSelected = value === item.value;
+                  const isSelected =
+                    normalizeValue(value) === normalizeValue(item.value);
 
                   return (
                     <TouchableOpacity

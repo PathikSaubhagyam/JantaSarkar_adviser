@@ -109,6 +109,7 @@ const PhoneDirectoryScreen = () => {
           gender,
           businessCategory,
         );
+        console.log(res, 'profile list===>>>');
 
         if (res?.status === true || res?.success === true) {
           const results = res?.results ?? [];
