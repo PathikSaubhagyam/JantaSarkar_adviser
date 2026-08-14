@@ -318,7 +318,7 @@ export default function SplashScreen() {
       >
         <View style={styles.logoBackground}>
           <Image
-            source={require('../../assets/images/Logo2.png')}
+            source={require('../../assets/images/adviser_logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -351,22 +351,13 @@ const styles = StyleSheet.create({
   logoBackground: {
     width: width * 0.5,
     height: width * 0.5,
-    borderRadius: (width * 0.5) / 2,
-    backgroundColor: '#FFFBEA',
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#CCCCCC',
-    // shadowColor: '#F59E0B',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
   },
   logo: {
-    width: width * 0.38,
-    height: width * 0.38,
-    borderRadius: (width * 0.38) / 2,
-    overflow: 'hidden',
+    width: width * 0.5,
+    height: width * 0.5,
   },
   backgroundCircle: {
     position: 'absolute',
